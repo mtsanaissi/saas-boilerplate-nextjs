@@ -16,7 +16,7 @@ export default function Home() {
                 <ul className="list-disc list-inside text-sm text-base-content/80 space-y-1">
                   <li>Next.js 16 (App Router)</li>
                   <li>Tailwind CSS v4 (Alpha)</li>
-                  <li>DaisyUI v5 (Beta)</li>
+                  <li>DaisyUI v5</li>
                   <li>Supabase (Docker)</li>
                 </ul>
               </div>
