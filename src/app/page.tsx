@@ -25,7 +25,7 @@ export default function Home() {
 
           {/* Left Column: Hero Text */}
           <div className="text-center lg:text-left">
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            <h1 className="text-5xl font-bold bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
               SaaS Boilerplate
             </h1>
             <p className="py-6 text-lg text-base-content/80 max-w-md">
