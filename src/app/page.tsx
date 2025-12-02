@@ -1,4 +1,4 @@
-import { HealthCheck } from '@/components/features/system/health-check';
+import { HealthCheck } from "@/components/features/system/health-check";
 
 export default function Home() {
   return (
@@ -6,11 +6,10 @@ export default function Home() {
       {/* DaisyUI Hero Component */}
       <div className="hero max-w-5xl mx-auto">
         <div className="hero-content flex-col lg:flex-row-reverse gap-12">
-          
           {/* Right Column: Interactive Status Card */}
           <div className="flex flex-col gap-4">
             <HealthCheck />
-            
+
             <div className="card bg-base-100 shadow-xl border border-base-300">
               <div className="card-body">
                 <h2 className="card-title">Tech Stack</h2>
@@ -30,8 +29,8 @@ export default function Home() {
               SaaS Boilerplate
             </h1>
             <p className="py-6 text-lg text-base-content/80 max-w-md">
-              Your environment is fully configured. This page demonstrates the 
-              integration of your local Dockerized database with the modern 
+              Your environment is fully configured. This page demonstrates the
+              integration of your local Dockerized database with the modern
               frontend stack.
             </p>
             <div className="flex gap-2 justify-center lg:justify-start">
@@ -39,7 +38,6 @@ export default function Home() {
               <button className="btn btn-ghost">View Documentation</button>
             </div>
           </div>
-
         </div>
       </div>
 
