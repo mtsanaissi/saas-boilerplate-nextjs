@@ -22,3 +22,9 @@
 
 - **Do NOT add `middleware.ts`** at the project root or under `src/app`. This project uses the Next.js 16+ `proxy.ts` pattern instead.
 - All request/session interception should go through `src/proxy.ts` (which delegates to Supabase helpers). If you need to adjust middleware-like behavior, update that file rather than creating traditional middleware.
+
+## Task Tracking
+
+- Use GitHub Issues as the source of truth for all work items. Each task should have its own issue.
+- When completing or adding significant work, update `TASKS.md` with a new line entry that references the corresponding issue (`#123`) and accurate created/completed dates, following the documented format.
+- Prefer updating Issues, the GitHub Project board, and `TASKS.md` over adding inline `TODO` comments in code.
