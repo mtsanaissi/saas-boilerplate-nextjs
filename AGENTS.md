@@ -17,3 +17,8 @@
 
 - **Runtime:** Node.js (via `fnm` in WSL).
 - **Package Manager:** `pnpm`. Do not use npm or yarn.
+
+## Next.js 16 Routing Note
+
+- **Do NOT add `middleware.ts`** at the project root or under `src/app`. This project uses the Next.js 16+ `proxy.ts` pattern instead.
+- All request/session interception should go through `src/proxy.ts` (which delegates to Supabase helpers). If you need to adjust middleware-like behavior, update that file rather than creating traditional middleware.
