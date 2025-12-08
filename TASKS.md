@@ -25,4 +25,4 @@ Examples:
 - [PENDING] 2025-12-03 (Completed: -) #TBD – Update layout and pages for accessibility landmarks, including header/nav/main/footer roles, a skip-to-content link, and consistent heading hierarchy
 - [PENDING] 2025-12-03 (Completed: -) #TBD – Improve focus indicators, color contrast, and Tailwind/DaisyUI theme tokens to meet WCAG AA, including dark mode and prefers-reduced-motion handling
 - [PENDING] 2025-12-03 (Completed: -) #TBD – Enhance form and alert accessibility with aria-invalid, aria-describedby, role=alert/status, aria-live regions, and clear button vs link semantics
-- [PENDING] 2025-12-03 (Completed: -) #TBD – Replace direct decodeURIComponent/error-string rendering with error-code to t(\"errors.*\") mapping so all user-visible messages are fully localizable
+- [PENDING] 2025-12-03 (Completed: -) #TBD – Replace direct decodeURIComponent/error-string rendering with error-code to t(\"errors.\*\") mapping so all user-visible messages are fully localizable
