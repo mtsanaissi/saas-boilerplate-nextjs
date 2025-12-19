@@ -5,14 +5,17 @@ import { safeDecodeURIComponent } from "@/lib/url";
 import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 import messages from "@/messages/en";
+import type { AppLocale } from "@/i18n/routing";
+
+type PlansSearchParams = {
+  success?: string;
+  canceled?: string;
+  error?: string;
+};
 
 interface PlansPageProps {
-  searchParams?: Promise<{
-    success?: string;
-    canceled?: string;
-    error?: string;
-  }>;
-  params: Promise<{ locale: string }>;
+  searchParams?: Promise<PlansSearchParams>;
+  params: Promise<{ locale: AppLocale }>;
 }
 
 export default async function PlansPage({
@@ -22,7 +25,7 @@ export default async function PlansPage({
   const [{ locale }, resolvedSearchParams, supabase, tPage, tAlerts] =
     await Promise.all([
       params,
-      searchParams ?? Promise.resolve({}),
+      searchParams ?? Promise.resolve<PlansSearchParams>({}),
       createClient(),
       getTranslations({ locale: "en", namespace: "plans.page" }),
       getTranslations({ locale: "en", namespace: "plans.alerts" }),
@@ -83,9 +86,9 @@ export default async function PlansPage({
               <Link
                 href={{
                   pathname: "/auth/login",
-                  locale,
                   query: { redirect: "/plans" },
                 }}
+                locale={locale}
                 className="link link-primary font-medium"
               >
                 {tAlerts("mustSignInLink")}
@@ -98,7 +101,6 @@ export default async function PlansPage({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {plans.map((plan) => {
             const card = cards[plan.id];
-            const isFree = plan.id === "free";
 
             return (
               <div
@@ -141,15 +143,15 @@ export default async function PlansPage({
                   </ul>
 
                   <div className="card-actions mt-4">
-                    {isFree ? (
+                    {plan.id === "free" ? (
                       <Link
-                        href={{
-                          pathname: user ? "/dashboard" : "/auth/register",
-                          locale,
-                        }}
+                        href={user ? "/dashboard" : "/auth/register"}
+                        locale={locale}
                         className="btn btn-outline w-full"
                       >
-                        {user ? card.ctaSignedIn : card.ctaSignedOut}
+                        {user
+                          ? cards.free.ctaSignedIn
+                          : cards.free.ctaSignedOut}
                       </Link>
                     ) : (
                       <form action={createCheckoutSession} className="w-full">
@@ -159,7 +161,9 @@ export default async function PlansPage({
                           className="btn btn-primary w-full"
                           disabled={!user}
                         >
-                          {user ? card.cta : card.ctaDisabled}
+                          {user
+                            ? cards[plan.id].cta
+                            : cards[plan.id].ctaDisabled}
                         </button>
                       </form>
                     )}

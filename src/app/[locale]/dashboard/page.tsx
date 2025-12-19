@@ -1,9 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect, Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
+import type { AppLocale } from "@/i18n/routing";
 
 interface DashboardPageProps {
-  params: Promise<{ locale: string }>;
+  params: Promise<{ locale: AppLocale }>;
 }
 
 export default async function DashboardPage({ params }: DashboardPageProps) {
@@ -16,9 +17,8 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
 
   if (!user) {
     redirect({
-      pathname: "/auth/login",
+      href: { pathname: "/auth/login", query: { redirect: "/dashboard" } },
       locale,
-      query: { redirect: "/dashboard" },
     });
   }
 
@@ -43,7 +43,8 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
               </p>
               <div className="card-actions mt-4">
                 <Link
-                  href={{ pathname: "/plans", locale }}
+                  href="/plans"
+                  locale={locale}
                   className="btn btn-primary btn-sm"
                 >
                   {t("viewPlans")}

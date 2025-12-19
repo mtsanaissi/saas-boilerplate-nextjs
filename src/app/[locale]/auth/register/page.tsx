@@ -3,10 +3,15 @@ import { signUpWithEmail } from "@/app/auth/actions";
 import { safeDecodeURIComponent } from "@/lib/url";
 import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
+import type { AppLocale } from "@/i18n/routing";
+
+type RegisterSearchParams = {
+  error?: string;
+};
 
 interface RegisterPageProps {
-  searchParams?: Promise<{ error?: string }>;
-  params: Promise<{ locale: string }>;
+  searchParams?: Promise<RegisterSearchParams>;
+  params: Promise<{ locale: AppLocale }>;
 }
 
 export default async function RegisterPage({
@@ -15,7 +20,7 @@ export default async function RegisterPage({
 }: RegisterPageProps) {
   const [{ locale }, resolvedSearchParams] = await Promise.all([
     params,
-    searchParams ?? Promise.resolve({}),
+    searchParams ?? Promise.resolve<RegisterSearchParams>({}),
   ]);
 
   const t = await getTranslations({ locale, namespace: "auth.register" });
@@ -80,7 +85,8 @@ export default async function RegisterPage({
       <p className="text-sm text-center text-base-content/70">
         {t("alreadyHaveAccount")}{" "}
         <Link
-          href={{ pathname: "/auth/login", locale }}
+          href="/auth/login"
+          locale={locale}
           className="link link-primary font-medium"
         >
           {t("signIn")}

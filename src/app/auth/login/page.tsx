@@ -1,1 +1,6 @@
-export { default } from "@/app/[locale]/auth/login/page";
+import { redirect } from "next/navigation";
+import { routing } from "@/i18n/routing";
+
+export default function LoginRedirectPage() {
+  redirect(`/${routing.defaultLocale}/auth/login`);
+}

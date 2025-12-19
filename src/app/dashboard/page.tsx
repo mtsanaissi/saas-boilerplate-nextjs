@@ -1,1 +1,6 @@
-export { default } from "@/app/[locale]/dashboard/page";
+import { redirect } from "next/navigation";
+import { routing } from "@/i18n/routing";
+
+export default function DashboardRedirectPage() {
+  redirect(`/${routing.defaultLocale}/dashboard`);
+}

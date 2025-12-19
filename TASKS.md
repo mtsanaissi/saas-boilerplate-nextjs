@@ -18,7 +18,7 @@ Examples:
 
 ---
 
-- [PENDING] 2025-12-03 (Completed: -) #TBD – Introduce an i18n library with /:locale routing and a typed message catalog, and move existing text (home hero, auth, plans, alerts) into locale message files
+- [DONE] 2025-12-03 (Completed: 2025-12-19) #TBD – Introduce an i18n library with /:locale routing and a typed message catalog, and move existing text (home hero, auth, plans, alerts) into locale message files
 - [PENDING] 2025-12-03 (Completed: -) #TBD – Implement locale detection (cookie, URL prefix, Accept-Language) and a language switcher in the navbar that updates the active locale
 - [PENDING] 2025-12-03 (Completed: -) #TBD – Localize pricing and future date/time displays using locale-aware Intl formatting for the active language
 - [PENDING] 2025-12-03 (Completed: -) #TBD – Prepare a pattern for localized transactional emails and Supabase auth templates aligned with the in-app i18n messages

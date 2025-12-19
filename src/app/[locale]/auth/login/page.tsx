@@ -3,10 +3,16 @@ import { signInWithEmail } from "@/app/auth/actions";
 import { safeDecodeURIComponent } from "@/lib/url";
 import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
+import type { AppLocale } from "@/i18n/routing";
+
+type LoginSearchParams = {
+  error?: string;
+  redirect?: string;
+};
 
 interface LoginPageProps {
-  searchParams?: Promise<{ error?: string; redirect?: string }>;
-  params: Promise<{ locale: string }>;
+  searchParams?: Promise<LoginSearchParams>;
+  params: Promise<{ locale: AppLocale }>;
 }
 
 export default async function LoginPage({
@@ -15,7 +21,7 @@ export default async function LoginPage({
 }: LoginPageProps) {
   const [{ locale }, resolvedSearchParams] = await Promise.all([
     params,
-    searchParams ?? Promise.resolve({}),
+    searchParams ?? Promise.resolve<LoginSearchParams>({}),
   ]);
 
   const t = await getTranslations({ locale, namespace: "auth.login" });
@@ -75,7 +81,8 @@ export default async function LoginPage({
       <p className="text-sm text-center text-base-content/70">
         {t("newHere")}{" "}
         <Link
-          href={{ pathname: "/auth/register", locale }}
+          href="/auth/register"
+          locale={locale}
           className="link link-primary font-medium"
         >
           {t("createAccount")}

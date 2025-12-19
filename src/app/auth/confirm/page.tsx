@@ -1,1 +1,6 @@
-export { default } from "@/app/[locale]/auth/confirm/page";
+import { redirect } from "next/navigation";
+import { routing } from "@/i18n/routing";
+
+export default function ConfirmRedirectPage() {
+  redirect(`/${routing.defaultLocale}/auth/confirm`);
+}
