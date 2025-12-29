@@ -6,6 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 import messages from "@/messages/en";
 import type { AppLocale } from "@/i18n/routing";
+import { getErrorMessageKey } from "@/lib/errors";
 
 type PlansSearchParams = {
   success?: string;
@@ -22,13 +23,14 @@ export default async function PlansPage({
   searchParams,
   params,
 }: PlansPageProps) {
-  const [{ locale }, resolvedSearchParams, supabase, tPage, tAlerts] =
+  const { locale } = await params;
+  const [resolvedSearchParams, supabase, tPage, tAlerts, tErrors] =
     await Promise.all([
-      params,
       searchParams ?? Promise.resolve<PlansSearchParams>({}),
       createClient(),
-      getTranslations({ locale: "en", namespace: "plans.page" }),
-      getTranslations({ locale: "en", namespace: "plans.alerts" }),
+      getTranslations({ locale, namespace: "plans.page" }),
+      getTranslations({ locale, namespace: "plans.alerts" }),
+      getTranslations({ locale, namespace: "errors" }),
     ]);
 
   const {
@@ -39,15 +41,8 @@ export default async function PlansPage({
   const hasCanceled = resolvedSearchParams.canceled === "1";
   const errorCode = safeDecodeURIComponent(resolvedSearchParams.error);
 
-  let errorMessage: string | null = null;
-
-  if (errorCode === "invalid_plan") {
-    errorMessage = tAlerts("invalidPlan");
-  } else if (errorCode === "plan_not_available") {
-    errorMessage = tAlerts("planNotAvailable");
-  } else if (errorCode === "checkout_unavailable") {
-    errorMessage = tAlerts("checkoutUnavailable");
-  }
+  const errorKey = getErrorMessageKey(errorCode);
+  const errorMessage = errorKey ? tErrors(errorKey) : null;
 
   const cards = messages.plans.cards;
 
@@ -62,25 +57,41 @@ export default async function PlansPage({
         </div>
 
         {hasSuccess ? (
-          <div className="alert alert-success text-sm">
+          <div
+            className="alert alert-success text-sm"
+            role="status"
+            aria-live="polite"
+          >
             <span>{tAlerts("success")}</span>
           </div>
         ) : null}
 
         {hasCanceled ? (
-          <div className="alert alert-info text-sm">
+          <div
+            className="alert alert-info text-sm"
+            role="status"
+            aria-live="polite"
+          >
             <span>{tAlerts("canceled")}</span>
           </div>
         ) : null}
 
         {errorMessage ? (
-          <div className="alert alert-error text-sm">
+          <div
+            className="alert alert-error text-sm"
+            role="alert"
+            aria-live="assertive"
+          >
             <span>{errorMessage}</span>
           </div>
         ) : null}
 
         {!user ? (
-          <div className="alert alert-warning text-sm">
+          <div
+            className="alert alert-warning text-sm"
+            role="status"
+            aria-live="polite"
+          >
             <span>
               {tAlerts("mustSignInPrefix")}{" "}
               <Link

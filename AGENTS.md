@@ -25,6 +25,6 @@
 
 ## Task Tracking
 
-- Use GitHub Issues as the source of truth for all work items. Each task should have its own issue.
-- When completing or adding significant work, update `TASKS.md` with a new line entry that references the corresponding issue (`#123`) and accurate created/completed dates, following the documented format.
-- Prefer updating Issues, the GitHub Project board, and `TASKS.md` over adding inline `TODO` comments in code.
+- Source of truth: `tasks/tasks.json` (edit tasks here).
+- Read-only view: `TASKS.md` (generated; do not edit by hand). Regenerate via `pnpm tasks:md`.
+- Prefer updating `tasks/tasks.json` over adding inline `TODO` comments in code.

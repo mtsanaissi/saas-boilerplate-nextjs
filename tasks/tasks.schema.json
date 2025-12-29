@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Tasks",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "tasks"],
+  "properties": {
+    "version": { "type": "integer", "const": 1 },
+    "tasks": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/task" }
+    }
+  },
+  "$defs": {
+    "date": {
+      "type": ["string", "null"],
+      "description": "YYYY-MM-DD",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "dateRequired": {
+      "type": "string",
+      "description": "YYYY-MM-DD",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$"
+    },
+    "taskId": {
+      "type": "string",
+      "pattern": "^T-[0-9]{3}$"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["pending", "in_progress", "blocked", "done"]
+    },
+    "acceptanceCriterion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["text", "done"],
+      "properties": {
+        "text": { "type": "string", "minLength": 1 },
+        "done": { "type": "boolean" }
+      }
+    },
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "title",
+        "description",
+        "status",
+        "createdAt",
+        "completedAt",
+        "acceptanceCriteria"
+      ],
+      "properties": {
+        "id": { "$ref": "#/$defs/taskId" },
+        "title": { "type": "string", "minLength": 1 },
+        "description": { "type": "string" },
+        "status": { "$ref": "#/$defs/status" },
+        "createdAt": { "$ref": "#/$defs/dateRequired" },
+        "completedAt": { "$ref": "#/$defs/date" },
+        "acceptanceCriteria": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/acceptanceCriterion" }
+        }
+      }
+    }
+  }
+}

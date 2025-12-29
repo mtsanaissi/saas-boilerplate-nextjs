@@ -13,14 +13,89 @@
   --font-mono: var(--font-geist-mono);
 }
 
-/* DaisyUI Theme Defaults */
+/* DaisyUI Theme Defaults + Accessibility */
 @layer base {
   :root {
-    --color-base-100: 255 255 255; /* Light Mode Base */
+    color-scheme: light;
+
+    /* Core surfaces */
+    --color-base-100: 255 255 255;
+    --color-base-200: 248 250 252;
+    --color-base-300: 226 232 240;
+    --color-base-content: 15 23 42;
+
+    /* Brand + semantic colors */
+    --color-primary: 99 102 241;
+    --color-primary-content: 255 255 255;
+    --color-secondary: 236 72 153;
+    --color-secondary-content: 255 255 255;
+    --color-accent: 14 165 233;
+    --color-accent-content: 255 255 255;
+    --color-neutral: 30 41 59;
+    --color-neutral-content: 241 245 249;
+    --color-info: 2 132 199;
+    --color-info-content: 255 255 255;
+    --color-success: 16 185 129;
+    --color-success-content: 255 255 255;
+    --color-warning: 245 158 11;
+    --color-warning-content: 17 24 39;
+    --color-error: 239 68 68;
+    --color-error-content: 255 255 255;
+
+    --focus-ring: var(--color-primary);
   }
+
   @media (prefers-color-scheme: dark) {
     :root {
-      --color-base-100: 29 35 42; /* Dark Mode Base */
+      color-scheme: dark;
+
+      --color-base-100: 17 24 39;
+      --color-base-200: 15 23 42;
+      --color-base-300: 30 41 59;
+      --color-base-content: 226 232 240;
+
+      --color-primary: 129 140 248;
+      --color-primary-content: 15 23 42;
+      --color-secondary: 244 114 182;
+      --color-secondary-content: 15 23 42;
+      --color-accent: 56 189 248;
+      --color-accent-content: 15 23 42;
+      --color-neutral: 51 65 85;
+      --color-neutral-content: 241 245 249;
+      --color-info: 56 189 248;
+      --color-info-content: 15 23 42;
+      --color-success: 52 211 153;
+      --color-success-content: 15 23 42;
+      --color-warning: 251 191 36;
+      --color-warning-content: 15 23 42;
+      --color-error: 248 113 113;
+      --color-error-content: 15 23 42;
+    }
+  }
+
+  :where(
+    a,
+    button,
+    input,
+    select,
+    textarea,
+    summary,
+    [role="button"],
+    [tabindex]
+  ):focus-visible {
+    outline: 2px solid rgb(var(--focus-ring) / 0.95);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 4px rgb(var(--focus-ring) / 0.25);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
     }
   }
 }

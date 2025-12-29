@@ -1,0 +1,138 @@
+{
+  "$schema": "./tasks.schema.json",
+  "version": 1,
+  "tasks": [
+    {
+      "id": "T-009",
+      "title": "Add placeholder pages to validate UX tasks",
+      "description": "Create a few simple placeholder pages/components (no real content) that exercise accessibility, focus/contrast, forms/alerts, and error handling so changes from the remaining tasks can be tested and validated in-app.",
+      "status": "done",
+      "createdAt": "2025-12-29",
+      "completedAt": "2025-12-29",
+      "acceptanceCriteria": [
+        {
+          "text": "At least 2–3 placeholder pages exist to exercise forms, alerts, and error states",
+          "done": true
+        },
+        {
+          "text": "Pages are reachable via an obvious navigation entry (e.g., a dev-only link)",
+          "done": true
+        },
+        {
+          "text": "Pages include representative UI elements to validate focus styles and contrast",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-008",
+      "title": "Introduce typed i18n with /:locale routing",
+      "description": "Introduce an i18n library with /:locale routing and a typed message catalog, and move existing text (home hero, auth, plans, alerts) into locale message files.",
+      "status": "done",
+      "createdAt": "2025-12-03",
+      "completedAt": "2025-12-19",
+      "acceptanceCriteria": [
+        {
+          "text": "Routes support `/:locale` with a defined default locale",
+          "done": true
+        },
+        {
+          "text": "Message catalog is typed and used across app UI",
+          "done": true
+        },
+        {
+          "text": "Existing user-facing text migrated to locale message files",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-004",
+      "title": "Accessibility landmarks + skip link + headings",
+      "description": "Update layout and pages for accessibility landmarks, including header/nav/main/footer roles, a skip-to-content link, and consistent heading hierarchy.",
+      "status": "done",
+      "createdAt": "2025-12-03",
+      "completedAt": "2025-12-29",
+      "acceptanceCriteria": [
+        {
+          "text": "Pages include clear landmarks (`header`, `nav`, `main`, `footer`)",
+          "done": true
+        },
+        {
+          "text": "A skip-to-content link exists and works with keyboard navigation",
+          "done": true
+        },
+        {
+          "text": "Heading hierarchy is consistent (single `h1`, no skipped levels)",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-003",
+      "title": "WCAG focus/contrast + theme tokens",
+      "description": "Improve focus indicators, color contrast, and Tailwind/DaisyUI theme tokens to meet WCAG AA, including dark mode and prefers-reduced-motion handling.",
+      "status": "done",
+      "createdAt": "2025-12-03",
+      "completedAt": "2025-12-29",
+      "acceptanceCriteria": [
+        {
+          "text": "Visible focus styles for all interactive elements (keyboard)",
+          "done": true
+        },
+        {
+          "text": "Theme tokens support light/dark and meet contrast targets where applicable",
+          "done": true
+        },
+        {
+          "text": "Motion respects `prefers-reduced-motion` for relevant animations/transitions",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-002",
+      "title": "Forms + alerts accessibility pass",
+      "description": "Enhance form and alert accessibility with aria-invalid, aria-describedby, role=alert/status, aria-live regions, and clear button vs link semantics.",
+      "status": "done",
+      "createdAt": "2025-12-03",
+      "completedAt": "2025-12-29",
+      "acceptanceCriteria": [
+        {
+          "text": "Invalid fields set `aria-invalid` and link errors via `aria-describedby`",
+          "done": true
+        },
+        {
+          "text": "Alerts use appropriate roles (`alert`/`status`) and `aria-live` where needed",
+          "done": true
+        },
+        {
+          "text": "Button vs link semantics match behavior (no fake links/buttons)",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-001",
+      "title": "Localize user-facing errors via error codes",
+      "description": "Replace direct decodeURIComponent/error-string rendering with error-code to t(\"errors.*\") mapping so all user-visible messages are fully localizable.",
+      "status": "done",
+      "createdAt": "2025-12-03",
+      "completedAt": "2025-12-29",
+      "acceptanceCriteria": [
+        {
+          "text": "UI never renders raw provider error strings to users",
+          "done": true
+        },
+        {
+          "text": "Errors map from stable error codes to `t(\"errors.*\")` keys",
+          "done": true
+        },
+        {
+          "text": "Unknown errors have a localized fallback message",
+          "done": true
+        }
+      ]
+    }
+  ]
+}

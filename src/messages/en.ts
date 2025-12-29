@@ -2,8 +2,21 @@ const messages = {
   common: {
     appName: "SaaS Boilerplate",
   },
+  errors: {
+    invalidCredentials: "The email or password you entered is incorrect.",
+    signupFailed:
+      "We could not create your account. Please try again in a moment.",
+    invalidPlan: "The selected plan is not valid.",
+    planNotAvailable:
+      "This plan is currently unavailable. Please choose another plan.",
+    checkoutUnavailable:
+      "We could not start the checkout session. Please try again.",
+    unknown: "Something went wrong. Please try again.",
+  },
   nav: {
     plans: "Plans",
+    dev: "Dev",
+    skipToContent: "Skip to content",
     dashboard: "Dashboard",
     signIn: "Sign in",
     signOut: "Sign out",
