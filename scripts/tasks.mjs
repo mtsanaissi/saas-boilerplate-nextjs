@@ -1,6 +1,8 @@
 import fs from "node:fs/promises";
+import path from "node:path";
 
 const TASKS_JSON_PATH = "tasks/tasks.json";
+const TASKS_SCHEMA_PATH = "tasks/tasks.schema.json";
 const TASKS_MD_PATH = "TASKS.md";
 
 function usage() {
@@ -14,6 +16,130 @@ function usage() {
       `Reads ${TASKS_JSON_PATH} and optionally regenerates ${TASKS_MD_PATH}.`,
     ].join("\n"),
   );
+}
+
+function isPlainObject(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function jsonPointerGet(root, pointer) {
+  if (pointer === "" || pointer === "#") return root;
+  if (!pointer.startsWith("#/")) return undefined;
+
+  const parts = pointer
+    .slice(2)
+    .split("/")
+    .map((part) => part.replaceAll("~1", "/").replaceAll("~0", "~"));
+
+  let current = root;
+  for (const part of parts) {
+    if (!isPlainObject(current) && !Array.isArray(current)) return undefined;
+    current = current[part];
+    if (current === undefined) return undefined;
+  }
+  return current;
+}
+
+function validateJsonSchemaSubset(value, schema, schemaRoot, pathStr, errors) {
+  if (!schema || typeof schema !== "object") {
+    errors.push(`${pathStr} schema is not an object.`);
+    return;
+  }
+
+  if (typeof schema.$ref === "string") {
+    const resolved = jsonPointerGet(schemaRoot, schema.$ref);
+    if (!resolved) {
+      errors.push(`${pathStr} $ref "${schema.$ref}" could not be resolved.`);
+      return;
+    }
+    validateJsonSchemaSubset(value, resolved, schemaRoot, pathStr, errors);
+    return;
+  }
+
+  if (schema.const !== undefined && value !== schema.const) {
+    errors.push(`${pathStr} must equal ${JSON.stringify(schema.const)}.`);
+    return;
+  }
+
+  if (Array.isArray(schema.enum) && !schema.enum.includes(value)) {
+    errors.push(
+      `${pathStr} must be one of ${schema.enum
+        .map((v) => JSON.stringify(v))
+        .join(", ")}.`,
+    );
+    return;
+  }
+
+  if (schema.type !== undefined) {
+    const allowed = Array.isArray(schema.type) ? schema.type : [schema.type];
+    const matches = allowed.some((t) => {
+      if (t === "null") return value === null;
+      if (t === "array") return Array.isArray(value);
+      if (t === "object") return isPlainObject(value);
+      if (t === "integer")
+        return typeof value === "number" && Number.isInteger(value);
+      return typeof value === t;
+    });
+    if (!matches) {
+      errors.push(`${pathStr} must be of type ${allowed.join("|")}.`);
+      return;
+    }
+  }
+
+  if (typeof value === "string") {
+    if (
+      typeof schema.minLength === "number" &&
+      value.length < schema.minLength
+    ) {
+      errors.push(`${pathStr} must have minLength ${schema.minLength}.`);
+    }
+    if (typeof schema.pattern === "string") {
+      const re = new RegExp(schema.pattern);
+      if (!re.test(value))
+        errors.push(`${pathStr} must match pattern ${schema.pattern}.`);
+    }
+  }
+
+  if (Array.isArray(value) && schema.items) {
+    for (let i = 0; i < value.length; i += 1) {
+      validateJsonSchemaSubset(
+        value[i],
+        schema.items,
+        schemaRoot,
+        `${pathStr}[${i}]`,
+        errors,
+      );
+    }
+  }
+
+  if (isPlainObject(value)) {
+    const required = Array.isArray(schema.required) ? schema.required : [];
+    for (const key of required) {
+      if (!(key in value)) errors.push(`${pathStr}.${key} is required.`);
+    }
+
+    const properties = isPlainObject(schema.properties)
+      ? schema.properties
+      : {};
+    for (const [key, propSchema] of Object.entries(properties)) {
+      if (!(key in value)) continue;
+      validateJsonSchemaSubset(
+        value[key],
+        propSchema,
+        schemaRoot,
+        `${pathStr}.${key}`,
+        errors,
+      );
+    }
+
+    if (schema.additionalProperties === false) {
+      const allowedKeys = new Set(Object.keys(properties));
+      for (const key of Object.keys(value)) {
+        if (!allowedKeys.has(key))
+          errors.push(`${pathStr}.${key} is not allowed.`);
+      }
+    }
+  }
 }
 
 function parseDate(dateStr, { allowNull }) {
@@ -78,7 +204,28 @@ function compareByCreatedDescThenIdDesc(a, b) {
   return compareTaskIds(b, a);
 }
 
-function validateTasksDoc(doc) {
+const schemaCache = new Map();
+async function readJsonFile(jsonPath) {
+  const raw = await fs.readFile(jsonPath, "utf8");
+  return JSON.parse(raw);
+}
+
+async function loadTasksSchema(schemaRef) {
+  const tasksDir = path.dirname(TASKS_JSON_PATH);
+  const resolvedPath = schemaRef
+    ? path.resolve(tasksDir, schemaRef)
+    : path.resolve(TASKS_SCHEMA_PATH);
+
+  const cacheKey = resolvedPath.replaceAll("\\", "/");
+  const cached = schemaCache.get(cacheKey);
+  if (cached) return cached;
+
+  const schema = await readJsonFile(resolvedPath);
+  schemaCache.set(cacheKey, schema);
+  return schema;
+}
+
+async function validateTasksDoc(doc) {
   const errors = [];
 
   if (!doc || typeof doc !== "object") {
@@ -86,19 +233,19 @@ function validateTasksDoc(doc) {
     return { ok: false, errors };
   }
 
-  if (doc.version !== 1) errors.push('Root "version" must be 1.');
-  if (!Array.isArray(doc.tasks)) errors.push('Root "tasks" must be an array.');
-  if (!Array.isArray(doc.tasks)) return { ok: false, errors };
+  const schema = await loadTasksSchema(
+    typeof doc.$schema === "string" ? doc.$schema : undefined,
+  );
+  const schemaErrors = [];
+  validateJsonSchemaSubset(doc, schema, schema, "$", schemaErrors);
+  if (schemaErrors.length > 0) {
+    return { ok: false, errors: schemaErrors };
+  }
 
   const ids = new Set();
   for (let i = 0; i < doc.tasks.length; i += 1) {
     const task = doc.tasks[i];
     const prefix = `tasks[${i}]`;
-
-    if (!task || typeof task !== "object") {
-      errors.push(`${prefix} must be an object.`);
-      continue;
-    }
 
     if (typeof task.id !== "string" || !/^T-\d{3}$/.test(task.id)) {
       errors.push(`${prefix}.id must match ^T-\\d{3}$ (e.g. T-001).`);
@@ -153,10 +300,6 @@ function validateTasksDoc(doc) {
       for (let j = 0; j < task.acceptanceCriteria.length; j += 1) {
         const criterion = task.acceptanceCriteria[j];
         const cPrefix = `${prefix}.acceptanceCriteria[${j}]`;
-        if (!criterion || typeof criterion !== "object") {
-          errors.push(`${cPrefix} must be an object.`);
-          continue;
-        }
         if (
           typeof criterion.text !== "string" ||
           criterion.text.trim().length === 0
@@ -174,9 +317,8 @@ function validateTasksDoc(doc) {
 }
 
 async function readTasksDoc() {
-  const raw = await fs.readFile(TASKS_JSON_PATH, "utf8");
-  const doc = JSON.parse(raw);
-  const result = validateTasksDoc(doc);
+  const doc = await readJsonFile(TASKS_JSON_PATH);
+  const result = await validateTasksDoc(doc);
   if (!result.ok) {
     const message = `Invalid ${TASKS_JSON_PATH}:\n- ${result.errors.join("\n- ")}`;
     throw new Error(message);
@@ -222,9 +364,8 @@ function normalizeTasksDoc(doc) {
 }
 
 async function fmt() {
-  const raw = await fs.readFile(TASKS_JSON_PATH, "utf8");
-  const doc = JSON.parse(raw);
-  const validated = validateTasksDoc(doc);
+  const doc = await readJsonFile(TASKS_JSON_PATH);
+  const validated = await validateTasksDoc(doc);
   if (!validated.ok) {
     const message = `Invalid ${TASKS_JSON_PATH}:\n- ${validated.errors.join("\n- ")}`;
     throw new Error(message);

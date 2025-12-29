@@ -5,6 +5,7 @@
   "additionalProperties": false,
   "required": ["version", "tasks"],
   "properties": {
+    "$schema": { "type": "string" },
     "version": { "type": "integer", "const": 1 },
     "tasks": {
       "type": "array",
