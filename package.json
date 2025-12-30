@@ -10,7 +10,8 @@
     "format": "prettier --write .",
     "tasks:check": "node scripts/tasks.mjs check",
     "tasks:fmt": "node scripts/tasks.mjs fmt",
-    "tasks:md": "node scripts/tasks.mjs write-md"
+    "tasks:md": "node scripts/tasks.mjs write-md",
+    "supabase": "supabase"
   },
   "dependencies": {
     "@supabase/ssr": "^0.8.0",

@@ -3,50 +3,6 @@
   "version": 1,
   "tasks": [
     {
-      "id": "T-010",
-      "title": "Create minimal Supabase billing schema (single-user)",
-      "description": "Add migrations for core billing tables and RLS policies so subscription state can be stored and read for single-user accounts.",
-      "status": "pending",
-      "createdAt": "2025-12-30",
-      "completedAt": null,
-      "acceptanceCriteria": [
-        {
-          "text": "Tables exist for profiles, billing_customers, billing_subscriptions, and stripe_events",
-          "done": false
-        },
-        {
-          "text": "RLS allows users to read their own billing data but restricts writes to service role only",
-          "done": false
-        },
-        {
-          "text": "Schema includes indexes/constraints for unique Stripe IDs and event deduplication",
-          "done": false
-        }
-      ]
-    },
-    {
-      "id": "T-011",
-      "title": "Persist Stripe webhook events for subscription state",
-      "description": "Extend the Stripe webhook handler to upsert subscription state for a single-user account and guard against duplicate processing.",
-      "status": "pending",
-      "createdAt": "2025-12-30",
-      "completedAt": null,
-      "acceptanceCriteria": [
-        {
-          "text": "Webhook verifies signatures in production and supports a safe local dev mode",
-          "done": false
-        },
-        {
-          "text": "Subscription state is upserted by user (status, price, period end, cancel-at-period-end)",
-          "done": false
-        },
-        {
-          "text": "Idempotency is enforced using Stripe event IDs",
-          "done": false
-        }
-      ]
-    },
-    {
       "id": "T-012",
       "title": "Local Stripe mock + webhook dev setup",
       "description": "Add a local Stripe emulator workflow (stripe-mock or localstripe) with env toggles and README guidance so subscriptions + webhooks can be exercised without a real Stripe account.",
@@ -187,7 +143,7 @@
       "completedAt": "2025-12-29",
       "acceptanceCriteria": [
         {
-          "text": "At least 2\u20133 placeholder pages exist to exercise forms, alerts, and error states",
+          "text": "At least 2–3 placeholder pages exist to exercise forms, alerts, and error states",
           "done": true
         },
         {
@@ -196,6 +152,50 @@
         },
         {
           "text": "Pages include representative UI elements to validate focus styles and contrast",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-010",
+      "title": "Create minimal Supabase billing schema (single-user)",
+      "description": "Add migrations for core billing tables and RLS policies so subscription state can be stored and read for single-user accounts.",
+      "status": "done",
+      "createdAt": "2025-12-30",
+      "completedAt": "2025-12-30",
+      "acceptanceCriteria": [
+        {
+          "text": "Tables exist for profiles, billing_customers, billing_subscriptions, and stripe_events",
+          "done": true
+        },
+        {
+          "text": "RLS allows users to read their own billing data but restricts writes to service role only",
+          "done": true
+        },
+        {
+          "text": "Schema includes indexes/constraints for unique Stripe IDs and event deduplication",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-011",
+      "title": "Persist Stripe webhook events for subscription state",
+      "description": "Extend the Stripe webhook handler to upsert subscription state for a single-user account and guard against duplicate processing.",
+      "status": "done",
+      "createdAt": "2025-12-30",
+      "completedAt": "2025-12-30",
+      "acceptanceCriteria": [
+        {
+          "text": "Webhook verifies signatures in production and supports a safe local dev mode",
+          "done": true
+        },
+        {
+          "text": "Subscription state is upserted by user (status, price, period end, cancel-at-period-end)",
+          "done": true
+        },
+        {
+          "text": "Idempotency is enforced using Stripe event IDs",
           "done": true
         }
       ]

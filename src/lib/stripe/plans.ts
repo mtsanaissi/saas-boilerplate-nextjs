@@ -23,6 +23,10 @@ export function getPlanById(id: PlanId): Plan | undefined {
   return plans.find((plan) => plan.id === id);
 }
 
+export function getPlanByPriceId(priceId: string): Plan | undefined {
+  return plans.find((plan) => plan.stripePriceId === priceId);
+}
+
 export function getAppBaseUrl(): string {
   return appUrl;
 }

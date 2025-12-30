@@ -44,6 +44,13 @@ export async function createCheckoutSession(formData: FormData) {
     success_url: `${baseUrl}/plans?success=1`,
     cancel_url: `${baseUrl}/plans?canceled=1`,
     customer_email: user.email ?? undefined,
+    client_reference_id: user.id,
+    subscription_data: {
+      metadata: {
+        supabase_user_id: user.id,
+        plan_id: plan.id,
+      },
+    },
     metadata: {
       supabase_user_id: user.id,
       plan_id: plan.id,

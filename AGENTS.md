@@ -27,5 +27,5 @@
 
 - Source of truth: `tasks/tasks.json` (edit tasks here).
 - Read-only view: `TASKS.md` (generated; do not edit by hand). Regenerate via `pnpm tasks:md`.
-- After editing `tasks/tasks.json`, always run `pnpm tasks:check` to validate it.
+- After editing `tasks/tasks.json`, always run `pnpm tasks:fmt` to format and `pnpm tasks:check` to validate it.
 - Prefer updating `tasks/tasks.json` over adding inline `TODO` comments in code.
