@@ -3,28 +3,6 @@
   "version": 1,
   "tasks": [
     {
-      "id": "T-012",
-      "title": "Local Stripe mock + webhook dev setup",
-      "description": "Add a local Stripe emulator workflow (stripe-mock or localstripe) with env toggles and README guidance so subscriptions + webhooks can be exercised without a real Stripe account.",
-      "status": "pending",
-      "createdAt": "2025-12-30",
-      "completedAt": null,
-      "acceptanceCriteria": [
-        {
-          "text": "Local mock instructions exist (how to start, which env vars to set, and any limitations vs real Stripe)",
-          "done": false
-        },
-        {
-          "text": "App can run in mock mode without real Stripe keys (dummy keys accepted)",
-          "done": false
-        },
-        {
-          "text": "Webhook flow can be triggered locally (documented example or helper route/script)",
-          "done": false
-        }
-      ]
-    },
-    {
       "id": "T-001",
       "title": "Localize user-facing errors via error codes",
       "description": "Replace direct decodeURIComponent/error-string rendering with error-code to t(\"errors.*\") mapping so all user-visible messages are fully localizable.",
@@ -196,6 +174,28 @@
         },
         {
           "text": "Idempotency is enforced using Stripe event IDs",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-012",
+      "title": "Local Stripe mock + webhook dev setup",
+      "description": "Add a local Stripe emulator workflow (stripe-mock or localstripe) with env toggles and README guidance so subscriptions + webhooks can be exercised without a real Stripe account.",
+      "status": "done",
+      "createdAt": "2025-12-30",
+      "completedAt": "2025-12-30",
+      "acceptanceCriteria": [
+        {
+          "text": "Local mock instructions exist (how to start, which env vars to set, and any limitations vs real Stripe)",
+          "done": true
+        },
+        {
+          "text": "App can run in mock mode without real Stripe keys (dummy keys accepted)",
+          "done": true
+        },
+        {
+          "text": "Webhook flow can be triggered locally (documented example or helper route/script)",
           "done": true
         }
       ]
