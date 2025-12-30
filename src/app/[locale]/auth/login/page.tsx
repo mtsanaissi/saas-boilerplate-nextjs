@@ -93,6 +93,15 @@ export default async function LoginPage({
         </div>
       </form>
 
+      <div className="flex flex-col items-center gap-2 text-sm">
+        <Link href="/auth/forgot" locale={locale} className="link link-primary">
+          {t("forgotPassword")}
+        </Link>
+        <Link href="/auth/magic" locale={locale} className="link link-hover">
+          {t("magicLink")}
+        </Link>
+      </div>
+
       <div className="divider text-xs uppercase">Or</div>
 
       <p className="text-sm text-center text-base-content/70">

@@ -85,6 +85,13 @@ export default async function RootLayout({
                   >
                     {tNav("dashboard")}
                   </Link>
+                  <Link
+                    href="/settings"
+                    locale={appLocale}
+                    className="btn btn-ghost btn-sm"
+                  >
+                    {tNav("settings")}
+                  </Link>
                   <form action={signOut}>
                     <button type="submit" className="btn btn-outline btn-sm">
                       {tNav("signOut")}

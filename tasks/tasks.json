@@ -3,6 +3,160 @@
   "version": 1,
   "tasks": [
     {
+      "id": "T-015",
+      "title": "Authorization + feature gating",
+      "description": "Introduce centralized authorization helpers and server-side checks for protected routes and plan-based feature access (single-user, no orgs).",
+      "status": "pending",
+      "createdAt": "2025-12-30",
+      "completedAt": null,
+      "acceptanceCriteria": [
+        {
+          "text": "Reusable auth guard utilities exist for RSCs, server actions, and API routes",
+          "done": false
+        },
+        {
+          "text": "Plan/feature checks are enforced server-side (not just in UI)",
+          "done": false
+        },
+        {
+          "text": "Denied access yields localized error UI or redirect paths",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "T-016",
+      "title": "Usage tracking + credits foundation",
+      "description": "Add schema + server utilities to record usage events and enforce per-plan limits or credits.",
+      "status": "pending",
+      "createdAt": "2025-12-30",
+      "completedAt": null,
+      "acceptanceCriteria": [
+        {
+          "text": "Database tables exist for usage events and balances (per user)",
+          "done": false
+        },
+        {
+          "text": "Server utilities record usage and check remaining allowance/credits",
+          "done": false
+        },
+        {
+          "text": "Limit exhaustion returns localized errors and blocks new usage",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "T-017",
+      "title": "Rate limiting + abuse protections",
+      "description": "Add per-user and per-IP rate limiting for auth and API endpoints with clear error handling.",
+      "status": "pending",
+      "createdAt": "2025-12-30",
+      "completedAt": null,
+      "acceptanceCriteria": [
+        {
+          "text": "Rate limiting applies to auth and critical API routes",
+          "done": false
+        },
+        {
+          "text": "Limits are configurable via env or config, with sensible defaults",
+          "done": false
+        },
+        {
+          "text": "Throttled responses return localized user-facing messages",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "T-018",
+      "title": "Billing management + plan status UI",
+      "description": "Integrate Stripe Customer Portal and reflect live subscription status in the dashboard and settings.",
+      "status": "pending",
+      "createdAt": "2025-12-30",
+      "completedAt": null,
+      "acceptanceCriteria": [
+        {
+          "text": "Customer Portal link/button works for authenticated users",
+          "done": false
+        },
+        {
+          "text": "Dashboard shows current plan, status, and renewal date from billing tables",
+          "done": false
+        },
+        {
+          "text": "Upgrade/downgrade/cancel flows update UI after webhook sync",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "T-019",
+      "title": "Observability baseline",
+      "description": "Add structured logging, error monitoring hooks, and minimal product analytics with environment toggles.",
+      "status": "pending",
+      "createdAt": "2025-12-30",
+      "completedAt": null,
+      "acceptanceCriteria": [
+        {
+          "text": "Server logs are structured and include request correlation IDs",
+          "done": false
+        },
+        {
+          "text": "Unhandled errors report to a configured monitoring provider",
+          "done": false
+        },
+        {
+          "text": "Basic analytics event tracking is available with opt-out toggle",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "T-020",
+      "title": "Security + compliance essentials",
+      "description": "Add audit logging, session/device management, and legal/consent pages appropriate for SaaS.",
+      "status": "pending",
+      "createdAt": "2025-12-30",
+      "completedAt": null,
+      "acceptanceCriteria": [
+        {
+          "text": "Audit log table exists with server helpers to append security-relevant events",
+          "done": false
+        },
+        {
+          "text": "Users can view active sessions/devices and revoke sessions",
+          "done": false
+        },
+        {
+          "text": "Privacy Policy + Terms pages exist and consent settings are respected",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "T-021",
+      "title": "Testing + CI setup",
+      "description": "Introduce unit/integration tests and a CI workflow for lint, typecheck, and tests.",
+      "status": "pending",
+      "createdAt": "2025-12-30",
+      "completedAt": null,
+      "acceptanceCriteria": [
+        {
+          "text": "Test runner configured with at least a smoke test for auth + billing flows",
+          "done": false
+        },
+        {
+          "text": "CI workflow runs lint, typecheck, and tests on pull requests",
+          "done": false
+        },
+        {
+          "text": "README documents how to run tests locally",
+          "done": false
+        }
+      ]
+    },
+    {
       "id": "T-001",
       "title": "Localize user-facing errors via error codes",
       "description": "Replace direct decodeURIComponent/error-string rendering with error-code to t(\"errors.*\") mapping so all user-visible messages are fully localizable.",
@@ -196,6 +350,50 @@
         },
         {
           "text": "Webhook flow can be triggered locally (documented example or helper route/script)",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-013",
+      "title": "Account recovery + verification flows",
+      "description": "Add password reset, email verification/resend, and magic-link sign-in flows with localized UI and secure server actions.",
+      "status": "done",
+      "createdAt": "2025-12-30",
+      "completedAt": "2025-12-30",
+      "acceptanceCriteria": [
+        {
+          "text": "Password reset request + confirm pages exist with Supabase email flow wired up",
+          "done": true
+        },
+        {
+          "text": "Email verification/resend flow is available after registration",
+          "done": true
+        },
+        {
+          "text": "All messages use i18n keys and server actions return localized error codes",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-014",
+      "title": "User profile settings",
+      "description": "Create a profile/settings area that lets users update profile fields and locale preferences stored in `profiles`.",
+      "status": "done",
+      "createdAt": "2025-12-30",
+      "completedAt": "2025-12-30",
+      "acceptanceCriteria": [
+        {
+          "text": "Settings page allows editing display name, avatar URL, and locale with validation",
+          "done": true
+        },
+        {
+          "text": "Profile updates use Supabase RLS-safe update paths and refresh in the UI",
+          "done": true
+        },
+        {
+          "text": "Dashboard reflects profile data (name + current locale) instead of placeholders",
           "done": true
         }
       ]

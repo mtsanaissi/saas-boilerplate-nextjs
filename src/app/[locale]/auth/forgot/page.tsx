@@ -1,42 +1,53 @@
 import { AuthCard } from "@/components/features/auth/AuthCard";
-import { signUpWithEmail } from "@/app/auth/actions";
+import { requestPasswordReset } from "@/app/auth/actions";
 import { safeDecodeURIComponent } from "@/lib/url";
 import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 import type { AppLocale } from "@/i18n/routing";
 import { getErrorMessageKey } from "@/lib/errors";
 
-type RegisterSearchParams = {
+type ForgotSearchParams = {
   error?: string;
+  success?: string;
 };
 
-interface RegisterPageProps {
-  searchParams?: Promise<RegisterSearchParams>;
+interface ForgotPageProps {
+  searchParams?: Promise<ForgotSearchParams>;
   params: Promise<{ locale: AppLocale }>;
 }
 
-export default async function RegisterPage({
+export default async function ForgotPage({
   searchParams,
   params,
-}: RegisterPageProps) {
+}: ForgotPageProps) {
   const [{ locale }, resolvedSearchParams] = await Promise.all([
     params,
-    searchParams ?? Promise.resolve<RegisterSearchParams>({}),
+    searchParams ?? Promise.resolve<ForgotSearchParams>({}),
   ]);
 
   const [t, tErrors] = await Promise.all([
-    getTranslations({ locale, namespace: "auth.register" }),
+    getTranslations({ locale, namespace: "auth.forgot" }),
     getTranslations({ locale, namespace: "errors" }),
   ]);
 
+  const hasSuccess = resolvedSearchParams.success === "1";
   const errorCode = safeDecodeURIComponent(resolvedSearchParams.error);
   const errorKey = getErrorMessageKey(errorCode);
   const errorMessage = errorKey ? tErrors(errorKey) : null;
-  const hasFieldErrors = errorCode === "invalid_credentials";
-  const formErrorId = errorMessage ? "auth-register-error" : undefined;
+  const formErrorId = errorMessage ? "auth-forgot-error" : undefined;
 
   return (
     <AuthCard title={t("title")} subtitle={t("subtitle")}>
+      {hasSuccess ? (
+        <div
+          className="alert alert-success text-sm"
+          role="status"
+          aria-live="polite"
+        >
+          <span>{t("success")}</span>
+        </div>
+      ) : null}
+
       {errorMessage ? (
         <div
           id={formErrorId}
@@ -48,7 +59,7 @@ export default async function RegisterPage({
         </div>
       ) : null}
 
-      <form action={signUpWithEmail} className="space-y-4">
+      <form action={requestPasswordReset} className="space-y-4">
         <input type="hidden" name="locale" value={locale} />
         <div className="form-control">
           <label className="label" htmlFor="email">
@@ -61,30 +72,9 @@ export default async function RegisterPage({
             required
             className="input input-bordered w-full"
             autoComplete="email"
-            aria-invalid={hasFieldErrors}
+            aria-invalid={Boolean(errorMessage)}
             aria-describedby={formErrorId}
           />
-        </div>
-        <div className="form-control">
-          <label className="label" htmlFor="password">
-            <span className="label-text">{t("passwordLabel")}</span>
-          </label>
-          <input
-            id="password"
-            type="password"
-            name="password"
-            required
-            minLength={8}
-            className="input input-bordered w-full"
-            autoComplete="new-password"
-            aria-invalid={hasFieldErrors}
-            aria-describedby={[formErrorId, "password-help"]
-              .filter(Boolean)
-              .join(" ")}
-          />
-          <p id="password-help" className="mt-2 text-xs text-base-content/70">
-            {t("passwordHelp")}
-          </p>
         </div>
 
         <div className="form-control mt-6">
@@ -95,13 +85,8 @@ export default async function RegisterPage({
       </form>
 
       <p className="text-sm text-center text-base-content/70">
-        {t("alreadyHaveAccount")}{" "}
-        <Link
-          href="/auth/login"
-          locale={locale}
-          className="link link-primary font-medium"
-        >
-          {t("signIn")}
+        <Link href="/auth/login" locale={locale} className="link link-primary">
+          {t("backToSignIn")}
         </Link>
       </p>
     </AuthCard>

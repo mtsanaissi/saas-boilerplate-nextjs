@@ -14,17 +14,22 @@ export default async function ConfirmPage({ params }: ConfirmPageProps) {
   return (
     <AuthCard title={t("title")} subtitle={t("subtitle")}>
       <p className="text-sm text-base-content/70">{t("body")}</p>
-      <div className="mt-6 flex justify-between items-center text-sm">
-        <Link href="/" locale={locale} className="link link-hover">
-          {t("backToHome")}
+      <div className="mt-6 flex flex-col gap-3 text-sm">
+        <Link href="/auth/verify" locale={locale} className="link link-primary">
+          {t("resendLink")}
         </Link>
-        <Link
-          href="/auth/login"
-          locale={locale}
-          className="btn btn-sm btn-outline"
-        >
-          {t("goToSignIn")}
-        </Link>
+        <div className="flex justify-between items-center text-sm">
+          <Link href="/" locale={locale} className="link link-hover">
+            {t("backToHome")}
+          </Link>
+          <Link
+            href="/auth/login"
+            locale={locale}
+            className="btn btn-sm btn-outline"
+          >
+            {t("goToSignIn")}
+          </Link>
+        </div>
       </div>
     </AuthCard>
   );

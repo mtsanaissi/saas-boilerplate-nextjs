@@ -200,9 +200,11 @@ export async function POST(request: Request) {
       const priceId = subscription.items.data[0]?.price?.id ?? null;
       const currentPeriodEnd =
         "current_period_end" in subscription
-          ? (subscription as Stripe.Subscription & {
-              current_period_end?: number;
-            }).current_period_end
+          ? (
+              subscription as Stripe.Subscription & {
+                current_period_end?: number;
+              }
+            ).current_period_end
           : subscription.items.data[0]?.current_period_end;
 
       if (!status || !priceId) {
@@ -217,7 +219,7 @@ export async function POST(request: Request) {
             stripe_subscription_id: subscription.id,
             stripe_price_id: priceId,
             status,
-          current_period_end: toTimestamp(currentPeriodEnd),
+            current_period_end: toTimestamp(currentPeriodEnd),
             cancel_at_period_end: subscription.cancel_at_period_end ?? false,
           },
           { onConflict: "user_id" },
