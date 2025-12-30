@@ -102,8 +102,9 @@ STRIPE_API_PROTOCOL=http
 To trigger the webhook locally without Stripe, send a fake event:
 
 ```bash
-curl -X POST http://localhost:3000/api/stripe/webhook \\
-  -H "Content-Type: application/json" \\
-  -d '{\n    \"id\": \"evt_test_1\",\n    \"type\": \"customer.subscription.created\",\n    \"created\": 1735536000,\n    \"data\": {\n      \"object\": {\n        \"id\": \"sub_test_1\",\n        \"status\": \"active\",\n        \"customer\": \"cus_test_1\",\n        \"metadata\": { \"supabase_user_id\": \"<YOUR_USER_ID>\" },\n        \"cancel_at_period_end\": false,\n        \"current_period_end\": 1738214400,\n        \"items\": { \"data\": [ { \"price\": { \"id\": \"price_test_starter\" } } ] }\n      }\n    }\n  }'\n```
+curl -X POST http://localhost:3000/api/stripe/webhook \
+  -H "Content-Type: application/json" \
+  -d '{\n    \"id\": \"evt_test_1\",\n    \"type\": \"customer.subscription.created\",\n    \"created\": 1735536000,\n    \"data\": {\n      \"object\": {\n        \"id\": \"sub_test_1\",\n        \"status\": \"active\",\n        \"customer\": \"cus_test_1\",\n        \"metadata\": { \"supabase_user_id\": \"<YOUR_USER_ID>\" },\n        \"cancel_at_period_end\": false,\n        \"current_period_end\": 1738214400,\n        \"items\": { \"data\": [ { \"price\": { \"id\": \"price_test_starter\" } } ] }\n      }\n    }\n  }'
+```
 
-Note: These emulators don’t fully implement Stripe Checkout UI. Use them to exercise server-side flows and webhooks.
+Note: These emulators don't fully implement Stripe Checkout UI. Use them to exercise server-side flows and webhooks.
