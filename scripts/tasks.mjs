@@ -194,14 +194,11 @@ function statusRank(status) {
   }
 }
 
-function compareByCreatedDescThenIdDesc(a, b) {
+function compareByStatusThenIdAsc(a, b) {
   const aRank = statusRank(a.status);
   const bRank = statusRank(b.status);
   if (aRank !== bRank) return aRank - bRank;
-  if (a.createdAt !== b.createdAt)
-    return b.createdAt.localeCompare(a.createdAt);
-  // Higher IDs are assumed newer if same date
-  return compareTaskIds(b, a);
+  return compareTaskIds(a, b);
 }
 
 const schemaCache = new Map();
@@ -332,7 +329,7 @@ function renderTaskMarkdown(task) {
 }
 
 function renderTasksMarkdown(doc) {
-  const tasksSorted = [...doc.tasks].sort(compareByCreatedDescThenIdDesc);
+  const tasksSorted = [...doc.tasks].sort(compareByStatusThenIdAsc);
 
   const blocks = tasksSorted.map(renderTaskMarkdown);
 
@@ -359,7 +356,7 @@ async function writeMd() {
 }
 
 function normalizeTasksDoc(doc) {
-  const tasks = [...doc.tasks].sort(compareByCreatedDescThenIdDesc);
+  const tasks = [...doc.tasks].sort(compareByStatusThenIdAsc);
   return { ...doc, tasks };
 }
 

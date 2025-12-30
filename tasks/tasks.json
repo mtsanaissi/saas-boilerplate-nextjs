@@ -3,89 +3,89 @@
   "version": 1,
   "tasks": [
     {
-      "id": "T-009",
-      "title": "Add placeholder pages to validate UX tasks",
-      "description": "Create a few simple placeholder pages/components (no real content) that exercise accessibility, focus/contrast, forms/alerts, and error handling so changes from the remaining tasks can be tested and validated in-app.",
-      "status": "done",
-      "createdAt": "2025-12-29",
-      "completedAt": "2025-12-29",
+      "id": "T-010",
+      "title": "Create minimal Supabase billing schema (single-user)",
+      "description": "Add migrations for core billing tables and RLS policies so subscription state can be stored and read for single-user accounts.",
+      "status": "pending",
+      "createdAt": "2025-12-30",
+      "completedAt": null,
       "acceptanceCriteria": [
         {
-          "text": "At least 2–3 placeholder pages exist to exercise forms, alerts, and error states",
-          "done": true
+          "text": "Tables exist for profiles, billing_customers, billing_subscriptions, and stripe_events",
+          "done": false
         },
         {
-          "text": "Pages are reachable via an obvious navigation entry (e.g., a dev-only link)",
-          "done": true
+          "text": "RLS allows users to read their own billing data but restricts writes to service role only",
+          "done": false
         },
         {
-          "text": "Pages include representative UI elements to validate focus styles and contrast",
-          "done": true
+          "text": "Schema includes indexes/constraints for unique Stripe IDs and event deduplication",
+          "done": false
         }
       ]
     },
     {
-      "id": "T-008",
-      "title": "Introduce typed i18n with /:locale routing",
-      "description": "Introduce an i18n library with /:locale routing and a typed message catalog, and move existing text (home hero, auth, plans, alerts) into locale message files.",
-      "status": "done",
-      "createdAt": "2025-12-03",
-      "completedAt": "2025-12-19",
+      "id": "T-011",
+      "title": "Persist Stripe webhook events for subscription state",
+      "description": "Extend the Stripe webhook handler to upsert subscription state for a single-user account and guard against duplicate processing.",
+      "status": "pending",
+      "createdAt": "2025-12-30",
+      "completedAt": null,
       "acceptanceCriteria": [
         {
-          "text": "Routes support `/:locale` with a defined default locale",
-          "done": true
+          "text": "Webhook verifies signatures in production and supports a safe local dev mode",
+          "done": false
         },
         {
-          "text": "Message catalog is typed and used across app UI",
-          "done": true
+          "text": "Subscription state is upserted by user (status, price, period end, cancel-at-period-end)",
+          "done": false
         },
         {
-          "text": "Existing user-facing text migrated to locale message files",
-          "done": true
+          "text": "Idempotency is enforced using Stripe event IDs",
+          "done": false
         }
       ]
     },
     {
-      "id": "T-004",
-      "title": "Accessibility landmarks + skip link + headings",
-      "description": "Update layout and pages for accessibility landmarks, including header/nav/main/footer roles, a skip-to-content link, and consistent heading hierarchy.",
+      "id": "T-012",
+      "title": "Local Stripe mock + webhook dev setup",
+      "description": "Add a local Stripe emulator workflow (stripe-mock or localstripe) with env toggles and README guidance so subscriptions + webhooks can be exercised without a real Stripe account.",
+      "status": "pending",
+      "createdAt": "2025-12-30",
+      "completedAt": null,
+      "acceptanceCriteria": [
+        {
+          "text": "Local mock instructions exist (how to start, which env vars to set, and any limitations vs real Stripe)",
+          "done": false
+        },
+        {
+          "text": "App can run in mock mode without real Stripe keys (dummy keys accepted)",
+          "done": false
+        },
+        {
+          "text": "Webhook flow can be triggered locally (documented example or helper route/script)",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "T-001",
+      "title": "Localize user-facing errors via error codes",
+      "description": "Replace direct decodeURIComponent/error-string rendering with error-code to t(\"errors.*\") mapping so all user-visible messages are fully localizable.",
       "status": "done",
       "createdAt": "2025-12-03",
       "completedAt": "2025-12-29",
       "acceptanceCriteria": [
         {
-          "text": "Pages include clear landmarks (`header`, `nav`, `main`, `footer`)",
+          "text": "UI never renders raw provider error strings to users",
           "done": true
         },
         {
-          "text": "A skip-to-content link exists and works with keyboard navigation",
+          "text": "Errors map from stable error codes to `t(\"errors.*\")` keys",
           "done": true
         },
         {
-          "text": "Heading hierarchy is consistent (single `h1`, no skipped levels)",
-          "done": true
-        }
-      ]
-    },
-    {
-      "id": "T-003",
-      "title": "WCAG focus/contrast + theme tokens",
-      "description": "Improve focus indicators, color contrast, and Tailwind/DaisyUI theme tokens to meet WCAG AA, including dark mode and prefers-reduced-motion handling.",
-      "status": "done",
-      "createdAt": "2025-12-03",
-      "completedAt": "2025-12-29",
-      "acceptanceCriteria": [
-        {
-          "text": "Visible focus styles for all interactive elements (keyboard)",
-          "done": true
-        },
-        {
-          "text": "Theme tokens support light/dark and meet contrast targets where applicable",
-          "done": true
-        },
-        {
-          "text": "Motion respects `prefers-reduced-motion` for relevant animations/transitions",
+          "text": "Unknown errors have a localized fallback message",
           "done": true
         }
       ]
@@ -113,23 +113,89 @@
       ]
     },
     {
-      "id": "T-001",
-      "title": "Localize user-facing errors via error codes",
-      "description": "Replace direct decodeURIComponent/error-string rendering with error-code to t(\"errors.*\") mapping so all user-visible messages are fully localizable.",
+      "id": "T-003",
+      "title": "WCAG focus/contrast + theme tokens",
+      "description": "Improve focus indicators, color contrast, and Tailwind/DaisyUI theme tokens to meet WCAG AA, including dark mode and prefers-reduced-motion handling.",
       "status": "done",
       "createdAt": "2025-12-03",
       "completedAt": "2025-12-29",
       "acceptanceCriteria": [
         {
-          "text": "UI never renders raw provider error strings to users",
+          "text": "Visible focus styles for all interactive elements (keyboard)",
           "done": true
         },
         {
-          "text": "Errors map from stable error codes to `t(\"errors.*\")` keys",
+          "text": "Theme tokens support light/dark and meet contrast targets where applicable",
           "done": true
         },
         {
-          "text": "Unknown errors have a localized fallback message",
+          "text": "Motion respects `prefers-reduced-motion` for relevant animations/transitions",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-004",
+      "title": "Accessibility landmarks + skip link + headings",
+      "description": "Update layout and pages for accessibility landmarks, including header/nav/main/footer roles, a skip-to-content link, and consistent heading hierarchy.",
+      "status": "done",
+      "createdAt": "2025-12-03",
+      "completedAt": "2025-12-29",
+      "acceptanceCriteria": [
+        {
+          "text": "Pages include clear landmarks (`header`, `nav`, `main`, `footer`)",
+          "done": true
+        },
+        {
+          "text": "A skip-to-content link exists and works with keyboard navigation",
+          "done": true
+        },
+        {
+          "text": "Heading hierarchy is consistent (single `h1`, no skipped levels)",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-008",
+      "title": "Introduce typed i18n with /:locale routing",
+      "description": "Introduce an i18n library with /:locale routing and a typed message catalog, and move existing text (home hero, auth, plans, alerts) into locale message files.",
+      "status": "done",
+      "createdAt": "2025-12-03",
+      "completedAt": "2025-12-19",
+      "acceptanceCriteria": [
+        {
+          "text": "Routes support `/:locale` with a defined default locale",
+          "done": true
+        },
+        {
+          "text": "Message catalog is typed and used across app UI",
+          "done": true
+        },
+        {
+          "text": "Existing user-facing text migrated to locale message files",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-009",
+      "title": "Add placeholder pages to validate UX tasks",
+      "description": "Create a few simple placeholder pages/components (no real content) that exercise accessibility, focus/contrast, forms/alerts, and error handling so changes from the remaining tasks can be tested and validated in-app.",
+      "status": "done",
+      "createdAt": "2025-12-29",
+      "completedAt": "2025-12-29",
+      "acceptanceCriteria": [
+        {
+          "text": "At least 2\u20133 placeholder pages exist to exercise forms, alerts, and error states",
+          "done": true
+        },
+        {
+          "text": "Pages are reachable via an obvious navigation entry (e.g., a dev-only link)",
+          "done": true
+        },
+        {
+          "text": "Pages include representative UI elements to validate focus styles and contrast",
           "done": true
         }
       ]
