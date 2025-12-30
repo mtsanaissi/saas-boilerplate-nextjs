@@ -3,28 +3,6 @@
   "version": 1,
   "tasks": [
     {
-      "id": "T-015",
-      "title": "Authorization + feature gating",
-      "description": "Introduce centralized authorization helpers and server-side checks for protected routes and plan-based feature access (single-user, no orgs).",
-      "status": "pending",
-      "createdAt": "2025-12-30",
-      "completedAt": null,
-      "acceptanceCriteria": [
-        {
-          "text": "Reusable auth guard utilities exist for RSCs, server actions, and API routes",
-          "done": false
-        },
-        {
-          "text": "Plan/feature checks are enforced server-side (not just in UI)",
-          "done": false
-        },
-        {
-          "text": "Denied access yields localized error UI or redirect paths",
-          "done": false
-        }
-      ]
-    },
-    {
       "id": "T-016",
       "title": "Usage tracking + credits foundation",
       "description": "Add schema + server utilities to record usage events and enforce per-plan limits or credits.",
@@ -394,6 +372,28 @@
         },
         {
           "text": "Dashboard reflects profile data (name + current locale) instead of placeholders",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-015",
+      "title": "Authorization + feature gating",
+      "description": "Introduce centralized authorization helpers and server-side checks for protected routes and plan-based feature access (single-user, no orgs).",
+      "status": "done",
+      "createdAt": "2025-12-30",
+      "completedAt": "2025-12-30",
+      "acceptanceCriteria": [
+        {
+          "text": "Reusable auth guard utilities exist for RSCs, server actions, and API routes",
+          "done": true
+        },
+        {
+          "text": "Plan/feature checks are enforced server-side (not just in UI)",
+          "done": true
+        },
+        {
+          "text": "Denied access yields localized error UI or redirect paths",
           "done": true
         }
       ]

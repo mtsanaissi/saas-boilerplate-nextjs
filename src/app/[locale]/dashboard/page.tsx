@@ -1,8 +1,8 @@
-import { createClient } from "@/lib/supabase/server";
-import { redirect, Link } from "@/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 import type { AppLocale } from "@/i18n/routing";
-import type { UserProfile } from "@/types/profile";
+import { hasPlanAccess, requireProfile } from "@/lib/auth/guards";
+import type { PlanId, PlanStatus } from "@/types/billing";
 
 interface DashboardPageProps {
   params: Promise<{ locale: AppLocale }>;
@@ -10,31 +10,15 @@ interface DashboardPageProps {
 
 export default async function DashboardPage({ params }: DashboardPageProps) {
   const { locale } = await params;
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect({
-      href: { pathname: "/auth/login", query: { redirect: "/dashboard" } },
-      locale,
-    });
-  }
-  if (!user) {
-    return null;
-  }
-
+  const { profile, email } = await requireProfile(locale, "/dashboard");
   const t = await getTranslations({ locale, namespace: "dashboard" });
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("display_name, locale")
-    .eq("id", user.id)
-    .maybeSingle<UserProfile>();
 
-  const displayName = profile?.display_name ?? user?.email ?? "";
+  const displayName = profile?.display_name ?? email ?? "";
   const preferredLocale = profile?.locale ?? locale;
+  const planId = (profile?.plan_id as PlanId) ?? "free";
+  const planStatus = (profile?.plan_status as PlanStatus) ?? "free";
+  const hasActivePlan = planStatus === "trialing" || planStatus === "active";
+  const canAccessAnalytics = hasPlanAccess(planId, "starter") && hasActivePlan;
 
   return (
     <div className="min-h-screen bg-base-200">
@@ -71,6 +55,34 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
                 >
                   {t("viewSettings")}
                 </Link>
+              </div>
+            </div>
+          </div>
+
+          <div className="card bg-base-100 shadow-md border border-base-300">
+            <div className="card-body">
+              <h2 className="card-title text-base">{t("analyticsTitle")}</h2>
+              <p className="text-sm text-base-content/70">
+                {t("analyticsBody")}
+              </p>
+              <div className="card-actions mt-4">
+                {canAccessAnalytics ? (
+                  <Link
+                    href="/dashboard/analytics"
+                    locale={locale}
+                    className="btn btn-ghost btn-sm"
+                  >
+                    {t("viewAnalytics")}
+                  </Link>
+                ) : (
+                  <Link
+                    href="/plans"
+                    locale={locale}
+                    className="btn btn-primary btn-sm"
+                  >
+                    {t("upgradePlan")}
+                  </Link>
+                )}
               </div>
             </div>
           </div>

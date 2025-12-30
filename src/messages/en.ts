@@ -20,6 +20,10 @@ const messages = {
       "Your session has expired. Please request a new link and try again.",
     profileUpdateFailed:
       "We could not save your profile changes. Please try again.",
+    accessDenied: "You do not have access to this feature.",
+    upgradeRequired:
+      "This feature requires an upgraded plan. Please choose a plan to continue.",
+    unauthorized: "Please sign in to continue.",
     invalidPlan: "The selected plan is not valid.",
     planNotAvailable:
       "This plan is currently unavailable. Please choose another plan.",
@@ -182,6 +186,11 @@ const messages = {
     currentPlanBody: "You are currently on the {plan} plan.",
     viewPlans: "View plans",
     viewSettings: "Settings",
+    analyticsTitle: "Analytics",
+    analyticsBody: "Starter and Pro plans can access analytics.",
+    viewAnalytics: "View analytics",
+    analyticsPlaceholder: "Analytics data will appear here once connected.",
+    upgradePlan: "Upgrade plan",
     gettingStartedTitle: "Getting started",
     gettingStartedItems: {
       exploreApi: "Explore the API and Supabase tables.",

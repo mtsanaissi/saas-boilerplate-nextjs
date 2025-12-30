@@ -8,7 +8,6 @@ Do not hand-edit this file. To edit tasks, update `tasks/tasks.json` and run:
 
 ---
 
-- T-015 - [PENDING] - Authorization + feature gating
 - T-016 - [PENDING] - Usage tracking + credits foundation
 - T-017 - [PENDING] - Rate limiting + abuse protections
 - T-018 - [PENDING] - Billing management + plan status UI
@@ -26,3 +25,4 @@ Do not hand-edit this file. To edit tasks, update `tasks/tasks.json` and run:
 - T-012 - [DONE] - Local Stripe mock + webhook dev setup
 - T-013 - [DONE] - Account recovery + verification flows
 - T-014 - [DONE] - User profile settings
+- T-015 - [DONE] - Authorization + feature gating

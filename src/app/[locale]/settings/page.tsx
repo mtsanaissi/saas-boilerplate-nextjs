@@ -1,12 +1,12 @@
 import { AuthCard } from "@/components/features/auth/AuthCard";
 import { updateProfile } from "@/app/settings/actions";
 import { safeDecodeURIComponent } from "@/lib/url";
-import { createClient } from "@/lib/supabase/server";
-import { Link, redirect } from "@/i18n/navigation";
+import { Link } from "@/i18n/navigation";
 import { getTranslations } from "next-intl/server";
 import { routing, type AppLocale } from "@/i18n/routing";
 import { getErrorMessageKey } from "@/lib/errors";
 import type { UserProfile } from "@/types/profile";
+import { requireProfile } from "@/lib/auth/guards";
 
 type SettingsSearchParams = {
   error?: string;
@@ -22,35 +22,25 @@ export default async function SettingsPage({
   searchParams,
   params,
 }: SettingsPageProps) {
-  const [{ locale }, resolvedSearchParams, supabase] = await Promise.all([
+  const [{ locale }, resolvedSearchParams] = await Promise.all([
     params,
     searchParams ?? Promise.resolve<SettingsSearchParams>({}),
-    createClient(),
   ]);
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect({
-      href: { pathname: "/auth/login", query: { redirect: "/settings" } },
-      locale,
-    });
-  }
-  if (!user) {
-    return null;
-  }
+  const { supabase, userId, profile } = await requireProfile(
+    locale,
+    "/settings",
+  );
 
   const [t, tErrors] = await Promise.all([
     getTranslations({ locale, namespace: "settings" }),
     getTranslations({ locale, namespace: "errors" }),
   ]);
 
-  const { data: profile } = await supabase
+  const { data: freshProfile } = await supabase
     .from("profiles")
     .select("id, display_name, avatar_url, locale")
-    .eq("id", user.id)
+    .eq("id", userId)
     .maybeSingle<UserProfile>();
 
   const hasSuccess = resolvedSearchParams.success === "1";
@@ -59,11 +49,13 @@ export default async function SettingsPage({
   const errorMessage = errorKey ? tErrors(errorKey) : null;
   const formErrorId = errorMessage ? "settings-error" : undefined;
 
-  const displayName = profile?.display_name ?? "";
-  const avatarUrl = profile?.avatar_url ?? "";
+  const resolvedProfile = freshProfile ?? profile;
+  const displayName = resolvedProfile?.display_name ?? "";
+  const avatarUrl = resolvedProfile?.avatar_url ?? "";
   const preferredLocale =
-    profile?.locale && routing.locales.includes(profile.locale as AppLocale)
-      ? (profile.locale as AppLocale)
+    resolvedProfile?.locale &&
+    routing.locales.includes(resolvedProfile.locale as AppLocale)
+      ? (resolvedProfile.locale as AppLocale)
       : locale;
 
   return (

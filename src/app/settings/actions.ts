@@ -1,8 +1,8 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import { routing, type AppLocale } from "@/i18n/routing";
+import { requireUser } from "@/lib/auth/guards";
 
 const MAX_DISPLAY_NAME_LENGTH = 80;
 
@@ -63,14 +63,7 @@ export async function updateProfile(formData: FormData) {
     normalizedAvatarUrl = trimmedUrl;
   }
 
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect(`/${locale}/auth/login?redirect=/settings`);
-  }
+  const { supabase, userId } = await requireUser(locale, "/settings");
 
   const { error } = await supabase
     .from("profiles")
@@ -79,7 +72,7 @@ export async function updateProfile(formData: FormData) {
       avatar_url: normalizedAvatarUrl,
       locale: localePreference,
     })
-    .eq("id", user.id);
+    .eq("id", userId);
 
   if (error) {
     redirect(`/${locale}/settings?error=profile_update_failed`);

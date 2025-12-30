@@ -3,4 +3,6 @@ export interface UserProfile {
   display_name: string | null;
   avatar_url: string | null;
   locale: string | null;
+  plan_id?: string | null;
+  plan_status?: string | null;
 }
