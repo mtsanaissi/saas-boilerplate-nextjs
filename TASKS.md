@@ -8,9 +8,6 @@ Do not hand-edit this file. To edit tasks, update `tasks/tasks.json` and run:
 
 ---
 
-- T-016 - [PENDING] - Usage tracking + credits foundation
-- T-017 - [PENDING] - Rate limiting + abuse protections
-- T-018 - [PENDING] - Billing management + plan status UI
 - T-019 - [PENDING] - Observability baseline
 - T-020 - [PENDING] - Security + compliance essentials
 - T-021 - [PENDING] - Testing + CI setup
@@ -26,3 +23,8 @@ Do not hand-edit this file. To edit tasks, update `tasks/tasks.json` and run:
 - T-013 - [DONE] - Account recovery + verification flows
 - T-014 - [DONE] - User profile settings
 - T-015 - [DONE] - Authorization + feature gating
+- T-016 - [DONE] - Usage tracking + credits foundation
+- T-017 - [DONE] - Rate limiting + abuse protections
+- T-018 - [DONE] - Billing management + plan status UI
+- T-022 - [DONE] - Usage UI summary card
+- T-023 - [DONE] - Usage details page

@@ -3,28 +3,6 @@
   "version": 1,
   "tasks": [
     {
-      "id": "T-018",
-      "title": "Billing management + plan status UI",
-      "description": "Integrate Stripe Customer Portal and reflect live subscription status in the dashboard and settings.",
-      "status": "pending",
-      "createdAt": "2025-12-30",
-      "completedAt": null,
-      "acceptanceCriteria": [
-        {
-          "text": "Customer Portal link/button works for authenticated users",
-          "done": false
-        },
-        {
-          "text": "Dashboard shows current plan, status, and renewal date from billing tables",
-          "done": false
-        },
-        {
-          "text": "Upgrade/downgrade/cancel flows update UI after webhook sync",
-          "done": false
-        }
-      ]
-    },
-    {
       "id": "T-019",
       "title": "Observability baseline",
       "description": "Add structured logging, error monitoring hooks, and minimal product analytics with environment toggles.",
@@ -394,6 +372,28 @@
         },
         {
           "text": "Throttled responses return localized user-facing messages",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-018",
+      "title": "Billing management + plan status UI",
+      "description": "Integrate Stripe Customer Portal and reflect live subscription status in the dashboard and settings.",
+      "status": "done",
+      "createdAt": "2025-12-30",
+      "completedAt": "2025-12-31",
+      "acceptanceCriteria": [
+        {
+          "text": "Customer Portal link/button works for authenticated users",
+          "done": true
+        },
+        {
+          "text": "Dashboard shows current plan, status, and renewal date from billing tables",
+          "done": true
+        },
+        {
+          "text": "Upgrade/downgrade/cancel flows update UI after webhook sync",
           "done": true
         }
       ]

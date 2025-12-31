@@ -29,6 +29,8 @@ const messages = {
     usageLimitExceeded:
       "You have reached your usage limit for this period. Please upgrade your plan or wait for the reset.",
     rateLimited: "Too many requests. Please wait and try again.",
+    billingPortalUnavailable:
+      "We could not open the billing portal. Please try again later.",
     invalidPlan: "The selected plan is not valid.",
     planNotAvailable:
       "This plan is currently unavailable. Please choose another plan.",
@@ -189,6 +191,9 @@ const messages = {
     localeLabel: "Locale: {locale}",
     currentPlanTitle: "Current plan",
     currentPlanBody: "You are currently on the {plan} plan.",
+    planStatusLabel: "Status: {status}",
+    renewalLabel: "Renews on {date}",
+    cancelAtPeriodEndLabel: "Cancels on {date}",
     viewPlans: "View plans",
     viewSettings: "Settings",
     analyticsTitle: "Analytics",
@@ -202,6 +207,22 @@ const messages = {
       configureStripe: "Configure Stripe price IDs in your env.",
       deploy: "Deploy when you are ready for production.",
     },
+    planNames: {
+      free: "Free",
+      starter: "Starter",
+      pro: "Pro",
+    },
+    planStatuses: {
+      free: "Free",
+      trialing: "Trialing",
+      active: "Active",
+      past_due: "Past due",
+      canceled: "Canceled",
+      unpaid: "Unpaid",
+      incomplete: "Incomplete",
+      incomplete_expired: "Incomplete expired",
+      paused: "Paused",
+    },
   },
   settings: {
     title: "Profile settings",
@@ -214,6 +235,14 @@ const messages = {
     save: "Save changes",
     success: "Your profile has been updated.",
     backToDashboard: "Back to dashboard",
+    billingTitle: "Billing",
+    billingSubtitle: "Manage your subscription and payment details.",
+    billingPlanLabel: "Plan",
+    billingStatusLabel: "Status",
+    billingRenewalLabel: "Renews on",
+    billingCancelLabel: "Cancels on",
+    manageBilling: "Manage billing",
+    noBilling: "No active subscription found.",
   },
   usage: {
     title: "Usage",

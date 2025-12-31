@@ -11,6 +11,8 @@ import type { UsageBalance } from "@/types/usage";
 import type { PlanId, PlanStatus } from "@/types/billing";
 import { getCreditsTotalForPlanStatus } from "@/lib/usage/limits";
 import { getCurrentPeriodRange } from "@/lib/usage/period";
+import type { BillingSubscription } from "@/types/billing";
+import { createBillingPortalSession } from "@/app/billing/actions";
 
 type SettingsSearchParams = {
   error?: string;
@@ -36,17 +38,25 @@ export default async function SettingsPage({
     "/settings",
   );
 
-  const [t, tErrors, tUsage] = await Promise.all([
+  const [t, tErrors, tUsage, tDashboard] = await Promise.all([
     getTranslations({ locale, namespace: "settings" }),
     getTranslations({ locale, namespace: "errors" }),
     getTranslations({ locale, namespace: "usage" }),
+    getTranslations({ locale, namespace: "dashboard" }),
   ]);
 
-  const { data: freshProfile } = await supabase
-    .from("profiles")
-    .select("id, display_name, avatar_url, locale")
-    .eq("id", userId)
-    .maybeSingle<UserProfile>();
+  const [{ data: freshProfile }, { data: subscription }] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("id, display_name, avatar_url, locale")
+      .eq("id", userId)
+      .maybeSingle<UserProfile>(),
+    supabase
+      .from("billing_subscriptions")
+      .select("status, current_period_end, cancel_at_period_end")
+      .eq("user_id", userId)
+      .maybeSingle<BillingSubscription>(),
+  ]);
 
   const hasSuccess = resolvedSearchParams.success === "1";
   const errorCode = safeDecodeURIComponent(resolvedSearchParams.error);
@@ -87,6 +97,12 @@ export default async function SettingsPage({
   const formattedReset = dateFormatter.format(
     new Date(`${resetDate}T00:00:00Z`),
   );
+
+  const planName = tDashboard(`planNames.${planId}`);
+  const planStatusLabel = tDashboard(`planStatuses.${planStatus}`);
+  const renewalDate = subscription?.current_period_end
+    ? dateFormatter.format(new Date(subscription.current_period_end))
+    : null;
 
   return (
     <AuthCard title={t("title")} subtitle={t("subtitle")}>
@@ -177,6 +193,40 @@ export default async function SettingsPage({
           </button>
         </div>
       </form>
+
+      <div className="divider text-xs uppercase">{t("billingTitle")}</div>
+      <div className="space-y-2 text-sm text-base-content/80">
+        <p className="text-sm text-base-content/70">{t("billingSubtitle")}</p>
+        {subscription ? (
+          <>
+            <p>
+              {t("billingPlanLabel")}:{" "}
+              <span className="font-semibold">{planName}</span>
+            </p>
+            <p>
+              {t("billingStatusLabel")}:{" "}
+              <span className="font-semibold">{planStatusLabel}</span>
+            </p>
+            {subscription.cancel_at_period_end && renewalDate ? (
+              <p className="text-xs text-base-content/60">
+                {t("billingCancelLabel")}: {renewalDate}
+              </p>
+            ) : renewalDate ? (
+              <p className="text-xs text-base-content/60">
+                {t("billingRenewalLabel")}: {renewalDate}
+              </p>
+            ) : null}
+            <form action={createBillingPortalSession}>
+              <input type="hidden" name="locale" value={locale} />
+              <button type="submit" className="btn btn-outline btn-sm mt-2">
+                {t("manageBilling")}
+              </button>
+            </form>
+          </>
+        ) : (
+          <p className="text-sm text-base-content/70">{t("noBilling")}</p>
+        )}
+      </div>
 
       <div className="divider text-xs uppercase">{tUsage("title")}</div>
 

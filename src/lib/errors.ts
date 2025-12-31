@@ -16,6 +16,7 @@ export const errorCodeToMessageKey = {
   unauthorized: "unauthorized",
   usage_limit_exceeded: "usageLimitExceeded",
   rate_limited: "rateLimited",
+  billing_portal_unavailable: "billingPortalUnavailable",
   invalid_plan: "invalidPlan",
   plan_not_available: "planNotAvailable",
   checkout_unavailable: "checkoutUnavailable",

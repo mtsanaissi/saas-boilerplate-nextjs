@@ -4,6 +4,7 @@ import type { AppLocale } from "@/i18n/routing";
 import { hasPlanAccess, requireProfile } from "@/lib/auth/guards";
 import type { PlanId, PlanStatus } from "@/types/billing";
 import type { UsageBalance } from "@/types/usage";
+import type { BillingSubscription } from "@/types/billing";
 import { getCreditsTotalForPlanStatus } from "@/lib/usage/limits";
 import { getCurrentPeriodRange } from "@/lib/usage/period";
 import { DevUsageEventButton } from "@/components/features/dev/DevUsageEventButton";
@@ -31,12 +32,19 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   const canAccessAnalytics = hasPlanAccess(planId, "starter") && hasActivePlan;
 
   const { periodStart, periodEnd } = getCurrentPeriodRange();
-  const { data: usageBalance } = await supabase
-    .from("usage_balances")
-    .select("credits_total, credits_used, period_start, period_end")
-    .eq("user_id", userId)
-    .eq("period_start", periodStart)
-    .maybeSingle<UsageBalance>();
+  const [{ data: usageBalance }, { data: subscription }] = await Promise.all([
+    supabase
+      .from("usage_balances")
+      .select("credits_total, credits_used, period_start, period_end")
+      .eq("user_id", userId)
+      .eq("period_start", periodStart)
+      .maybeSingle<UsageBalance>(),
+    supabase
+      .from("billing_subscriptions")
+      .select("status, current_period_end, cancel_at_period_end")
+      .eq("user_id", userId)
+      .maybeSingle<BillingSubscription>(),
+  ]);
 
   const creditsTotal =
     usageBalance?.credits_total ??
@@ -52,6 +60,12 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
   const formattedReset = dateFormatter.format(
     new Date(`${resetDate}T00:00:00Z`),
   );
+
+  const planName = t(`planNames.${planId}`);
+  const planStatusLabel = t(`planStatuses.${planStatus}`);
+  const renewalDate = subscription?.current_period_end
+    ? dateFormatter.format(new Date(subscription.current_period_end))
+    : null;
   const showDevButton = process.env.NODE_ENV !== "production";
 
   return (
@@ -72,8 +86,20 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
             <div className="card-body">
               <h2 className="card-title text-base">{t("currentPlanTitle")}</h2>
               <p className="text-sm text-base-content/70">
-                {t("currentPlanBody", { plan: "Free" })}
+                {t("currentPlanBody", { plan: planName })}
               </p>
+              <p className="text-xs text-base-content/60">
+                {t("planStatusLabel", { status: planStatusLabel })}
+              </p>
+              {subscription?.cancel_at_period_end && renewalDate ? (
+                <p className="text-xs text-base-content/60">
+                  {t("cancelAtPeriodEndLabel", { date: renewalDate })}
+                </p>
+              ) : renewalDate ? (
+                <p className="text-xs text-base-content/60">
+                  {t("renewalLabel", { date: renewalDate })}
+                </p>
+              ) : null}
               <div className="card-actions mt-4">
                 <Link
                   href="/plans"
