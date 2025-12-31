@@ -3,28 +3,6 @@
   "version": 1,
   "tasks": [
     {
-      "id": "T-016",
-      "title": "Usage tracking + credits foundation",
-      "description": "Add schema + server utilities to record usage events and enforce per-plan limits or credits.",
-      "status": "pending",
-      "createdAt": "2025-12-30",
-      "completedAt": null,
-      "acceptanceCriteria": [
-        {
-          "text": "Database tables exist for usage events and balances (per user)",
-          "done": false
-        },
-        {
-          "text": "Server utilities record usage and check remaining allowance/credits",
-          "done": false
-        },
-        {
-          "text": "Limit exhaustion returns localized errors and blocks new usage",
-          "done": false
-        }
-      ]
-    },
-    {
       "id": "T-017",
       "title": "Rate limiting + abuse protections",
       "description": "Add per-user and per-IP rate limiting for auth and API endpoints with clear error handling.",
@@ -394,6 +372,72 @@
         },
         {
           "text": "Denied access yields localized error UI or redirect paths",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-016",
+      "title": "Usage tracking + credits foundation",
+      "description": "Add schema + server utilities to record usage events and enforce per-plan limits or credits.",
+      "status": "done",
+      "createdAt": "2025-12-30",
+      "completedAt": "2025-12-30",
+      "acceptanceCriteria": [
+        {
+          "text": "Database tables exist for usage events and balances (per user)",
+          "done": true
+        },
+        {
+          "text": "Server utilities record usage and check remaining allowance/credits",
+          "done": true
+        },
+        {
+          "text": "Limit exhaustion returns localized errors and blocks new usage",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-022",
+      "title": "Usage UI summary card",
+      "description": "Add a dashboard/settings UI surface that shows current period usage, remaining credits, and reset date.",
+      "status": "done",
+      "createdAt": "2025-12-30",
+      "completedAt": "2025-12-30",
+      "acceptanceCriteria": [
+        {
+          "text": "Dashboard shows credits used/remaining for the current billing period",
+          "done": true
+        },
+        {
+          "text": "UI uses localized labels and formats dates consistently",
+          "done": true
+        },
+        {
+          "text": "Free vs paid plan messaging is clear (limit or unlimited if applicable)",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-023",
+      "title": "Usage details page",
+      "description": "Create a dedicated usage page listing recent usage events and credits balance history.",
+      "status": "done",
+      "createdAt": "2025-12-30",
+      "completedAt": "2025-12-30",
+      "acceptanceCriteria": [
+        {
+          "text": "Usage page lists recent events with feature name, amount, and timestamp",
+          "done": true
+        },
+        {
+          "text": "Balance section shows current period totals and reset date",
+          "done": true
+        },
+        {
+          "text": "Page is gated to authenticated users and handles empty states",
           "done": true
         }
       ]

@@ -7,6 +7,10 @@ import { routing, type AppLocale } from "@/i18n/routing";
 import { getErrorMessageKey } from "@/lib/errors";
 import type { UserProfile } from "@/types/profile";
 import { requireProfile } from "@/lib/auth/guards";
+import type { UsageBalance } from "@/types/usage";
+import type { PlanId, PlanStatus } from "@/types/billing";
+import { getCreditsTotalForPlanStatus } from "@/lib/usage/limits";
+import { getCurrentPeriodRange } from "@/lib/usage/period";
 
 type SettingsSearchParams = {
   error?: string;
@@ -32,9 +36,10 @@ export default async function SettingsPage({
     "/settings",
   );
 
-  const [t, tErrors] = await Promise.all([
+  const [t, tErrors, tUsage] = await Promise.all([
     getTranslations({ locale, namespace: "settings" }),
     getTranslations({ locale, namespace: "errors" }),
+    getTranslations({ locale, namespace: "usage" }),
   ]);
 
   const { data: freshProfile } = await supabase
@@ -57,6 +62,31 @@ export default async function SettingsPage({
     routing.locales.includes(resolvedProfile.locale as AppLocale)
       ? (resolvedProfile.locale as AppLocale)
       : locale;
+
+  const planId = (resolvedProfile?.plan_id as PlanId) ?? "free";
+  const planStatus = (resolvedProfile?.plan_status as PlanStatus) ?? "free";
+  const { periodStart, periodEnd } = getCurrentPeriodRange();
+  const { data: usageBalance } = await supabase
+    .from("usage_balances")
+    .select("credits_total, credits_used, period_start, period_end")
+    .eq("user_id", userId)
+    .eq("period_start", periodStart)
+    .maybeSingle<UsageBalance>();
+
+  const creditsTotal =
+    usageBalance?.credits_total ??
+    getCreditsTotalForPlanStatus(planId, planStatus);
+  const creditsUsed = usageBalance?.credits_used ?? 0;
+  const creditsRemaining = Math.max(creditsTotal - creditsUsed, 0);
+  const resetDate = usageBalance?.period_end ?? periodEnd;
+  const dateFormatter = new Intl.DateTimeFormat(locale, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+  const formattedReset = dateFormatter.format(
+    new Date(`${resetDate}T00:00:00Z`),
+  );
 
   return (
     <AuthCard title={t("title")} subtitle={t("subtitle")}>
@@ -147,6 +177,32 @@ export default async function SettingsPage({
           </button>
         </div>
       </form>
+
+      <div className="divider text-xs uppercase">{tUsage("title")}</div>
+
+      <div className="space-y-2 text-sm text-base-content/80">
+        <p className="text-sm text-base-content/70">{tUsage("subtitle")}</p>
+        {creditsTotal > 0 ? (
+          <>
+            <p>
+              {tUsage("creditsRemaining")}:{" "}
+              <span className="font-semibold">{creditsRemaining}</span>
+            </p>
+            <p>
+              {tUsage("creditsUsed")}:{" "}
+              <span className="font-semibold">{creditsUsed}</span>
+            </p>
+            <p className="text-xs text-base-content/60">
+              {tUsage("resetOn", { date: formattedReset })}
+            </p>
+          </>
+        ) : (
+          <p className="text-sm text-base-content/70">{tUsage("noCredits")}</p>
+        )}
+        <Link href="/usage" locale={locale} className="link link-primary">
+          {tUsage("viewDetails")}
+        </Link>
+      </div>
 
       <p className="text-sm text-center text-base-content/70">
         <Link href="/dashboard" locale={locale} className="link link-primary">

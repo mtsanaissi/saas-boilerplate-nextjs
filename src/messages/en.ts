@@ -24,6 +24,8 @@ const messages = {
     upgradeRequired:
       "This feature requires an upgraded plan. Please choose a plan to continue.",
     unauthorized: "Please sign in to continue.",
+    usageLimitExceeded:
+      "You have reached your usage limit for this period. Please upgrade your plan or wait for the reset.",
     invalidPlan: "The selected plan is not valid.",
     planNotAvailable:
       "This plan is currently unavailable. Please choose another plan.",
@@ -209,6 +211,22 @@ const messages = {
     save: "Save changes",
     success: "Your profile has been updated.",
     backToDashboard: "Back to dashboard",
+  },
+  usage: {
+    title: "Usage",
+    subtitle: "Track your credits usage for the current period.",
+    creditsRemaining: "Credits remaining",
+    creditsUsed: "Credits used",
+    resetOn: "Resets on {date}",
+    viewDetails: "View usage details",
+    noCredits: "No credits are available for the current plan.",
+    eventsTitle: "Recent usage",
+    emptyEvents: "No usage recorded yet.",
+    periodLabel: "Current period: {start}–{end}",
+    featureLabel: "Feature",
+    creditsLabel: "Credits",
+    whenLabel: "When",
+    devGenerate: "Add dev usage event",
   },
 } as const;
 

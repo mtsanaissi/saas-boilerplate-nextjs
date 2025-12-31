@@ -13,6 +13,7 @@ export const errorCodeToMessageKey = {
   access_denied: "accessDenied",
   upgrade_required: "upgradeRequired",
   unauthorized: "unauthorized",
+  usage_limit_exceeded: "usageLimitExceeded",
   invalid_plan: "invalidPlan",
   plan_not_available: "planNotAvailable",
   checkout_unavailable: "checkoutUnavailable",
