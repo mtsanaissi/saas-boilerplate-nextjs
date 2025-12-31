@@ -2,6 +2,8 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getClientIpFromHeaders } from "@/lib/rate-limit/headers";
+import { rateLimitAuth } from "@/lib/rate-limit/server";
 
 function getRedirectTarget(formData: FormData, fallback: string): string {
   const redirectTo = formData.get("redirectTo");
@@ -27,13 +29,39 @@ function buildAuthCallbackUrl(locale: string, nextPath: string): string {
   return callbackUrl.toString();
 }
 
+async function enforceAuthRateLimit(
+  key: string,
+  redirectTo: string,
+): Promise<void> {
+  try {
+    await rateLimitAuth(key);
+  } catch (error) {
+    if (error instanceof Error && error.name === "rate_limited") {
+      redirect(redirectTo);
+    }
+    console.error("Rate limit check failed", error);
+  }
+}
+
 export async function signInWithEmail(formData: FormData) {
   const email = formData.get("email");
   const password = formData.get("password");
+  const locale = getLocale(formData);
+  const ip = await getClientIpFromHeaders();
+
+  await enforceAuthRateLimit(
+    `ip:${ip}`,
+    `/${locale}/auth/login?error=rate_limited`,
+  );
 
   if (typeof email !== "string" || typeof password !== "string") {
-    redirect("/auth/login?error=invalid_credentials");
+    redirect(`/${locale}/auth/login?error=invalid_credentials`);
   }
+
+  await enforceAuthRateLimit(
+    `email:${email.toLowerCase()}`,
+    `/${locale}/auth/login?error=rate_limited`,
+  );
 
   const supabase = await createClient();
 
@@ -43,20 +71,31 @@ export async function signInWithEmail(formData: FormData) {
   });
 
   if (error) {
-    redirect("/auth/login?error=invalid_credentials");
+    redirect(`/${locale}/auth/login?error=invalid_credentials`);
   }
 
-  redirect(getRedirectTarget(formData, "/dashboard"));
+  redirect(getRedirectTarget(formData, `/${locale}/dashboard`));
 }
 
 export async function signUpWithEmail(formData: FormData) {
   const email = formData.get("email");
   const password = formData.get("password");
   const locale = getLocale(formData);
+  const ip = await getClientIpFromHeaders();
+
+  await enforceAuthRateLimit(
+    `ip:${ip}`,
+    `/${locale}/auth/register?error=rate_limited`,
+  );
 
   if (typeof email !== "string" || typeof password !== "string") {
-    redirect("/auth/register?error=invalid_credentials");
+    redirect(`/${locale}/auth/register?error=invalid_credentials`);
   }
+
+  await enforceAuthRateLimit(
+    `email:${email.toLowerCase()}`,
+    `/${locale}/auth/register?error=rate_limited`,
+  );
 
   const supabase = await createClient();
 
@@ -69,10 +108,17 @@ export async function signUpWithEmail(formData: FormData) {
   });
 
   if (error) {
-    redirect("/auth/register?error=signup_failed");
+    const lowerMessage = error.message?.toLowerCase() ?? "";
+    if (
+      lowerMessage.includes("already registered") ||
+      lowerMessage.includes("already exists")
+    ) {
+      redirect(`/${locale}/auth/register?error=email_already_registered`);
+    }
+    redirect(`/${locale}/auth/register?error=signup_failed`);
   }
 
-  redirect("/auth/confirm");
+  redirect(`/${locale}/auth/confirm`);
 }
 
 export async function signOut() {
@@ -86,10 +132,21 @@ export async function signOut() {
 export async function requestPasswordReset(formData: FormData) {
   const email = formData.get("email");
   const locale = getLocale(formData);
+  const ip = await getClientIpFromHeaders();
+
+  await enforceAuthRateLimit(
+    `ip:${ip}`,
+    `/${locale}/auth/forgot?error=rate_limited`,
+  );
 
   if (typeof email !== "string") {
     redirect(`/${locale}/auth/forgot?error=invalid_email`);
   }
+
+  await enforceAuthRateLimit(
+    `email:${email.toLowerCase()}`,
+    `/${locale}/auth/forgot?error=rate_limited`,
+  );
 
   const supabase = await createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -132,10 +189,21 @@ export async function updatePassword(formData: FormData) {
 export async function sendMagicLink(formData: FormData) {
   const email = formData.get("email");
   const locale = getLocale(formData);
+  const ip = await getClientIpFromHeaders();
+
+  await enforceAuthRateLimit(
+    `ip:${ip}`,
+    `/${locale}/auth/magic?error=rate_limited`,
+  );
 
   if (typeof email !== "string") {
     redirect(`/${locale}/auth/magic?error=invalid_email`);
   }
+
+  await enforceAuthRateLimit(
+    `email:${email.toLowerCase()}`,
+    `/${locale}/auth/magic?error=rate_limited`,
+  );
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithOtp({
@@ -155,10 +223,21 @@ export async function sendMagicLink(formData: FormData) {
 export async function resendVerificationEmail(formData: FormData) {
   const email = formData.get("email");
   const locale = getLocale(formData);
+  const ip = await getClientIpFromHeaders();
+
+  await enforceAuthRateLimit(
+    `ip:${ip}`,
+    `/${locale}/auth/verify?error=rate_limited`,
+  );
 
   if (typeof email !== "string") {
     redirect(`/${locale}/auth/verify?error=invalid_email`);
   }
+
+  await enforceAuthRateLimit(
+    `email:${email.toLowerCase()}`,
+    `/${locale}/auth/verify?error=rate_limited`,
+  );
 
   const supabase = await createClient();
   const { error } = await supabase.auth.resend({

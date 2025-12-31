@@ -7,6 +7,8 @@ const messages = {
     invalidEmail: "Please enter a valid email address.",
     invalidPassword: "Please enter a valid password.",
     invalidProfile: "Please check your profile details and try again.",
+    emailAlreadyRegistered:
+      "An account with this email already exists. Please sign in instead.",
     signupFailed:
       "We could not create your account. Please try again in a moment.",
     resetFailed: "We could not send a password reset email. Please try again.",
@@ -26,6 +28,7 @@ const messages = {
     unauthorized: "Please sign in to continue.",
     usageLimitExceeded:
       "You have reached your usage limit for this period. Please upgrade your plan or wait for the reset.",
+    rateLimited: "Too many requests. Please wait and try again.",
     invalidPlan: "The selected plan is not valid.",
     planNotAvailable:
       "This plan is currently unavailable. Please choose another plan.",

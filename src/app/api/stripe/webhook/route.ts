@@ -1,10 +1,12 @@
 import { headers } from "next/headers";
-import { NextResponse } from "next/server";
+import { NextResponse, type NextRequest } from "next/server";
 import Stripe from "stripe";
 import { getStripeClient } from "@/lib/stripe/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getPlanByPriceId } from "@/lib/stripe/plans";
 import type { PlanStatus } from "@/types/billing";
+import { getClientIpFromRequest } from "@/lib/rate-limit/headers";
+import { rateLimitApi } from "@/lib/rate-limit/server";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -49,7 +51,17 @@ async function resolveUserIdFromCustomer(
   return data?.user_id ?? null;
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  const ip = getClientIpFromRequest(request);
+  try {
+    await rateLimitApi(`stripe:ip:${ip}`);
+  } catch (error) {
+    if (error instanceof Error && error.name === "rate_limited") {
+      return NextResponse.json({ error: "rate_limited" }, { status: 429 });
+    }
+    throw error;
+  }
+
   const supabaseAdmin = createAdminClient();
 
   const headerStore = await headers();

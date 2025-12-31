@@ -52,6 +52,7 @@ export default async function LoginPage({
       ) : null}
 
       <form action={signInWithEmail} className="space-y-4">
+        <input type="hidden" name="locale" value={locale} />
         {redirectTo ? (
           <input type="hidden" name="redirectTo" value={redirectTo} />
         ) : null}

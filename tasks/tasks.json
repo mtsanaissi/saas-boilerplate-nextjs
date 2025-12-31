@@ -3,28 +3,6 @@
   "version": 1,
   "tasks": [
     {
-      "id": "T-017",
-      "title": "Rate limiting + abuse protections",
-      "description": "Add per-user and per-IP rate limiting for auth and API endpoints with clear error handling.",
-      "status": "pending",
-      "createdAt": "2025-12-30",
-      "completedAt": null,
-      "acceptanceCriteria": [
-        {
-          "text": "Rate limiting applies to auth and critical API routes",
-          "done": false
-        },
-        {
-          "text": "Limits are configurable via env or config, with sensible defaults",
-          "done": false
-        },
-        {
-          "text": "Throttled responses return localized user-facing messages",
-          "done": false
-        }
-      ]
-    },
-    {
       "id": "T-018",
       "title": "Billing management + plan status UI",
       "description": "Integrate Stripe Customer Portal and reflect live subscription status in the dashboard and settings.",
@@ -394,6 +372,28 @@
         },
         {
           "text": "Limit exhaustion returns localized errors and blocks new usage",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-017",
+      "title": "Rate limiting + abuse protections",
+      "description": "Add per-user and per-IP rate limiting for auth and API endpoints with clear error handling.",
+      "status": "done",
+      "createdAt": "2025-12-30",
+      "completedAt": "2025-12-31",
+      "acceptanceCriteria": [
+        {
+          "text": "Rate limiting applies to auth and critical API routes",
+          "done": true
+        },
+        {
+          "text": "Limits are configurable via env or config, with sensible defaults",
+          "done": true
+        },
+        {
+          "text": "Throttled responses return localized user-facing messages",
           "done": true
         }
       ]
