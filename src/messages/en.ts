@@ -260,6 +260,9 @@ const messages = {
     whenLabel: "When",
     devGenerate: "Add dev usage event",
   },
+  analytics: {
+    disabled: "Analytics tracking is disabled.",
+  },
 } as const;
 
 export default messages;

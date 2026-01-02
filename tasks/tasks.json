@@ -3,28 +3,6 @@
   "version": 1,
   "tasks": [
     {
-      "id": "T-019",
-      "title": "Observability baseline",
-      "description": "Add structured logging, error monitoring hooks, and minimal product analytics with environment toggles.",
-      "status": "pending",
-      "createdAt": "2025-12-30",
-      "completedAt": null,
-      "acceptanceCriteria": [
-        {
-          "text": "Server logs are structured and include request correlation IDs",
-          "done": false
-        },
-        {
-          "text": "Unhandled errors report to a configured monitoring provider",
-          "done": false
-        },
-        {
-          "text": "Basic analytics event tracking is available with opt-out toggle",
-          "done": false
-        }
-      ]
-    },
-    {
       "id": "T-020",
       "title": "Security + compliance essentials",
       "description": "Add audit logging, session/device management, and legal/consent pages appropriate for SaaS.",
@@ -399,6 +377,28 @@
       ]
     },
     {
+      "id": "T-019",
+      "title": "Observability baseline",
+      "description": "Add structured logging, error monitoring hooks, and minimal product analytics with environment toggles.",
+      "status": "done",
+      "createdAt": "2025-12-30",
+      "completedAt": "2025-12-31",
+      "acceptanceCriteria": [
+        {
+          "text": "Server logs are structured and include request correlation IDs",
+          "done": true
+        },
+        {
+          "text": "Unhandled errors report to a configured monitoring provider",
+          "done": true
+        },
+        {
+          "text": "Basic analytics event tracking is available with opt-out toggle",
+          "done": true
+        }
+      ]
+    },
+    {
       "id": "T-022",
       "title": "Usage UI summary card",
       "description": "Add a dashboard/settings UI surface that shows current period usage, remaining credits, and reset date.",
@@ -438,6 +438,28 @@
         },
         {
           "text": "Page is gated to authenticated users and handles empty states",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-024",
+      "title": "Logging levels + env switch",
+      "description": "Add debug-level logging support with an environment-configurable log level that gates verbose output.",
+      "status": "done",
+      "createdAt": "2025-12-31",
+      "completedAt": "2025-12-31",
+      "acceptanceCriteria": [
+        {
+          "text": "Logger supports debug/info/warn/error levels with a single log-level env switch",
+          "done": true
+        },
+        {
+          "text": "Debug logs are suppressed unless LOG_LEVEL=debug is set",
+          "done": true
+        },
+        {
+          "text": "README or AGENTS.md documents logging usage and env control",
           "done": true
         }
       ]

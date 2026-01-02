@@ -3,6 +3,9 @@ import { requireUserInRoute } from "@/lib/auth/route-guards";
 import { consumeUsageOrThrow } from "@/lib/usage/server";
 import { getClientIpFromRequest } from "@/lib/rate-limit/headers";
 import { rateLimitApi, rateLimitUsage } from "@/lib/rate-limit/server";
+import { getRequestId } from "@/lib/observability/request-id";
+import { logInfo } from "@/lib/observability/logger";
+import { reportError } from "@/lib/observability/error-reporting";
 
 type ConsumePayload = {
   feature: string;
@@ -11,6 +14,7 @@ type ConsumePayload = {
 };
 
 export async function POST(request: NextRequest) {
+  const requestId = await getRequestId();
   const ip = getClientIpFromRequest(request);
   try {
     await rateLimitApi(`ip:${ip}`);
@@ -19,6 +23,7 @@ export async function POST(request: NextRequest) {
     if (error instanceof Error && error.name === "rate_limited") {
       return NextResponse.json({ error: "rate_limited" }, { status: 429 });
     }
+    reportError(error, { requestId, route: "/api/usage/consume" });
     throw error;
   }
 
@@ -35,6 +40,11 @@ export async function POST(request: NextRequest) {
     if (error instanceof Error && error.name === "rate_limited") {
       return NextResponse.json({ error: "rate_limited" }, { status: 429 });
     }
+    reportError(error, {
+      requestId,
+      route: "/api/usage/consume",
+      userId: authResult.userId,
+    });
     throw error;
   }
 
@@ -52,6 +62,13 @@ export async function POST(request: NextRequest) {
       metadata: payload.metadata ?? null,
     });
 
+    logInfo("usage_consumed", {
+      requestId,
+      userId: authResult.userId,
+      feature: payload.feature,
+      amount: payload.amount,
+    });
+
     return NextResponse.json({ allowance });
   } catch (error) {
     if (error instanceof Error && error.name === "usage_limit_exceeded") {
@@ -60,6 +77,11 @@ export async function POST(request: NextRequest) {
         { status: 403 },
       );
     }
+    reportError(error, {
+      requestId,
+      route: "/api/usage/consume",
+      userId: authResult.userId,
+    });
 
     return NextResponse.json({ error: "server_error" }, { status: 500 });
   }

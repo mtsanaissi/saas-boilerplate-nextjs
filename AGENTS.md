@@ -29,3 +29,10 @@
 - Read-only view: `TASKS.md` (generated; do not edit by hand). Regenerate via `pnpm tasks:md`.
 - After editing `tasks/tasks.json`, always run `pnpm tasks:fmt` to format, `pnpm tasks:check` to validate it and `pnpm tasks:md` to update `TASKS.md`.
 - Prefer updating `tasks/tasks.json` over adding inline `TODO` comments in code.
+
+## Observability & Logging
+
+- Use **strategic, surgical logging** only; avoid noisy logs in hot paths.
+- Prefer the structured logger in `src/lib/observability/logger.ts`.
+- Logging levels: `debug`, `info`, `warn`, `error`. Use `info` for key events, `warn` for recoverable issues, `error` for failures.
+- **Environment switch:** set `LOG_LEVEL=debug|info|warn|error` (default: `info`) to gate verbose logging. Use `logDebug` only when the additional detail is needed.

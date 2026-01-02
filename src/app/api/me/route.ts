@@ -3,8 +3,12 @@ import { requireUserInRoute } from "@/lib/auth/route-guards";
 import type { UserProfile } from "@/types/profile";
 import { getClientIpFromRequest } from "@/lib/rate-limit/headers";
 import { rateLimitApi } from "@/lib/rate-limit/server";
+import { getRequestId } from "@/lib/observability/request-id";
+import { logInfo } from "@/lib/observability/logger";
+import { reportError } from "@/lib/observability/error-reporting";
 
 export async function GET(request: NextRequest) {
+  const requestId = await getRequestId();
   const ip = getClientIpFromRequest(request);
   try {
     await rateLimitApi(`ip:${ip}`);
@@ -12,6 +16,7 @@ export async function GET(request: NextRequest) {
     if (error instanceof Error && error.name === "rate_limited") {
       return NextResponse.json({ error: "rate_limited" }, { status: 429 });
     }
+    reportError(error, { requestId, route: "/api/me" });
     throw error;
   }
 
@@ -27,6 +32,11 @@ export async function GET(request: NextRequest) {
     if (error instanceof Error && error.name === "rate_limited") {
       return NextResponse.json({ error: "rate_limited" }, { status: 429 });
     }
+    reportError(error, {
+      requestId,
+      route: "/api/me",
+      userId: authResult.userId,
+    });
     throw error;
   }
 
@@ -36,6 +46,8 @@ export async function GET(request: NextRequest) {
     .select("id, display_name, avatar_url, locale, plan_id, plan_status")
     .eq("id", userId)
     .maybeSingle<UserProfile>();
+
+  logInfo("api_me_request", { requestId, userId: authResult.userId });
 
   return NextResponse.json({
     user: { id: userId, email },

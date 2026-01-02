@@ -7,6 +7,9 @@ import { getPlanByPriceId } from "@/lib/stripe/plans";
 import type { PlanStatus } from "@/types/billing";
 import { getClientIpFromRequest } from "@/lib/rate-limit/headers";
 import { rateLimitApi } from "@/lib/rate-limit/server";
+import { getRequestId } from "@/lib/observability/request-id";
+import { logInfo } from "@/lib/observability/logger";
+import { reportError } from "@/lib/observability/error-reporting";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -52,6 +55,7 @@ async function resolveUserIdFromCustomer(
 }
 
 export async function POST(request: NextRequest) {
+  const requestId = await getRequestId();
   const ip = getClientIpFromRequest(request);
   try {
     await rateLimitApi(`stripe:ip:${ip}`);
@@ -59,6 +63,7 @@ export async function POST(request: NextRequest) {
     if (error instanceof Error && error.name === "rate_limited") {
       return NextResponse.json({ error: "rate_limited" }, { status: 429 });
     }
+    reportError(error, { requestId, route: "/api/stripe/webhook" });
     throw error;
   }
 
@@ -96,6 +101,11 @@ export async function POST(request: NextRequest) {
       );
     }
   } catch (error) {
+    reportError(error, {
+      requestId,
+      route: "/api/stripe/webhook",
+      extra: { reason: "signature_verification" },
+    });
     return NextResponse.json(
       {
         error: "Invalid Stripe signature",
@@ -131,6 +141,11 @@ export async function POST(request: NextRequest) {
     );
 
   if (eventInsertError) {
+    reportError(eventInsertError, {
+      requestId,
+      route: "/api/stripe/webhook",
+      extra: { reason: "stripe_event_insert" },
+    });
     return NextResponse.json(
       {
         error: "Failed to record Stripe event",
@@ -147,6 +162,11 @@ export async function POST(request: NextRequest) {
     .maybeSingle();
 
   if (eventFetchError) {
+    reportError(eventFetchError, {
+      requestId,
+      route: "/api/stripe/webhook",
+      extra: { reason: "stripe_event_fetch" },
+    });
     return NextResponse.json(
       {
         error: "Failed to load Stripe event",
@@ -159,6 +179,13 @@ export async function POST(request: NextRequest) {
   if (eventRecord?.processed_at) {
     return NextResponse.json({ received: true, deduped: true });
   }
+
+  logInfo("stripe_webhook_received", {
+    requestId,
+    eventId: event.id,
+    eventType: event.type,
+    userId,
+  });
 
   switch (event.type) {
     case "checkout.session.completed": {
@@ -179,6 +206,11 @@ export async function POST(request: NextRequest) {
           );
 
         if (upsertCustomerError) {
+          reportError(upsertCustomerError, {
+            requestId,
+            route: "/api/stripe/webhook",
+            extra: { reason: "billing_customer_upsert" },
+          });
           return NextResponse.json(
             {
               error: "Failed to upsert billing customer",
@@ -238,6 +270,11 @@ export async function POST(request: NextRequest) {
         );
 
       if (upsertSubscriptionError) {
+        reportError(upsertSubscriptionError, {
+          requestId,
+          route: "/api/stripe/webhook",
+          extra: { reason: "billing_subscription_upsert" },
+        });
         return NextResponse.json(
           {
             error: "Failed to upsert billing subscription",
@@ -255,6 +292,11 @@ export async function POST(request: NextRequest) {
           .eq("id", subscriptionUserId);
 
         if (updateProfileError) {
+          reportError(updateProfileError, {
+            requestId,
+            route: "/api/stripe/webhook",
+            extra: { reason: "profile_plan_update" },
+          });
           return NextResponse.json(
             {
               error: "Failed to update profile plan info",
@@ -276,6 +318,11 @@ export async function POST(request: NextRequest) {
     .eq("id", event.id);
 
   if (eventUpdateError) {
+    reportError(eventUpdateError, {
+      requestId,
+      route: "/api/stripe/webhook",
+      extra: { reason: "stripe_event_finalize" },
+    });
     return NextResponse.json(
       {
         error: "Failed to finalize Stripe event",
@@ -284,6 +331,13 @@ export async function POST(request: NextRequest) {
       { status: 500 },
     );
   }
+
+  logInfo("stripe_webhook_processed", {
+    requestId,
+    eventId: event.id,
+    eventType: event.type,
+    userId,
+  });
 
   return NextResponse.json({ received: true });
 }
