@@ -3,28 +3,6 @@
   "version": 1,
   "tasks": [
     {
-      "id": "T-020",
-      "title": "Security + compliance essentials",
-      "description": "Add audit logging, session/device management, and legal/consent pages appropriate for SaaS.",
-      "status": "pending",
-      "createdAt": "2025-12-30",
-      "completedAt": null,
-      "acceptanceCriteria": [
-        {
-          "text": "Audit log table exists with server helpers to append security-relevant events",
-          "done": false
-        },
-        {
-          "text": "Users can view active sessions/devices and revoke sessions",
-          "done": false
-        },
-        {
-          "text": "Privacy Policy + Terms pages exist and consent settings are respected",
-          "done": false
-        }
-      ]
-    },
-    {
       "id": "T-021",
       "title": "Testing + CI setup",
       "description": "Introduce unit/integration tests and a CI workflow for lint, typecheck, and tests.",
@@ -394,6 +372,28 @@
         },
         {
           "text": "Basic analytics event tracking is available with opt-out toggle",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-020",
+      "title": "Security + compliance essentials",
+      "description": "Add audit logging, session/device management, and legal/consent pages appropriate for SaaS.",
+      "status": "done",
+      "createdAt": "2025-12-30",
+      "completedAt": "2025-12-31",
+      "acceptanceCriteria": [
+        {
+          "text": "Audit log table exists with server helpers to append security-relevant events",
+          "done": true
+        },
+        {
+          "text": "Users can view active sessions/devices and revoke sessions",
+          "done": true
+        },
+        {
+          "text": "Privacy Policy + Terms pages exist and consent settings are respected",
           "done": true
         }
       ]

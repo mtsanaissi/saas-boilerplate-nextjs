@@ -13,6 +13,16 @@ import { getCreditsTotalForPlanStatus } from "@/lib/usage/limits";
 import { getCurrentPeriodRange } from "@/lib/usage/period";
 import type { BillingSubscription } from "@/types/billing";
 import { createBillingPortalSession } from "@/app/billing/actions";
+import {
+  signOutAllSessions,
+  signOutOtherSessions,
+  updateConsents,
+} from "@/app/settings/security-actions";
+import { getSessionIdFromAccessToken } from "@/lib/auth/session";
+import { headers } from "next/headers";
+import { getClientIpFromHeaders } from "@/lib/rate-limit/headers";
+import type { UserConsent, UserSession } from "@/types/security";
+import type { AuditLogEntry } from "@/types/security";
 
 type SettingsSearchParams = {
   error?: string;
@@ -103,6 +113,53 @@ export default async function SettingsPage({
   const renewalDate = subscription?.current_period_end
     ? dateFormatter.format(new Date(subscription.current_period_end))
     : null;
+
+  const session = await supabase.auth.getSession();
+  const accessToken = session.data.session?.access_token ?? null;
+  const sessionId = getSessionIdFromAccessToken(accessToken);
+  const headerStore = await headers();
+  const userAgent = headerStore.get("user-agent");
+  const ipAddress = await getClientIpFromHeaders();
+
+  if (sessionId) {
+    await supabase
+      .from("user_sessions")
+      .upsert({
+        session_id: sessionId,
+        user_id: userId,
+        ip_address: ipAddress,
+        user_agent: userAgent,
+        last_seen_at: new Date().toISOString(),
+      })
+      .select()
+      .maybeSingle();
+  }
+
+  const [{ data: consents }, { data: sessions }, { data: auditLogs }] =
+    await Promise.all([
+    supabase
+      .from("user_consents")
+      .select(
+        "user_id, analytics_enabled, marketing_enabled, terms_accepted_at, privacy_accepted_at",
+      )
+      .eq("user_id", userId)
+      .maybeSingle<UserConsent>(),
+    supabase
+      .from("user_sessions")
+      .select(
+        "session_id, user_id, ip_address, user_agent, created_at, last_seen_at",
+      )
+      .eq("user_id", userId)
+      .order("last_seen_at", { ascending: false })
+      .returns<UserSession[]>(),
+    supabase
+      .from("audit_logs")
+      .select("id, action, created_at, ip_address")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(10)
+      .returns<AuditLogEntry[]>(),
+  ]);
 
   return (
     <AuthCard title={t("title")} subtitle={t("subtitle")}>
@@ -252,6 +309,144 @@ export default async function SettingsPage({
         <Link href="/usage" locale={locale} className="link link-primary">
           {tUsage("viewDetails")}
         </Link>
+      </div>
+
+      <div className="divider text-xs uppercase" id="sessions">
+        {t("sessionsTitle")}
+      </div>
+      <div className="space-y-2 text-sm text-base-content/80">
+        <p className="text-sm text-base-content/70">
+          {t("sessionsSubtitle")}
+        </p>
+        {sessions && sessions.length > 0 ? (
+          <ul className="space-y-2">
+            {sessions.map((sessionItem) => {
+              const isCurrent = sessionId === sessionItem.session_id;
+              const label = isCurrent
+                ? t("currentSession")
+                : t("otherSessions");
+              return (
+                <li
+                  key={sessionItem.session_id}
+                  className="rounded border border-base-300 p-3 text-xs text-base-content/70"
+                >
+                  <div className="font-semibold text-base-content">
+                    {label}
+                  </div>
+                  <div>IP: {sessionItem.ip_address ?? "unknown"}</div>
+                  <div>User agent: {sessionItem.user_agent ?? "unknown"}</div>
+                  <div>
+                    Last seen:{" "}
+                    {dateFormatter.format(new Date(sessionItem.last_seen_at))}
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <p className="text-sm text-base-content/70">
+            {t("sessionsEmpty")}
+          </p>
+        )}
+        <div className="flex flex-wrap gap-2">
+          <form action={signOutOtherSessions}>
+            <input type="hidden" name="locale" value={locale} />
+            {sessionId ? (
+              <input type="hidden" name="currentSessionId" value={sessionId} />
+            ) : null}
+            <button type="submit" className="btn btn-outline btn-sm">
+              {t("signOutOthers")}
+            </button>
+          </form>
+          <form action={signOutAllSessions}>
+            <input type="hidden" name="locale" value={locale} />
+            <button type="submit" className="btn btn-outline btn-sm">
+              {t("signOutAll")}
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div className="divider text-xs uppercase" id="consents">
+        {t("consentsTitle")}
+      </div>
+      <div className="space-y-2 text-sm text-base-content/80">
+        <p className="text-sm text-base-content/70">
+          {t("consentsSubtitle")}
+        </p>
+        <form action={updateConsents} className="space-y-3">
+          <input type="hidden" name="locale" value={locale} />
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              name="analyticsEnabled"
+              className="checkbox checkbox-sm"
+              defaultChecked={consents?.analytics_enabled ?? true}
+            />
+            <span>{t("analyticsConsent")}</span>
+          </label>
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              name="marketingEnabled"
+              className="checkbox checkbox-sm"
+              defaultChecked={consents?.marketing_enabled ?? false}
+            />
+            <span>{t("marketingConsent")}</span>
+          </label>
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              name="termsAccepted"
+              className="checkbox checkbox-sm"
+              defaultChecked={Boolean(consents?.terms_accepted_at)}
+            />
+            <span>{t("termsConsent")}</span>
+          </label>
+          <label className="flex items-center gap-2 text-sm">
+            <input
+              type="checkbox"
+              name="privacyAccepted"
+              className="checkbox checkbox-sm"
+              defaultChecked={Boolean(consents?.privacy_accepted_at)}
+            />
+            <span>{t("privacyConsent")}</span>
+          </label>
+          <button type="submit" className="btn btn-primary btn-sm">
+            {t("saveConsents")}
+          </button>
+        </form>
+      </div>
+
+      <div className="divider text-xs uppercase" id="audit-logs">
+        {t("auditLogsTitle")}
+      </div>
+      <div className="space-y-2 text-sm text-base-content/80">
+        <p className="text-sm text-base-content/70">
+          {t("auditLogsSubtitle")}
+        </p>
+        {auditLogs && auditLogs.length > 0 ? (
+          <ul className="space-y-2 text-xs text-base-content/70">
+            {auditLogs.map((entry) => (
+              <li
+                key={entry.id}
+                className="rounded border border-base-300 p-3"
+              >
+                <div className="font-semibold text-base-content">
+                  {entry.action}
+                </div>
+                <div>
+                  {dateFormatter.format(new Date(entry.created_at))} •{" "}
+                  {entry.ip_address ?? "unknown"}
+                </div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-sm text-base-content/70">
+            {t("auditLogsEmpty")}
+          </p>
+        )}
       </div>
 
       <p className="text-sm text-center text-base-content/70">

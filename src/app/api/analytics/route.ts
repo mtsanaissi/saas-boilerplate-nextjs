@@ -36,6 +36,16 @@ export async function POST(request: NextRequest) {
     return authResult.response;
   }
 
+  const { data: consents } = await authResult.supabase
+    .from("user_consents")
+    .select("analytics_enabled")
+    .eq("user_id", authResult.userId)
+    .maybeSingle<{ analytics_enabled: boolean }>();
+
+  if (consents && consents.analytics_enabled === false) {
+    return NextResponse.json({ error: "analytics_disabled" }, { status: 403 });
+  }
+
   let payload: AnalyticsPayload | null = null;
   try {
     payload = (await request.json()) as AnalyticsPayload;

@@ -5,6 +5,9 @@ import { createClient } from "@/lib/supabase/server";
 import { getStripeClient } from "@/lib/stripe/server";
 import { getAppBaseUrl } from "@/lib/stripe/plans";
 import { routing, type AppLocale } from "@/i18n/routing";
+import { logAuditEvent } from "@/lib/observability/audit";
+import { getClientIpFromHeaders } from "@/lib/rate-limit/headers";
+import { headers } from "next/headers";
 
 function getLocale(formData: FormData): AppLocale {
   const locale = formData.get("locale");
@@ -50,6 +53,16 @@ export async function createBillingPortalSession(formData: FormData) {
     if (!session.url) {
       redirect(`/${locale}/settings?error=billing_portal_unavailable`);
     }
+
+    const headerStore = await headers();
+    const userAgent = headerStore.get("user-agent");
+    const ipAddress = await getClientIpFromHeaders();
+    await logAuditEvent({
+      userId: user.id,
+      action: "billing.portal_opened",
+      ipAddress,
+      userAgent,
+    });
 
     redirect(session.url);
   } catch {

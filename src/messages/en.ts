@@ -31,6 +31,8 @@ const messages = {
     rateLimited: "Too many requests. Please wait and try again.",
     billingPortalUnavailable:
       "We could not open the billing portal. Please try again later.",
+    consentUpdateFailed:
+      "We could not update your consent preferences. Please try again.",
     invalidPlan: "The selected plan is not valid.",
     planNotAvailable:
       "This plan is currently unavailable. Please choose another plan.",
@@ -47,6 +49,8 @@ const messages = {
     signIn: "Sign in",
     signOut: "Sign out",
     getStarted: "Get started",
+    privacy: "Privacy",
+    terms: "Terms",
   },
   home: {
     hero: {
@@ -243,6 +247,23 @@ const messages = {
     billingCancelLabel: "Cancels on",
     manageBilling: "Manage billing",
     noBilling: "No active subscription found.",
+    sessionsTitle: "Active sessions",
+    sessionsSubtitle: "Review where your account is signed in.",
+    currentSession: "Current session",
+    otherSessions: "Other sessions",
+    sessionsEmpty: "No sessions found.",
+    signOutOthers: "Sign out other sessions",
+    signOutAll: "Sign out all sessions",
+    consentsTitle: "Consent preferences",
+    consentsSubtitle: "Control analytics and marketing preferences.",
+    analyticsConsent: "Allow analytics tracking",
+    marketingConsent: "Allow marketing emails",
+    termsConsent: "I agree to the Terms of Service",
+    privacyConsent: "I agree to the Privacy Policy",
+    saveConsents: "Save preferences",
+    auditLogsTitle: "Audit logs",
+    auditLogsSubtitle: "Recent security events for your account.",
+    auditLogsEmpty: "No audit events recorded yet.",
   },
   usage: {
     title: "Usage",
@@ -262,6 +283,11 @@ const messages = {
   },
   analytics: {
     disabled: "Analytics tracking is disabled.",
+  },
+  legal: {
+    termsTitle: "Terms of Service",
+    privacyTitle: "Privacy Policy",
+    updatedAt: "Last updated: {date}",
   },
 } as const;
 

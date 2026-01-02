@@ -3,6 +3,9 @@
 import { redirect } from "next/navigation";
 import { routing, type AppLocale } from "@/i18n/routing";
 import { requireUser } from "@/lib/auth/guards";
+import { logAuditEvent } from "@/lib/observability/audit";
+import { getClientIpFromHeaders } from "@/lib/rate-limit/headers";
+import { headers } from "next/headers";
 
 const MAX_DISPLAY_NAME_LENGTH = 80;
 
@@ -77,6 +80,17 @@ export async function updateProfile(formData: FormData) {
   if (error) {
     redirect(`/${locale}/settings?error=profile_update_failed`);
   }
+
+  const headerStore = await headers();
+  const userAgent = headerStore.get("user-agent");
+  const ipAddress = await getClientIpFromHeaders();
+  await logAuditEvent({
+    userId,
+    action: "profile.updated",
+    ipAddress,
+    userAgent,
+    metadata: { displayName: trimmedName, localePreference },
+  });
 
   redirect(`/${locale}/settings?success=1`);
 }

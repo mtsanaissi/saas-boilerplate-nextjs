@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getClientIpFromHeaders } from "@/lib/rate-limit/headers";
 import { rateLimitAuth } from "@/lib/rate-limit/server";
+import { logAuditEvent } from "@/lib/observability/audit";
+import { headers } from "next/headers";
 
 function getRedirectTarget(formData: FormData, fallback: string): string {
   const redirectTo = formData.get("redirectTo");
@@ -27,6 +29,11 @@ function buildAuthCallbackUrl(locale: string, nextPath: string): string {
   const callbackUrl = new URL("/auth/callback", getAppUrl());
   callbackUrl.searchParams.set("next", `/${locale}${nextPath}`);
   return callbackUrl.toString();
+}
+
+async function getUserAgent(): Promise<string | null> {
+  const headerStore = await headers();
+  return headerStore.get("user-agent");
 }
 
 async function enforceAuthRateLimit(
@@ -74,6 +81,19 @@ export async function signInWithEmail(formData: FormData) {
     redirect(`/${locale}/auth/login?error=invalid_credentials`);
   }
 
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const userAgent = await getUserAgent();
+  if (user) {
+    await logAuditEvent({
+      userId: user.id,
+      action: "auth.sign_in",
+      ipAddress: ip,
+      userAgent,
+    });
+  }
+
   redirect(getRedirectTarget(formData, `/${locale}/dashboard`));
 }
 
@@ -118,6 +138,15 @@ export async function signUpWithEmail(formData: FormData) {
     redirect(`/${locale}/auth/register?error=signup_failed`);
   }
 
+  const userAgent = await getUserAgent();
+  await logAuditEvent({
+    userId: null,
+    action: "auth.sign_up",
+    ipAddress: ip,
+    userAgent,
+    metadata: { email },
+  });
+
   redirect(`/${locale}/auth/confirm`);
 }
 
@@ -125,6 +154,15 @@ export async function signOut() {
   const supabase = await createClient();
 
   await supabase.auth.signOut();
+
+  const ip = await getClientIpFromHeaders();
+  const userAgent = await getUserAgent();
+  await logAuditEvent({
+    userId: null,
+    action: "auth.sign_out",
+    ipAddress: ip,
+    userAgent,
+  });
 
   redirect("/");
 }
