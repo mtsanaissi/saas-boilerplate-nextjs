@@ -137,29 +137,29 @@ export default async function SettingsPage({
 
   const [{ data: consents }, { data: sessions }, { data: auditLogs }] =
     await Promise.all([
-    supabase
-      .from("user_consents")
-      .select(
-        "user_id, analytics_enabled, marketing_enabled, terms_accepted_at, privacy_accepted_at",
-      )
-      .eq("user_id", userId)
-      .maybeSingle<UserConsent>(),
-    supabase
-      .from("user_sessions")
-      .select(
-        "session_id, user_id, ip_address, user_agent, created_at, last_seen_at",
-      )
-      .eq("user_id", userId)
-      .order("last_seen_at", { ascending: false })
-      .returns<UserSession[]>(),
-    supabase
-      .from("audit_logs")
-      .select("id, action, created_at, ip_address")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false })
-      .limit(10)
-      .returns<AuditLogEntry[]>(),
-  ]);
+      supabase
+        .from("user_consents")
+        .select(
+          "user_id, analytics_enabled, marketing_enabled, terms_accepted_at, privacy_accepted_at",
+        )
+        .eq("user_id", userId)
+        .maybeSingle<UserConsent>(),
+      supabase
+        .from("user_sessions")
+        .select(
+          "session_id, user_id, ip_address, user_agent, created_at, last_seen_at",
+        )
+        .eq("user_id", userId)
+        .order("last_seen_at", { ascending: false })
+        .returns<UserSession[]>(),
+      supabase
+        .from("audit_logs")
+        .select("id, action, created_at, ip_address")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(10)
+        .returns<AuditLogEntry[]>(),
+    ]);
 
   return (
     <AuthCard title={t("title")} subtitle={t("subtitle")}>
@@ -315,9 +315,7 @@ export default async function SettingsPage({
         {t("sessionsTitle")}
       </div>
       <div className="space-y-2 text-sm text-base-content/80">
-        <p className="text-sm text-base-content/70">
-          {t("sessionsSubtitle")}
-        </p>
+        <p className="text-sm text-base-content/70">{t("sessionsSubtitle")}</p>
         {sessions && sessions.length > 0 ? (
           <ul className="space-y-2">
             {sessions.map((sessionItem) => {
@@ -330,9 +328,7 @@ export default async function SettingsPage({
                   key={sessionItem.session_id}
                   className="rounded border border-base-300 p-3 text-xs text-base-content/70"
                 >
-                  <div className="font-semibold text-base-content">
-                    {label}
-                  </div>
+                  <div className="font-semibold text-base-content">{label}</div>
                   <div>IP: {sessionItem.ip_address ?? "unknown"}</div>
                   <div>User agent: {sessionItem.user_agent ?? "unknown"}</div>
                   <div>
@@ -344,9 +340,7 @@ export default async function SettingsPage({
             })}
           </ul>
         ) : (
-          <p className="text-sm text-base-content/70">
-            {t("sessionsEmpty")}
-          </p>
+          <p className="text-sm text-base-content/70">{t("sessionsEmpty")}</p>
         )}
         <div className="flex flex-wrap gap-2">
           <form action={signOutOtherSessions}>
@@ -371,9 +365,7 @@ export default async function SettingsPage({
         {t("consentsTitle")}
       </div>
       <div className="space-y-2 text-sm text-base-content/80">
-        <p className="text-sm text-base-content/70">
-          {t("consentsSubtitle")}
-        </p>
+        <p className="text-sm text-base-content/70">{t("consentsSubtitle")}</p>
         <form action={updateConsents} className="space-y-3">
           <input type="hidden" name="locale" value={locale} />
           <label className="flex items-center gap-2 text-sm">
@@ -422,16 +414,11 @@ export default async function SettingsPage({
         {t("auditLogsTitle")}
       </div>
       <div className="space-y-2 text-sm text-base-content/80">
-        <p className="text-sm text-base-content/70">
-          {t("auditLogsSubtitle")}
-        </p>
+        <p className="text-sm text-base-content/70">{t("auditLogsSubtitle")}</p>
         {auditLogs && auditLogs.length > 0 ? (
           <ul className="space-y-2 text-xs text-base-content/70">
             {auditLogs.map((entry) => (
-              <li
-                key={entry.id}
-                className="rounded border border-base-300 p-3"
-              >
+              <li key={entry.id} className="rounded border border-base-300 p-3">
                 <div className="font-semibold text-base-content">
                   {entry.action}
                 </div>
@@ -443,9 +430,7 @@ export default async function SettingsPage({
             ))}
           </ul>
         ) : (
-          <p className="text-sm text-base-content/70">
-            {t("auditLogsEmpty")}
-          </p>
+          <p className="text-sm text-base-content/70">{t("auditLogsEmpty")}</p>
         )}
       </div>
 

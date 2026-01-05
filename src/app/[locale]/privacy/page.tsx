@@ -30,9 +30,7 @@ export default async function PrivacyPage({ params }: PrivacyPageProps) {
             We do not sell your data. You can manage consent preferences in your
             account settings.
           </p>
-          <p>
-            If you have questions about data handling, contact support.
-          </p>
+          <p>If you have questions about data handling, contact support.</p>
         </div>
       </div>
     </div>

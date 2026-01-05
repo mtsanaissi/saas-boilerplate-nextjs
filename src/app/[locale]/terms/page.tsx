@@ -23,16 +23,16 @@ export default async function TermsPage({ params }: TermsPageProps) {
         </p>
         <div className="space-y-3 text-sm text-base-content/80">
           <p>
-            These terms govern your use of the service. By creating an account or
-            using the product, you agree to these terms.
+            These terms govern your use of the service. By creating an account
+            or using the product, you agree to these terms.
           </p>
           <p>
             You are responsible for maintaining the security of your account and
             for any activity that occurs under your account.
           </p>
           <p>
-            Subscriptions renew automatically unless canceled. Refunds are handled
-            according to the billing provider policy.
+            Subscriptions renew automatically unless canceled. Refunds are
+            handled according to the billing provider policy.
           </p>
         </div>
       </div>

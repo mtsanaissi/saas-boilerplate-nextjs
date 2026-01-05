@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
+    "test": "vitest run",
     "tasks:check": "node scripts/tasks.mjs check",
     "tasks:fmt": "node scripts/tasks.mjs fmt",
     "tasks:md": "node scripts/tasks.mjs write-md",
@@ -33,6 +35,8 @@
     "eslint-config-next": "16.0.7",
     "prettier": "^3.7.4",
     "tailwindcss": "^4.1.17",
-    "typescript": "^5.9.3"
-  }
+    "typescript": "^5.9.3",
+    "vitest": "^2.1.9"
+  },
+  "packageManager": "pnpm@10.27.0+sha512.72d699da16b1179c14ba9e64dc71c9a40988cbdc65c264cb0e489db7de917f20dcf4d64d8723625f2969ba52d4b7e2a1170682d9ac2a5dcaeaab732b7e16f04a"
 }

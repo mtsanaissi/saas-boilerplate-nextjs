@@ -5,7 +5,12 @@ const levelOrder: LogLevel[] = ["debug", "info", "warn", "error"];
 
 function resolveLogLevel(): LogLevel {
   const value = process.env.LOG_LEVEL?.toLowerCase();
-  if (value === "debug" || value === "info" || value === "warn" || value === "error") {
+  if (
+    value === "debug" ||
+    value === "info" ||
+    value === "warn" ||
+    value === "error"
+  ) {
     return value;
   }
   return "info";
@@ -17,7 +22,11 @@ function shouldLog(level: LogLevel) {
   return levelOrder.indexOf(level) >= levelOrder.indexOf(activeLevel);
 }
 
-function formatLogEntry(level: LogLevel, message: string, context?: LogContext) {
+function formatLogEntry(
+  level: LogLevel,
+  message: string,
+  context?: LogContext,
+) {
   return JSON.stringify({
     level,
     message,

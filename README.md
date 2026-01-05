@@ -48,6 +48,13 @@ Then open `http://localhost:3000` to access:
 - `/dashboard` – example protected page (requires auth)
 - `/plans` – Free, Starter and Pro plans with Stripe Checkout
 
+### 3b. Tests
+
+```bash
+pnpm typecheck
+pnpm test
+```
+
 ### 4. Configure Stripe webhooks
 
 To keep subscription status in sync, configure a Stripe webhook that points to:

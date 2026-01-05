@@ -10,7 +10,10 @@ import { headers } from "next/headers";
 
 function getLocale(formData: FormData): AppLocale {
   const locale = formData.get("locale");
-  if (typeof locale === "string" && routing.locales.includes(locale as AppLocale)) {
+  if (
+    typeof locale === "string" &&
+    routing.locales.includes(locale as AppLocale)
+  ) {
     return locale as AppLocale;
   }
   return routing.defaultLocale;
@@ -66,7 +69,10 @@ export async function signOutOtherSessions(formData: FormData) {
   const { supabase, userId } = await requireUser(locale, "/settings");
   await supabase.auth.signOut({ scope: "others" });
 
-  const deleteQuery = supabase.from("user_sessions").delete().eq("user_id", userId);
+  const deleteQuery = supabase
+    .from("user_sessions")
+    .delete()
+    .eq("user_id", userId);
   if (typeof currentSessionId === "string" && currentSessionId.length > 0) {
     await deleteQuery.neq("session_id", currentSessionId);
   } else {

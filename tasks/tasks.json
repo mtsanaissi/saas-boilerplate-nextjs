@@ -3,28 +3,6 @@
   "version": 1,
   "tasks": [
     {
-      "id": "T-021",
-      "title": "Testing + CI setup",
-      "description": "Introduce unit/integration tests and a CI workflow for lint, typecheck, and tests.",
-      "status": "pending",
-      "createdAt": "2025-12-30",
-      "completedAt": null,
-      "acceptanceCriteria": [
-        {
-          "text": "Test runner configured with at least a smoke test for auth + billing flows",
-          "done": false
-        },
-        {
-          "text": "CI workflow runs lint, typecheck, and tests on pull requests",
-          "done": false
-        },
-        {
-          "text": "README documents how to run tests locally",
-          "done": false
-        }
-      ]
-    },
-    {
       "id": "T-001",
       "title": "Localize user-facing errors via error codes",
       "description": "Replace direct decodeURIComponent/error-string rendering with error-code to t(\"errors.*\") mapping so all user-visible messages are fully localizable.",
@@ -394,6 +372,28 @@
         },
         {
           "text": "Privacy Policy + Terms pages exist and consent settings are respected",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-021",
+      "title": "Testing + CI setup",
+      "description": "Introduce unit/integration tests and a CI workflow for lint, typecheck, and tests.",
+      "status": "done",
+      "createdAt": "2025-12-30",
+      "completedAt": "2025-12-31",
+      "acceptanceCriteria": [
+        {
+          "text": "Test runner configured with at least a smoke test for auth + billing flows",
+          "done": true
+        },
+        {
+          "text": "CI workflow runs lint, typecheck, and tests on pull requests",
+          "done": true
+        },
+        {
+          "text": "README documents how to run tests locally",
           "done": true
         }
       ]

@@ -128,10 +128,18 @@ export default async function RootLayout({
           <div className="max-w-5xl mx-auto flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
             <span>© {new Date().getFullYear()} SaaS Boilerplate</span>
             <div className="flex gap-4">
-              <Link href="/privacy" locale={appLocale} className="link link-hover">
+              <Link
+                href="/privacy"
+                locale={appLocale}
+                className="link link-hover"
+              >
                 {tNav("privacy")}
               </Link>
-              <Link href="/terms" locale={appLocale} className="link link-hover">
+              <Link
+                href="/terms"
+                locale={appLocale}
+                className="link link-hover"
+              >
                 {tNav("terms")}
               </Link>
             </div>
