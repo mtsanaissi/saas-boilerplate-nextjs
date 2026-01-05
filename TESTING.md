@@ -45,4 +45,3 @@ pnpm test
 ```
 
 For integration tests, ensure local Supabase is running and env vars are configured (see README).
-
