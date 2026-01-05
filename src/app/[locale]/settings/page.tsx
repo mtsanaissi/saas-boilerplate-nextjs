@@ -19,6 +19,7 @@ import {
   updateConsents,
 } from "@/app/settings/security-actions";
 import { getSessionIdFromAccessToken } from "@/lib/auth/session";
+import { upsertUserSession } from "@/lib/auth/session-tracking";
 import { headers } from "next/headers";
 import { getClientIpFromHeaders } from "@/lib/rate-limit/headers";
 import type { UserConsent, UserSession } from "@/types/security";
@@ -116,24 +117,29 @@ export default async function SettingsPage({
 
   const session = await supabase.auth.getSession();
   const accessToken = session.data.session?.access_token ?? null;
-  const sessionId = getSessionIdFromAccessToken(accessToken);
   const headerStore = await headers();
   const userAgent = headerStore.get("user-agent");
   const ipAddress = await getClientIpFromHeaders();
 
-  if (sessionId) {
-    await supabase
-      .from("user_sessions")
-      .upsert({
-        session_id: sessionId,
-        user_id: userId,
-        ip_address: ipAddress,
-        user_agent: userAgent,
-        last_seen_at: new Date().toISOString(),
-      })
-      .select()
-      .maybeSingle();
-  }
+  await upsertUserSession({
+    supabase,
+    accessToken,
+    userId,
+    ipAddress,
+    userAgent,
+  });
+
+  const sessionId = getSessionIdFromAccessToken(accessToken);
+
+  const sessionRetentionDays = 90;
+  const staleCutoff = new Date(
+    Date.now() - sessionRetentionDays * 24 * 60 * 60 * 1000,
+  ).toISOString();
+  await supabase
+    .from("user_sessions")
+    .delete()
+    .eq("user_id", userId)
+    .lt("last_seen_at", staleCutoff);
 
   const [{ data: consents }, { data: sessions }, { data: auditLogs }] =
     await Promise.all([

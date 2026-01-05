@@ -36,3 +36,8 @@
 - Prefer the structured logger in `src/lib/observability/logger.ts`.
 - Logging levels: `debug`, `info`, `warn`, `error`. Use `info` for key events, `warn` for recoverable issues, `error` for failures.
 - **Environment switch:** set `LOG_LEVEL=debug|info|warn|error` (default: `info`) to gate verbose logging. Use `logDebug` only when the additional detail is needed.
+
+## Testing
+
+- Follow `TESTING.md` for the testing strategy and mock boundaries.
+- Avoid heavy mocking that only verifies your own implementation details.

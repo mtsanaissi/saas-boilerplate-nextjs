@@ -75,7 +75,18 @@ export async function signOutOtherSessions(formData: FormData) {
   if (typeof currentSessionId === "string" && currentSessionId.length > 0) {
     await deleteQuery.neq("session_id", currentSessionId);
   } else {
-    await deleteQuery;
+    const { data: latestSession } = await supabase
+      .from("user_sessions")
+      .select("session_id")
+      .eq("user_id", userId)
+      .order("last_seen_at", { ascending: false })
+      .limit(1)
+      .maybeSingle<{ session_id: string }>();
+    if (latestSession?.session_id) {
+      await deleteQuery.neq("session_id", latestSession.session_id);
+    } else {
+      await deleteQuery;
+    }
   }
 
   const ip = await getClientIpFromHeaders();

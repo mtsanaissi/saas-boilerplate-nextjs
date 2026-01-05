@@ -55,6 +55,8 @@ pnpm typecheck
 pnpm test
 ```
 
+See `TESTING.md` for the testing strategy and mocking guidance.
+
 ### 4. Configure Stripe webhooks
 
 To keep subscription status in sync, configure a Stripe webhook that points to:
