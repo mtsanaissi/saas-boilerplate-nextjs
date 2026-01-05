@@ -8,8 +8,6 @@ Do not hand-edit this file. To edit tasks, update `tasks/tasks.json` and run:
 
 ---
 
-- T-026 - [PENDING] - Session tracking on auth + proxy
-- T-027 - [PENDING] - Session list reliability + revocation behavior
 - T-028 - [PENDING] - Atomic usage consumption RPC
 - T-029 - [PENDING] - Use atomic usage consumption in server API
 - T-030 - [PENDING] - Reuse Stripe customers in Checkout
@@ -44,3 +42,5 @@ Do not hand-edit this file. To edit tasks, update `tasks/tasks.json` and run:
 - T-023 - [DONE] - Usage details page
 - T-024 - [DONE] - Logging levels + env switch
 - T-025 - [DONE] - Full UI copy localization audit
+- T-026 - [DONE] - Session tracking on auth + proxy
+- T-027 - [DONE] - Session list reliability + revocation behavior
