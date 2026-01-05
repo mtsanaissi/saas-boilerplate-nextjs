@@ -132,9 +132,9 @@ export default async function SettingsPage({
   const sessionId = getSessionIdFromAccessToken(accessToken);
 
   const sessionRetentionDays = 90;
-  const staleCutoff = new Date(
-    Date.now() - sessionRetentionDays * 24 * 60 * 60 * 1000,
-  ).toISOString();
+  const staleCutoffDate = new Date();
+  staleCutoffDate.setDate(staleCutoffDate.getDate() - sessionRetentionDays);
+  const staleCutoff = staleCutoffDate.toISOString();
   await supabase
     .from("user_sessions")
     .delete()
