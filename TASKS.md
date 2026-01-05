@@ -8,6 +8,20 @@ Do not hand-edit this file. To edit tasks, update `tasks/tasks.json` and run:
 
 ---
 
+- T-026 - [PENDING] - Session tracking on auth + proxy
+- T-027 - [PENDING] - Session list reliability + revocation behavior
+- T-028 - [PENDING] - Atomic usage consumption RPC
+- T-029 - [PENDING] - Use atomic usage consumption in server API
+- T-030 - [PENDING] - Reuse Stripe customers in Checkout
+- T-031 - [PENDING] - Harden auth rate-limit failure handling
+- T-032 - [PENDING] - Add tests for Stripe webhook + usage API
+- T-033 - [PENDING] - Account deletion + data export
+- T-034 - [PENDING] - Email change flow
+- T-035 - [PENDING] - Security hardening: email verification + MFA
+- T-036 - [PENDING] - Billing UX improvements
+- T-037 - [PENDING] - Env validation and feature flags
+- T-038 - [PENDING] - Health endpoint + error boundaries
+- T-039 - [PENDING] - Seed and reset scripts for local dev
 - T-001 - [DONE] - Localize user-facing errors via error codes
 - T-002 - [DONE] - Forms + alerts accessibility pass
 - T-003 - [DONE] - WCAG focus/contrast + theme tokens

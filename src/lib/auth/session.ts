@@ -4,9 +4,15 @@ type JwtPayload = {
 
 function decodeBase64Url(value: string): string | null {
   try {
-    const padded = value.replace(/-/g, "+").replace(/_/g, "/");
-    const decoded = Buffer.from(padded, "base64").toString("utf-8");
-    return decoded;
+    const base64 = value.replace(/-/g, "+").replace(/_/g, "/");
+    const padded = base64.padEnd(Math.ceil(base64.length / 4) * 4, "=");
+    if (typeof atob === "function") {
+      return atob(padded);
+    }
+    if (typeof Buffer !== "undefined") {
+      return Buffer.from(padded, "base64").toString("utf-8");
+    }
+    return null;
   } catch {
     return null;
   }

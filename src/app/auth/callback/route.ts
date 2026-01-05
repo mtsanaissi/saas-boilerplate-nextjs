@@ -1,6 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { routing } from "@/i18n/routing";
+import { upsertUserSession } from "@/lib/auth/session-tracking";
+import { getClientIpFromRequest } from "@/lib/rate-limit/headers";
 
 function isSafeNextPath(path: string): boolean {
   return path.startsWith("/") && !path.startsWith("//");
@@ -25,6 +27,19 @@ export async function GET(request: NextRequest) {
     const fallback = `/${routing.defaultLocale}/auth/login?error=invalid_session`;
     return NextResponse.redirect(new URL(fallback, request.url));
   }
+
+  const [{ data: sessionData }, { data: userData }] = await Promise.all([
+    supabase.auth.getSession(),
+    supabase.auth.getUser(),
+  ]);
+
+  await upsertUserSession({
+    supabase,
+    accessToken: sessionData.session?.access_token ?? null,
+    userId: userData.user?.id ?? null,
+    ipAddress: getClientIpFromRequest(request),
+    userAgent: request.headers.get("user-agent"),
+  });
 
   const destination = isSafeNextPath(nextPath)
     ? nextPath
