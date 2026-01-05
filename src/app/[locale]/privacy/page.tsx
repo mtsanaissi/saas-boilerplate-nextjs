@@ -22,15 +22,9 @@ export default async function PrivacyPage({ params }: PrivacyPageProps) {
           {t("updatedAt", { date: updatedAt })}
         </p>
         <div className="space-y-3 text-sm text-base-content/80">
-          <p>
-            We collect the minimum information needed to operate the service,
-            including account and usage data.
-          </p>
-          <p>
-            We do not sell your data. You can manage consent preferences in your
-            account settings.
-          </p>
-          <p>If you have questions about data handling, contact support.</p>
+          <p>{t("privacyParagraphOne")}</p>
+          <p>{t("privacyParagraphTwo")}</p>
+          <p>{t("privacyParagraphThree")}</p>
         </div>
       </div>
     </div>

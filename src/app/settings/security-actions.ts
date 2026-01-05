@@ -1,7 +1,6 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
 import { requireUser } from "@/lib/auth/guards";
 import { routing, type AppLocale } from "@/i18n/routing";
 import { logAuditEvent } from "@/lib/observability/audit";

@@ -15,7 +15,7 @@ type RouteAuthFailure = { response: NextResponse };
 const activeStatuses: PlanStatus[] = ["trialing", "active"];
 
 export async function requireUserInRoute(
-  _request: NextRequest,
+  _request?: NextRequest,
 ): Promise<RouteAuthSuccess | RouteAuthFailure> {
   const supabase = await createClient();
   const {

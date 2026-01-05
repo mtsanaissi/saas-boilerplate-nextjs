@@ -133,12 +133,12 @@ export default async function PlansPage({
 
                   <div className="text-3xl font-semibold">
                     {plan.priceMonthly === 0 ? (
-                      <span>Free</span>
+                      <span>{tPage("priceFree")}</span>
                     ) : (
                       <>
                         <span>${plan.priceMonthly}</span>
                         <span className="text-sm font-normal text-base-content/60">
-                          /month
+                          {tPage("perMonthSuffix")}
                         </span>
                       </>
                     )}

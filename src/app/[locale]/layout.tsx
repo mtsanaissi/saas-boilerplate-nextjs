@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { signOut } from "@/app/auth/actions";
@@ -7,10 +6,28 @@ import { Link } from "@/i18n/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
 
-export const metadata: Metadata = {
-  title: "SaaS Boilerplate",
-  description: "Next.js, Supabase, Stripe, Tailwind v4 & DaisyUI",
-};
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string }>;
+}) {
+  const { locale } = await params;
+  const appLocale = locale as (typeof routing.locales)[number];
+
+  if (!routing.locales.includes(appLocale)) {
+    return {};
+  }
+
+  const tCommon = await getTranslations({
+    locale: appLocale,
+    namespace: "common",
+  });
+
+  return {
+    title: tCommon("appName"),
+    description: tCommon("appDescription"),
+  };
+}
 
 interface RootLayoutProps {
   children: React.ReactNode;
@@ -29,9 +46,10 @@ export default async function RootLayout({
     notFound();
   }
 
-  const [supabase, tNav] = await Promise.all([
+  const [supabase, tNav, tCommon] = await Promise.all([
     createClient(),
     getTranslations({ locale: appLocale, namespace: "nav" }),
+    getTranslations({ locale: appLocale, namespace: "common" }),
   ]);
 
   const {
@@ -49,14 +67,14 @@ export default async function RootLayout({
         </a>
 
         <header className="border-b border-base-300 bg-base-100 px-4">
-          <nav className="navbar" aria-label="Primary">
+          <nav className="navbar" aria-label={tNav("primaryNavLabel")}>
             <div className="flex-1">
               <Link
                 href="/"
                 locale={appLocale}
                 className="btn btn-ghost normal-case text-xl"
               >
-                SaaS Boilerplate
+                {tCommon("appName")}
               </Link>
             </div>
             <div className="flex-none gap-2">
@@ -126,7 +144,11 @@ export default async function RootLayout({
 
         <footer className="border-t border-base-300 bg-base-100 px-4 py-3 text-xs text-base-content/60">
           <div className="max-w-5xl mx-auto flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-            <span>© {new Date().getFullYear()} SaaS Boilerplate</span>
+            <span>
+              {tCommon("footerCopyright", {
+                year: String(new Date().getFullYear()),
+              })}
+            </span>
             <div className="flex gap-4">
               <Link
                 href="/privacy"

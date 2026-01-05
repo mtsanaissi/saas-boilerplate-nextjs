@@ -463,6 +463,28 @@
           "done": true
         }
       ]
+    },
+    {
+      "id": "T-025",
+      "title": "Full UI copy localization audit",
+      "description": "Audit all user-facing UI text and error messages to ensure every string is localized via next-intl (no hardcoded literals in components or client-side code).",
+      "status": "done",
+      "createdAt": "2026-01-05",
+      "completedAt": "2026-01-05",
+      "acceptanceCriteria": [
+        {
+          "text": "All user-facing UI text is sourced from next-intl message keys",
+          "done": true
+        },
+        {
+          "text": "No hardcoded literal strings remain in components or client-side code, including error messages",
+          "done": true
+        },
+        {
+          "text": "Locale message files include any newly added keys with consistent naming",
+          "done": true
+        }
+      ]
     }
   ]
 }

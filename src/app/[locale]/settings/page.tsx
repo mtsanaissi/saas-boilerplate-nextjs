@@ -217,7 +217,7 @@ export default async function SettingsPage({
             type="url"
             name="avatarUrl"
             className="input input-bordered w-full"
-            placeholder="https://"
+            placeholder={t("avatarUrlPlaceholder")}
             defaultValue={avatarUrl}
             aria-describedby={"avatar-url-help"}
           />
@@ -323,17 +323,29 @@ export default async function SettingsPage({
               const label = isCurrent
                 ? t("currentSession")
                 : t("otherSessions");
+              const unknownValue = t("unknownValue");
               return (
                 <li
                   key={sessionItem.session_id}
                   className="rounded border border-base-300 p-3 text-xs text-base-content/70"
                 >
                   <div className="font-semibold text-base-content">{label}</div>
-                  <div>IP: {sessionItem.ip_address ?? "unknown"}</div>
-                  <div>User agent: {sessionItem.user_agent ?? "unknown"}</div>
                   <div>
-                    Last seen:{" "}
-                    {dateFormatter.format(new Date(sessionItem.last_seen_at))}
+                    {t("ipLabel", {
+                      value: sessionItem.ip_address ?? unknownValue,
+                    })}
+                  </div>
+                  <div>
+                    {t("userAgentLabel", {
+                      value: sessionItem.user_agent ?? unknownValue,
+                    })}
+                  </div>
+                  <div>
+                    {t("lastSeenLabel", {
+                      date: dateFormatter.format(
+                        new Date(sessionItem.last_seen_at),
+                      ),
+                    })}
                   </div>
                 </li>
               );

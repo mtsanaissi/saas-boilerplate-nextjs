@@ -9,7 +9,11 @@ interface HomePageProps {
 
 export default async function HomePage({ params }: HomePageProps) {
   const { locale } = await params;
-  const t = await getTranslations("home.hero");
+  const [tHero, tTech] = await Promise.all([
+    getTranslations("home.hero"),
+    getTranslations("home.techStack"),
+  ]);
+  const techItems = tTech.raw("items") as string[];
 
   return (
     <div className="bg-base-200 flex flex-col items-center justify-center p-4">
@@ -17,10 +21,10 @@ export default async function HomePage({ params }: HomePageProps) {
         <div className="hero-content flex-col lg:flex-row gap-12">
           <div className="text-center lg:text-left">
             <h1 className="text-5xl font-bold bg-linear-to-r from-primary to-secondary bg-clip-text text-transparent">
-              {t("title")}
+              {tHero("title")}
             </h1>
             <p className="py-6 text-lg text-base-content/80 max-w-md">
-              {t("description")}
+              {tHero("description")}
             </p>
             <div className="flex gap-2 justify-center lg:justify-start">
               <Link
@@ -28,10 +32,10 @@ export default async function HomePage({ params }: HomePageProps) {
                 locale={locale}
                 className="btn btn-primary"
               >
-                {t("primaryCta")}
+                {tHero("primaryCta")}
               </Link>
               <Link href="/plans" locale={locale} className="btn btn-ghost">
-                {t("secondaryCta")}
+                {tHero("secondaryCta")}
               </Link>
             </div>
           </div>
@@ -41,12 +45,11 @@ export default async function HomePage({ params }: HomePageProps) {
 
             <div className="card bg-base-100 shadow-xl border border-base-300">
               <div className="card-body">
-                <h2 className="card-title">Tech Stack</h2>
+                <h2 className="card-title">{tTech("title")}</h2>
                 <ul className="list-disc list-inside text-sm text-base-content/80 space-y-1">
-                  <li>Next.js 16 (App Router)</li>
-                  <li>Tailwind CSS v4 (Alpha)</li>
-                  <li>DaisyUI v5</li>
-                  <li>Supabase (Docker)</li>
+                  {techItems.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
                 </ul>
               </div>
             </div>
@@ -55,7 +58,7 @@ export default async function HomePage({ params }: HomePageProps) {
       </div>
 
       <p className="mt-8 text-xs text-base-content/50 font-mono">
-        {t("footer")}
+        {tHero("footer")}
       </p>
     </div>
   );

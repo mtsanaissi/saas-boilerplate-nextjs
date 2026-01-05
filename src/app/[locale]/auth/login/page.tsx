@@ -103,7 +103,7 @@ export default async function LoginPage({
         </Link>
       </div>
 
-      <div className="divider text-xs uppercase">Or</div>
+      <div className="divider text-xs uppercase">{t("dividerOr")}</div>
 
       <p className="text-sm text-center text-base-content/70">
         {t("newHere")}{" "}

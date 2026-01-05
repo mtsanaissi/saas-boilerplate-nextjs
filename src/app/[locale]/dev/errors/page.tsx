@@ -20,38 +20,35 @@ export default async function DevErrorsPage({
   const { locale } = await params;
   const resolvedSearchParams = await searchParams;
   const errorCode = safeDecodeURIComponent(resolvedSearchParams.error);
-  const tErrors = await getTranslations({ locale, namespace: "errors" });
+  const [tErrors, tDev] = await Promise.all([
+    getTranslations({ locale, namespace: "errors" }),
+    getTranslations({ locale, namespace: "dev.errors" }),
+  ]);
   const errorKey = getErrorMessageKey(errorCode);
   const errorMessage = errorKey ? tErrors(errorKey) : null;
 
-  const knownCodes = [
-    "invalid_credentials",
-    "signup_failed",
-    "invalid_plan",
-    "plan_not_available",
-    "checkout_unavailable",
-    "some_unknown_error",
-  ] as const;
+  const knownCodes = tDev.raw("knownCodes") as string[];
 
   return (
     <div className="max-w-3xl mx-auto p-6 space-y-8">
       <header className="space-y-2">
-        <h1 className="text-3xl font-semibold">Error states surface</h1>
-        <p className="opacity-80">
-          Use query params to simulate error codes and validate user-facing
-          error messaging.
-        </p>
+        <h1 className="text-3xl font-semibold">{tDev("title")}</h1>
+        <p className="opacity-80">{tDev("description")}</p>
       </header>
 
       <section className="space-y-3">
-        <h2 className="text-xl font-semibold">Current error code</h2>
+        <h2 className="text-xl font-semibold">{tDev("currentCodeTitle")}</h2>
         <div className="card bg-base-100 border border-base-300">
           <div className="card-body">
             <p className="text-sm opacity-70">
-              Resolved <code>error</code> query param:
+              {tDev.rich("currentCodeLabel", {
+                code: (chunks) => (
+                  <code className="px-1 rounded bg-base-300">{chunks}</code>
+                ),
+              })}
             </p>
             <pre className="bg-base-200 p-3 rounded-box overflow-x-auto">
-              {errorCode ?? "(none)"}
+              {errorCode ?? tDev("noneLabel")}
             </pre>
             {errorMessage ? (
               <div
@@ -62,14 +59,14 @@ export default async function DevErrorsPage({
                 <span>{errorMessage}</span>
               </div>
             ) : (
-              <p className="text-sm opacity-70">No error code provided.</p>
+              <p className="text-sm opacity-70">{tDev("noCodeProvided")}</p>
             )}
           </div>
         </div>
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-xl font-semibold">Try a code</h2>
+        <h2 className="text-xl font-semibold">{tDev("tryCodeTitle")}</h2>
         <div className="flex flex-wrap gap-2">
           {knownCodes.map((code) => (
             <a
@@ -81,7 +78,7 @@ export default async function DevErrorsPage({
             </a>
           ))}
           <a className="btn btn-sm btn-ghost" href=".">
-            clear
+            {tDev("clear")}
           </a>
         </div>
       </section>

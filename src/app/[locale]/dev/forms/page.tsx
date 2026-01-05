@@ -1,6 +1,7 @@
 import { Link } from "@/i18n/navigation";
 import { notFound } from "next/navigation";
 import type { AppLocale } from "@/i18n/routing";
+import { getTranslations } from "next-intl/server";
 
 interface DevFormsPageProps {
   params: Promise<{ locale: AppLocale }>;
@@ -22,6 +23,7 @@ export default async function DevFormsPage({
 
   const { locale } = await params;
   const resolvedSearchParams = await searchParams;
+  const t = await getTranslations({ locale, namespace: "dev.forms" });
 
   const invalid = getStringParam(resolvedSearchParams.invalid) ?? "none";
   const showAlert = getStringParam(resolvedSearchParams.alert) ?? "none";
@@ -32,55 +34,58 @@ export default async function DevFormsPage({
   return (
     <div className="max-w-3xl mx-auto p-6 space-y-8">
       <header className="space-y-2">
-        <h1 className="text-3xl font-semibold">Forms + alerts surface</h1>
+        <h1 className="text-3xl font-semibold">{t("title")}</h1>
         <p className="opacity-80">
-          Placeholder validation states for `aria-invalid`, `aria-describedby`,
-          and alert semantics.
+          {t.rich("description", {
+            code: (chunks) => (
+              <code className="px-1 rounded bg-base-300">{chunks}</code>
+            ),
+          })}
         </p>
       </header>
 
       <div className="flex flex-wrap gap-2 text-sm">
-        <span className="opacity-70">Quick toggles:</span>
+        <span className="opacity-70">{t("quickToggles")}</span>
         <Link href="/dev/forms?invalid=email" locale={locale} className="link">
-          invalid email
+          {t("toggles.invalidEmail")}
         </Link>
         <Link
           href="/dev/forms?invalid=password"
           locale={locale}
           className="link"
         >
-          invalid password
+          {t("toggles.invalidPassword")}
         </Link>
         <Link href="/dev/forms?alert=error" locale={locale} className="link">
-          error alert
+          {t("toggles.errorAlert")}
         </Link>
         <Link href="/dev/forms?alert=success" locale={locale} className="link">
-          success alert
+          {t("toggles.successAlert")}
         </Link>
         <Link href="/dev/forms" locale={locale} className="link">
-          reset
+          {t("toggles.reset")}
         </Link>
       </div>
 
       {showAlert === "error" ? (
         <div className="alert alert-error" role="alert">
-          <span>Placeholder error alert (role=&quot;alert&quot;).</span>
+          <span>{t("alertError")}</span>
         </div>
       ) : null}
 
       {showAlert === "success" ? (
         <div className="alert alert-success" role="status" aria-live="polite">
-          <span>Placeholder success message (role=&quot;status&quot;).</span>
+          <span>{t("alertSuccess")}</span>
         </div>
       ) : null}
 
       <form className="card bg-base-100 border border-base-300">
         <div className="card-body space-y-4">
-          <h2 className="card-title">Example form</h2>
+          <h2 className="card-title">{t("formTitle")}</h2>
 
           <div className="form-control">
             <label className="label" htmlFor="email">
-              <span className="label-text">Email</span>
+              <span className="label-text">{t("emailLabel")}</span>
             </label>
             <input
               id="email"
@@ -89,22 +94,22 @@ export default async function DevFormsPage({
               className="input input-bordered"
               aria-invalid={emailInvalid}
               aria-describedby={emailInvalid ? "email-error" : "email-help"}
-              placeholder="name@example.com"
+              placeholder={t("emailPlaceholder")}
             />
             {emailInvalid ? (
               <p id="email-error" className="mt-2 text-sm text-error">
-                Placeholder email error text (described by input).
+                {t("emailError")}
               </p>
             ) : (
               <p id="email-help" className="mt-2 text-sm opacity-70">
-                Placeholder helper text.
+                {t("emailHelp")}
               </p>
             )}
           </div>
 
           <div className="form-control">
             <label className="label" htmlFor="password">
-              <span className="label-text">Password</span>
+              <span className="label-text">{t("passwordLabel")}</span>
             </label>
             <input
               id="password"
@@ -115,28 +120,28 @@ export default async function DevFormsPage({
               aria-describedby={
                 passwordInvalid ? "password-error" : "password-help"
               }
-              placeholder="••••••••"
+              placeholder={t("passwordPlaceholder")}
             />
             {passwordInvalid ? (
               <p id="password-error" className="mt-2 text-sm text-error">
-                Placeholder password error text (described by input).
+                {t("passwordError")}
               </p>
             ) : (
               <p id="password-help" className="mt-2 text-sm opacity-70">
-                Placeholder helper text.
+                {t("passwordHelp")}
               </p>
             )}
           </div>
 
           <div className="flex items-center gap-3">
             <button type="button" className="btn btn-primary">
-              Submit (placeholder)
+              {t("submitPlaceholder")}
             </button>
             <button type="button" className="btn btn-ghost">
-              Secondary action
+              {t("secondaryAction")}
             </button>
             <a href="#top" className="link">
-              Link-style action
+              {t("linkAction")}
             </a>
           </div>
         </div>

@@ -2,6 +2,8 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { getErrorMessageKey } from "@/lib/errors";
 
 interface DevUsageEventButtonProps {
   label: string;
@@ -9,6 +11,8 @@ interface DevUsageEventButtonProps {
 
 export function DevUsageEventButton({ label }: DevUsageEventButtonProps) {
   const router = useRouter();
+  const tErrors = useTranslations("errors");
+  const tDev = useTranslations("dev.usage");
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -23,16 +27,19 @@ export function DevUsageEventButton({ label }: DevUsageEventButtonProps) {
 
       if (!response.ok) {
         const payload = (await response.json()) as { error?: string };
-        throw new Error(payload.error ?? "request_failed");
+        throw new Error(payload.error ?? "unknown");
       }
 
       startTransition(() => {
         router.refresh();
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "request_failed");
+      setError(err instanceof Error ? err.message : "unknown");
     }
   }
+
+  const errorKey = error ? getErrorMessageKey(error) : null;
+  const errorMessage = errorKey ? tErrors(errorKey) : null;
 
   return (
     <div className="flex flex-col items-start gap-2">
@@ -44,8 +51,10 @@ export function DevUsageEventButton({ label }: DevUsageEventButtonProps) {
       >
         {label}
       </button>
-      {error ? (
-        <span className="text-xs text-error">Error: {error}</span>
+      {errorMessage ? (
+        <span className="text-xs text-error">
+          {tDev("errorPrefix", { message: errorMessage })}
+        </span>
       ) : null}
     </div>
   );

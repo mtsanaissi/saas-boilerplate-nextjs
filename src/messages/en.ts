@@ -1,6 +1,8 @@
 const messages = {
   common: {
     appName: "SaaS Boilerplate",
+    appDescription: "Next.js, Supabase, Stripe, Tailwind v4 & DaisyUI",
+    footerCopyright: "© {year} SaaS Boilerplate",
   },
   errors: {
     invalidCredentials: "The email or password you entered is incorrect.",
@@ -44,6 +46,7 @@ const messages = {
     plans: "Plans",
     dev: "Dev",
     skipToContent: "Skip to content",
+    primaryNavLabel: "Primary",
     dashboard: "Dashboard",
     settings: "Settings",
     signIn: "Sign in",
@@ -61,6 +64,15 @@ const messages = {
       secondaryCta: "View Documentation",
       footer: "Running on WSL 2 • Ubuntu 24.04",
     },
+    techStack: {
+      title: "Tech Stack",
+      items: [
+        "Next.js 16 (App Router)",
+        "Tailwind CSS v4 (Alpha)",
+        "DaisyUI v5",
+        "Supabase (Docker)",
+      ],
+    },
   },
   auth: {
     login: {
@@ -74,6 +86,7 @@ const messages = {
       forgotPassword: "Forgot your password?",
       magicLink: "Email me a magic link",
       invalidCredentials: "The email or password you entered is incorrect.",
+      dividerOr: "Or",
     },
     register: {
       title: "Create your account",
@@ -140,6 +153,8 @@ const messages = {
       title: "Plans",
       subtitle:
         "Choose the subscription that fits your stage. You can start on the Free tier and upgrade when you are ready.",
+      priceFree: "Free",
+      perMonthSuffix: "/month",
     },
     alerts: {
       success:
@@ -235,6 +250,7 @@ const messages = {
     displayNameHelp: "Shown in the dashboard and emails.",
     avatarUrlLabel: "Avatar URL",
     avatarUrlHelp: "Use a public image URL (https://).",
+    avatarUrlPlaceholder: "https://",
     localeLabel: "Preferred locale",
     save: "Save changes",
     success: "Your profile has been updated.",
@@ -251,6 +267,10 @@ const messages = {
     sessionsSubtitle: "Review where your account is signed in.",
     currentSession: "Current session",
     otherSessions: "Other sessions",
+    ipLabel: "IP: {value}",
+    userAgentLabel: "User agent: {value}",
+    lastSeenLabel: "Last seen: {date}",
+    unknownValue: "unknown",
     sessionsEmpty: "No sessions found.",
     signOutOthers: "Sign out other sessions",
     signOutAll: "Sign out all sessions",
@@ -284,10 +304,127 @@ const messages = {
   analytics: {
     disabled: "Analytics tracking is disabled.",
   },
+  system: {
+    healthCheck: {
+      title: "System status",
+      serviceName: "Supabase",
+      statusChecking: "Checking...",
+      statusOnline: "🟢 Online",
+      statusOffline: "🔴 Offline",
+      envChecking: "Checking...",
+      envLoaded: "Env vars loaded",
+      missingEnvVars: "Missing env vars",
+    },
+  },
+  dev: {
+    index: {
+      title: "Dev playground",
+      description:
+        "Placeholder pages to exercise accessibility, forms/alerts, focus styles, and error states.",
+      links: {
+        a11yTitle: "A11y surface",
+        a11yDescription:
+          "Landmarks/headings checklist, focusable controls, and contrast samples.",
+        formsTitle: "Forms + alerts",
+        formsDescription:
+          "Inputs, validation states, and live region placeholders.",
+        errorsTitle: "Error states",
+        errorsDescription:
+          "Query-param driven error codes to validate error-message mapping.",
+      },
+    },
+    a11y: {
+      title: "Accessibility surface",
+      intro:
+        "Use this page to validate focus visibility, heading hierarchy, and interactive control semantics.",
+      focusableTitle: "Focusable controls",
+      focusable: {
+        primary: "Primary button",
+        outline: "Outline button",
+        ghost: "Ghost button",
+        inPageLink: "In-page link",
+        checkbox: "Checkbox",
+        toggle: "Toggle",
+      },
+      tip: "Tip: keyboard-tab through the controls and confirm the focus indicator is always visible.",
+      contrastTitle: "Contrast samples",
+      contrast: {
+        baseTitle: "Base surface",
+        baseBody: "Text on base background for quick visual checks.",
+        primaryTitle: "Primary surface",
+        primaryBody: "Verify contrast for primary tokens.",
+        successTitle: "Success surface",
+        successBody: "Used for success alerts and badges.",
+        errorTitle: "Error surface",
+        errorBody: "Used for error alerts and validation messages.",
+      },
+      headingsTitle: "Headings + content",
+      headingsBody:
+        "This section exists to help validate consistent heading order and a single page-level heading.",
+      longParagraph:
+        "Placeholder paragraph {index}. Use this to test scroll, focus retention, and any skip-to-content behavior once added.",
+      longHint: "Add <code>?long=1</code> to generate more content.",
+    },
+    forms: {
+      title: "Forms + alerts surface",
+      description:
+        "Placeholder validation states for <code>aria-invalid</code>, <code>aria-describedby</code>, and alert semantics.",
+      quickToggles: "Quick toggles:",
+      toggles: {
+        invalidEmail: "invalid email",
+        invalidPassword: "invalid password",
+        errorAlert: "error alert",
+        successAlert: "success alert",
+        reset: "reset",
+      },
+      alertError: 'Placeholder error alert (role="alert").',
+      alertSuccess: 'Placeholder success message (role="status").',
+      formTitle: "Example form",
+      emailLabel: "Email",
+      passwordLabel: "Password",
+      emailPlaceholder: "name@example.com",
+      passwordPlaceholder: "••••••••",
+      emailError: "Placeholder email error text (described by input).",
+      emailHelp: "Placeholder helper text.",
+      passwordError: "Placeholder password error text (described by input).",
+      passwordHelp: "Placeholder helper text.",
+      submitPlaceholder: "Submit (placeholder)",
+      secondaryAction: "Secondary action",
+      linkAction: "Link-style action",
+    },
+    errors: {
+      title: "Error states surface",
+      description:
+        "Use query params to simulate error codes and validate user-facing error messaging.",
+      currentCodeTitle: "Current error code",
+      currentCodeLabel: "Resolved <code>error</code> query param:",
+      noneLabel: "(none)",
+      noCodeProvided: "No error code provided.",
+      tryCodeTitle: "Try a code",
+      clear: "clear",
+      knownCodes: [
+        "invalid_credentials",
+        "signup_failed",
+        "invalid_plan",
+        "plan_not_available",
+        "checkout_unavailable",
+        "some_unknown_error",
+      ],
+    },
+    usage: {
+      errorPrefix: "Error: {message}",
+    },
+  },
   legal: {
     termsTitle: "Terms of Service",
     privacyTitle: "Privacy Policy",
     updatedAt: "Last updated: {date}",
+    privacyParagraphOne:
+      "We collect the minimum information needed to operate the service, including account and usage data.",
+    privacyParagraphTwo:
+      "We do not sell your data. You can manage consent preferences in your account settings.",
+    privacyParagraphThree:
+      "If you have questions about data handling, contact support.",
   },
 } as const;
 
