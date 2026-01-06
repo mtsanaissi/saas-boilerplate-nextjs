@@ -3,36 +3,6 @@
   "version": 1,
   "tasks": [
     {
-      "id": "T-028",
-      "title": "Atomic usage consumption RPC",
-      "description": "Add a Postgres function to atomically check limits, update usage_balances, and insert usage_events in a single transaction. Include an integration test against local Supabase that exercises the RPC with real tables (no Supabase client mocks).",
-      "status": "pending",
-      "createdAt": "2026-01-05",
-      "completedAt": null,
-      "acceptanceCriteria": [
-        {
-          "text": "A SQL function performs balance upsert + event insert atomically and returns updated allowance",
-          "done": false
-        },
-        {
-          "text": "Function guards against negative or zero amounts and returns a stable error for limit exceeded",
-          "done": false
-        },
-        {
-          "text": "RLS/permissions allow service-role invocation only as required",
-          "done": false
-        },
-        {
-          "text": "Integration test asserts the RPC increments usage_balances and inserts a usage_events row in the same call",
-          "done": false
-        },
-        {
-          "text": "Integration test covers limit-exceeded behavior returning the expected error signal",
-          "done": false
-        }
-      ]
-    },
-    {
       "id": "T-029",
       "title": "Use atomic usage consumption in server API",
       "description": "Update usage server utilities and API routes to call the atomic usage RPC and map errors to existing error codes. Add route tests that stub only the RPC boundary (not internal logic).",
@@ -850,6 +820,36 @@
         },
         {
           "text": "Optional: stale sessions are pruned or visually flagged using last_seen_at",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-028",
+      "title": "Atomic usage consumption RPC",
+      "description": "Add a Postgres function to atomically check limits, update usage_balances, and insert usage_events in a single transaction. Include an integration test against local Supabase that exercises the RPC with real tables (no Supabase client mocks).",
+      "status": "done",
+      "createdAt": "2026-01-05",
+      "completedAt": "2026-01-05",
+      "acceptanceCriteria": [
+        {
+          "text": "A SQL function performs balance upsert + event insert atomically and returns updated allowance",
+          "done": true
+        },
+        {
+          "text": "Function guards against negative or zero amounts and returns a stable error for limit exceeded",
+          "done": true
+        },
+        {
+          "text": "RLS/permissions allow service-role invocation only as required",
+          "done": true
+        },
+        {
+          "text": "Integration test asserts the RPC increments usage_balances and inserts a usage_events row in the same call",
+          "done": true
+        },
+        {
+          "text": "Integration test covers limit-exceeded behavior returning the expected error signal",
           "done": true
         }
       ]

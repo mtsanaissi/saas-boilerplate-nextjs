@@ -45,3 +45,5 @@ pnpm test
 ```
 
 For integration tests, ensure local Supabase is running and env vars are configured (see README).
+
+Note: Vitest loads env vars via Vite's `loadEnv` (see `vitest.config.ts`), so `.env.local` and `.env.test` are available to tests.
