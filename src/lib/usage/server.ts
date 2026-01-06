@@ -50,51 +50,69 @@ export async function consumeUsage({
   metadata?: Record<string, unknown> | null;
 }): Promise<UsageAllowance> {
   if (!Number.isFinite(amount) || amount <= 0) {
-    throw new Error("Invalid usage amount");
+    const error = new Error("invalid_request");
+    error.name = "invalid_request";
+    throw error;
   }
 
   const supabaseAdmin = createAdminClient();
   const { periodStart, periodEnd } = getCurrentPeriodRange();
-  const allowance = await getUsageAllowance(userId);
+  const { data: profile, error: profileError } = await supabaseAdmin
+    .from("profiles")
+    .select("plan_id, plan_status")
+    .eq("id", userId)
+    .maybeSingle();
 
-  if (allowance.creditsRemaining < amount) {
-    const error = new Error("usage_limit_exceeded");
-    error.name = "usage_limit_exceeded";
+  if (profileError) {
+    throw profileError;
+  }
+
+  const planId = (profile?.plan_id as PlanId) ?? "free";
+  const planStatus = (profile?.plan_status as PlanStatus) ?? "free";
+  const creditsTotal = getCreditsTotalForPlanStatus(planId, planStatus);
+
+  const { data, error } = await supabaseAdmin.rpc("consume_usage", {
+    p_user_id: userId,
+    p_feature: feature,
+    p_amount: amount,
+    p_period_start: periodStart,
+    p_period_end: periodEnd,
+    p_credits_total: creditsTotal,
+    p_metadata: metadata ?? null,
+  });
+
+  if (error) {
+    if (error.message === "usage_limit_exceeded") {
+      const limitError = new Error("usage_limit_exceeded");
+      limitError.name = "usage_limit_exceeded";
+      throw limitError;
+    }
+
+    if (
+      error.message === "invalid_usage_amount" ||
+      error.message === "invalid_usage_total"
+    ) {
+      const requestError = new Error("invalid_request");
+      requestError.name = "invalid_request";
+      throw requestError;
+    }
+
     throw error;
   }
 
-  const { error: upsertError } = await supabaseAdmin
-    .from("usage_balances")
-    .upsert(
-      {
-        user_id: userId,
-        period_start: periodStart,
-        period_end: periodEnd,
-        credits_total: allowance.creditsTotal,
-        credits_used: allowance.creditsUsed + amount,
-      },
-      { onConflict: "user_id,period_start" },
-    );
+  const result = Array.isArray(data) ? data[0] : data;
 
-  if (upsertError) {
-    throw upsertError;
+  if (!result) {
+    throw new Error("usage_rpc_no_result");
   }
 
-  const { error: insertError } = await supabaseAdmin
-    .from("usage_events")
-    .insert({
-      user_id: userId,
-      feature,
-      amount,
-      period_start: periodStart,
-      metadata: metadata ?? null,
-    });
-
-  if (insertError) {
-    throw insertError;
-  }
-
-  return getUsageAllowance(userId);
+  return {
+    periodStart: result.period_start,
+    periodEnd: result.period_end,
+    creditsTotal: result.credits_total,
+    creditsUsed: result.credits_used,
+    creditsRemaining: result.credits_remaining,
+  };
 }
 
 export async function consumeUsageOrThrow({
@@ -115,6 +133,11 @@ export async function consumeUsageOrThrow({
       const limitError = new Error("usage_limit_exceeded");
       limitError.name = "usage_limit_exceeded";
       throw limitError;
+    }
+    if (error instanceof Error && error.name === "invalid_request") {
+      const requestError = new Error("invalid_request");
+      requestError.name = "invalid_request";
+      throw requestError;
     }
     throw error;
   }

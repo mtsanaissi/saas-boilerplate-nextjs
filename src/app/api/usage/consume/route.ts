@@ -77,6 +77,9 @@ export async function POST(request: NextRequest) {
         { status: 403 },
       );
     }
+    if (error instanceof Error && error.name === "invalid_request") {
+      return NextResponse.json({ error: "invalid_request" }, { status: 400 });
+    }
     reportError(error, {
       requestId,
       route: "/api/usage/consume",

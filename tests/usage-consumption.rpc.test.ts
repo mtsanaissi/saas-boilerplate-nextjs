@@ -127,4 +127,60 @@ describeIf("consume_usage RPC", () => {
       await deleteTestUser(supabase, userId);
     }
   });
+
+  it("prevents double-spend when concurrent usage exceeds the limit", async () => {
+    const { supabase, userId } = await createTestUser();
+    const { periodStart, periodEnd } = getCurrentPeriodRange();
+
+    try {
+      const [first, second] = await Promise.all([
+        supabase.rpc("consume_usage", {
+          p_user_id: userId,
+          p_feature: "demo",
+          p_amount: 7,
+          p_period_start: periodStart,
+          p_period_end: periodEnd,
+          p_credits_total: 10,
+          p_metadata: null,
+        }),
+        supabase.rpc("consume_usage", {
+          p_user_id: userId,
+          p_feature: "demo",
+          p_amount: 7,
+          p_period_start: periodStart,
+          p_period_end: periodEnd,
+          p_credits_total: 10,
+          p_metadata: null,
+        }),
+      ]);
+
+      const results = [first, second];
+      const successCount = results.filter((result) => !result.error).length;
+      const errorMessages = results
+        .map((result) => result.error?.message)
+        .filter(Boolean);
+
+      expect(successCount).toBe(1);
+      expect(errorMessages).toContain("usage_limit_exceeded");
+
+      const { data: balance } = await supabase
+        .from("usage_balances")
+        .select("credits_used")
+        .eq("user_id", userId)
+        .eq("period_start", periodStart)
+        .maybeSingle();
+
+      expect(balance?.credits_used).toBe(7);
+
+      const { data: events } = await supabase
+        .from("usage_events")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("period_start", periodStart);
+
+      expect(events ?? []).toHaveLength(1);
+    } finally {
+      await deleteTestUser(supabase, userId);
+    }
+  });
 });

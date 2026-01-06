@@ -8,7 +8,6 @@ Do not hand-edit this file. To edit tasks, update `tasks/tasks.json` and run:
 
 ---
 
-- T-029 - [PENDING] - Use atomic usage consumption in server API
 - T-030 - [PENDING] - Reuse Stripe customers in Checkout
 - T-031 - [PENDING] - Harden auth rate-limit failure handling
 - T-032 - [PENDING] - Add tests for Stripe webhook + usage API
@@ -44,3 +43,4 @@ Do not hand-edit this file. To edit tasks, update `tasks/tasks.json` and run:
 - T-026 - [DONE] - Session tracking on auth + proxy
 - T-027 - [DONE] - Session list reliability + revocation behavior
 - T-028 - [DONE] - Atomic usage consumption RPC
+- T-029 - [DONE] - Use atomic usage consumption in server API

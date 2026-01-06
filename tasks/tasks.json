@@ -3,32 +3,6 @@
   "version": 1,
   "tasks": [
     {
-      "id": "T-029",
-      "title": "Use atomic usage consumption in server API",
-      "description": "Update usage server utilities and API routes to call the atomic usage RPC and map errors to existing error codes. Add route tests that stub only the RPC boundary (not internal logic).",
-      "status": "pending",
-      "createdAt": "2026-01-05",
-      "completedAt": null,
-      "acceptanceCriteria": [
-        {
-          "text": "consumeUsage/consumeUsageOrThrow use the new RPC instead of separate writes",
-          "done": false
-        },
-        {
-          "text": "API errors remain stable (usage_limit_exceeded, invalid_request, server_error)",
-          "done": false
-        },
-        {
-          "text": "Tests verify the API returns 403 on usage_limit_exceeded and 400 on invalid payload",
-          "done": false
-        },
-        {
-          "text": "Tests cover concurrency/limit behavior or include a regression test for double-spend",
-          "done": false
-        }
-      ]
-    },
-    {
       "id": "T-030",
       "title": "Reuse Stripe customers in Checkout",
       "description": "Attach existing billing_customers to Stripe Checkout sessions so users are not duplicated as new Stripe customers. Add a unit test that asserts the Stripe session creation call includes `customer` when a stripe_customer_id exists.",
@@ -850,6 +824,32 @@
         },
         {
           "text": "Integration test covers limit-exceeded behavior returning the expected error signal",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-029",
+      "title": "Use atomic usage consumption in server API",
+      "description": "Update usage server utilities and API routes to call the atomic usage RPC and map errors to existing error codes. Add route tests that stub only the RPC boundary (not internal logic).",
+      "status": "done",
+      "createdAt": "2026-01-05",
+      "completedAt": "2026-01-06",
+      "acceptanceCriteria": [
+        {
+          "text": "consumeUsage/consumeUsageOrThrow use the new RPC instead of separate writes",
+          "done": true
+        },
+        {
+          "text": "API errors remain stable (usage_limit_exceeded, invalid_request, server_error)",
+          "done": true
+        },
+        {
+          "text": "Tests verify the API returns 403 on usage_limit_exceeded and 400 on invalid payload",
+          "done": true
+        },
+        {
+          "text": "Tests cover concurrency/limit behavior or include a regression test for double-spend",
           "done": true
         }
       ]
