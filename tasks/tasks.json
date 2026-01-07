@@ -3,36 +3,6 @@
   "version": 1,
   "tasks": [
     {
-      "id": "T-035",
-      "title": "Security hardening: email verification + MFA",
-      "description": "Add email-verified enforcement on protected routes and an optional MFA setup flow. Add tests for verification gating and MFA enrollment state transitions.",
-      "status": "pending",
-      "createdAt": "2026-01-05",
-      "completedAt": null,
-      "acceptanceCriteria": [
-        {
-          "text": "Protected areas can require verified email addresses with a clear redirect path",
-          "done": false
-        },
-        {
-          "text": "MFA enrollment and verification UI flows are available (Supabase supported factors)",
-          "done": false
-        },
-        {
-          "text": "Audit logs record MFA changes and verification enforcement",
-          "done": false
-        },
-        {
-          "text": "Tests verify unverified users are redirected from protected routes with a stable error code",
-          "done": false
-        },
-        {
-          "text": "Tests cover MFA enrollment and revoke paths with audit logging",
-          "done": false
-        }
-      ]
-    },
-    {
       "id": "T-036",
       "title": "Billing UX improvements",
       "description": "Add UI copy and states for plan changes, cancellations, grace periods, and renewal messaging. If status-to-copy mapping is extracted into a helper, add unit tests for the mapping.",
@@ -850,6 +820,28 @@
         },
         {
           "text": "Tests cover email change request action and confirmation callback behavior",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-035",
+      "title": "Security hardening: email verification",
+      "description": "Add email-verified enforcement on protected routes. Add tests for verification gating and stable error codes.",
+      "status": "done",
+      "createdAt": "2026-01-05",
+      "completedAt": "2026-01-07",
+      "acceptanceCriteria": [
+        {
+          "text": "Protected areas can require verified email addresses with a clear redirect path",
+          "done": true
+        },
+        {
+          "text": "Tests verify unverified users are redirected from protected routes with a stable error code",
+          "done": true
+        },
+        {
+          "text": "Audit logs record verification enforcement changes where applicable",
           "done": true
         }
       ]

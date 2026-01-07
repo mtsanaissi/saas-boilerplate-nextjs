@@ -3,9 +3,19 @@ import { createClient } from "@/lib/supabase/server";
 import { routing, type AppLocale } from "@/i18n/routing";
 import type { PlanId, PlanStatus } from "@/types/billing";
 import type { UserProfile } from "@/types/profile";
+import type { User } from "@supabase/supabase-js";
+import { logAuditEvent } from "@/lib/observability/audit";
+import { logInfo } from "@/lib/observability/logger";
+import { getClientIpFromHeaders } from "@/lib/rate-limit/headers";
+import { getRequestId } from "@/lib/observability/request-id";
+import { headers } from "next/headers";
 
 const planOrder: PlanId[] = ["free", "starter", "pro"];
 const activeStatuses: PlanStatus[] = ["trialing", "active"];
+
+export function isEmailVerified(user: User): boolean {
+  return Boolean(user.email_confirmed_at ?? user.confirmed_at);
+}
 
 function getPlanRank(plan: PlanId): number {
   return planOrder.indexOf(plan);
@@ -37,6 +47,34 @@ export async function requireUser(
 
   if (!user) {
     throw new Error("User required but not available after redirect.");
+  }
+
+  if (!isEmailVerified(user)) {
+    const [requestId, ipAddress, headerStore] = await Promise.all([
+      getRequestId(),
+      getClientIpFromHeaders(),
+      headers(),
+    ]);
+    const userAgent = headerStore.get("user-agent");
+
+    await logAuditEvent({
+      userId: user.id,
+      action: "auth.email_unverified_blocked",
+      ipAddress,
+      userAgent,
+      metadata: { redirectTo },
+    });
+
+    logInfo("auth_email_unverified", {
+      requestId,
+      userId: user.id,
+      redirectTo,
+      locale,
+    });
+    redirect({
+      href: { pathname: "/auth/verify", query: { error: "email_unverified" } },
+      locale,
+    });
   }
 
   return { supabase, userId: user.id, email: user.email ?? null };

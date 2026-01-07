@@ -14,6 +14,7 @@ export const errorCodeToMessageKey = {
   email_change_failed: "emailChangeFailed",
   email_change_same: "emailChangeSame",
   access_denied: "accessDenied",
+  email_unverified: "emailUnverified",
   upgrade_required: "upgradeRequired",
   unauthorized: "unauthorized",
   usage_limit_exceeded: "usageLimitExceeded",

@@ -40,7 +40,7 @@ export default async function RootLayout({
 }: RootLayoutProps) {
   const { locale } = await params;
   const appLocale = locale as (typeof routing.locales)[number];
-  const showDevLinks = process.env.NODE_ENV !== "production";
+  const devPagesEnabled = process.env.DEV_PAGES_ENABLED === "true";
 
   if (!routing.locales.includes(appLocale)) {
     notFound();
@@ -55,6 +55,9 @@ export default async function RootLayout({
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  const showDevLinks =
+    devPagesEnabled && (process.env.NODE_ENV !== "production" || Boolean(user));
 
   return (
     <NextIntlClientProvider locale={appLocale}>

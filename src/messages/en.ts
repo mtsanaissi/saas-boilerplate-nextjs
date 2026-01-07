@@ -28,6 +28,8 @@ const messages = {
     emailChangeSame:
       "That is already your current email. Please enter a new address.",
     accessDenied: "You do not have access to this feature.",
+    emailUnverified:
+      "Please verify your email address before continuing. Check your inbox for the verification link.",
     upgradeRequired:
       "This feature requires an upgraded plan. Please choose a plan to continue.",
     unauthorized: "Please sign in to continue.",

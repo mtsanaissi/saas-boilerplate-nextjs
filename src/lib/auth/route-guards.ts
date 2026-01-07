@@ -2,7 +2,10 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import type { PlanId, PlanStatus } from "@/types/billing";
 import type { UserProfile } from "@/types/profile";
-import { hasPlanAccess } from "@/lib/auth/guards";
+import { hasPlanAccess, isEmailVerified } from "@/lib/auth/guards";
+import { logAuditEvent } from "@/lib/observability/audit";
+import { logInfo } from "@/lib/observability/logger";
+import { getClientIpFromRequest } from "@/lib/rate-limit/headers";
 
 type RouteAuthSuccess = {
   supabase: Awaited<ReturnType<typeof createClient>>;
@@ -26,6 +29,34 @@ export async function requireUserInRoute(
   if (!user) {
     return {
       response: NextResponse.json({ error: "unauthorized" }, { status: 401 }),
+    };
+  }
+
+  if (!isEmailVerified(user)) {
+    const ipAddress = _request ? getClientIpFromRequest(_request) : null;
+    const userAgent = _request?.headers.get("user-agent") ?? null;
+    const requestId = _request?.headers.get("x-request-id") ?? null;
+    const path = _request?.nextUrl?.pathname ?? null;
+
+    await logAuditEvent({
+      userId: user.id,
+      action: "auth.email_unverified_blocked",
+      ipAddress,
+      userAgent,
+      metadata: { path },
+    });
+
+    logInfo("auth_email_unverified", {
+      requestId,
+      userId: user.id,
+      path,
+    });
+
+    return {
+      response: NextResponse.json(
+        { error: "email_unverified" },
+        { status: 403 },
+      ),
     };
   }
 
