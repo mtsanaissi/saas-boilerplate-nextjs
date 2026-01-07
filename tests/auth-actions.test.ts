@@ -1,7 +1,10 @@
-import { beforeEach, describe, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createRedirectError, expectRedirect } from "./helpers";
 
 const createClient = vi.fn();
+const rateLimitAuth = vi.fn();
+const logWarn = vi.fn();
+const logError = vi.fn();
 
 vi.mock("next/navigation", () => ({
   redirect: (to: string) => {
@@ -14,11 +17,20 @@ vi.mock("@/lib/rate-limit/headers", () => ({
 }));
 
 vi.mock("@/lib/rate-limit/server", () => ({
-  rateLimitAuth: () => Promise.resolve(),
+  rateLimitAuth,
 }));
 
 vi.mock("@/lib/observability/audit", () => ({
   logAuditEvent: () => Promise.resolve(),
+}));
+
+vi.mock("@/lib/observability/logger", () => ({
+  logWarn,
+  logError,
+}));
+
+vi.mock("@/lib/observability/request-id", () => ({
+  getRequestId: () => Promise.resolve("req-123"),
 }));
 
 vi.mock("@/lib/supabase/server", () => ({
@@ -35,10 +47,18 @@ vi.mock("next/headers", () => ({
 describe("auth actions", () => {
   beforeEach(() => {
     createClient.mockReset();
+    rateLimitAuth.mockReset();
+    logWarn.mockReset();
+    logError.mockReset();
     vi.resetModules();
   });
 
+  afterEach(() => {
+    delete process.env.RATE_LIMIT_AUTH_FAILURE_MODE;
+  });
+
   it("redirects on invalid sign-in credentials", async () => {
+    rateLimitAuth.mockResolvedValue(undefined);
     const { signInWithEmail } = await import("@/app/auth/actions");
     createClient.mockResolvedValueOnce({
       auth: {
@@ -58,6 +78,7 @@ describe("auth actions", () => {
   });
 
   it("redirects with email already registered on signup error", async () => {
+    rateLimitAuth.mockResolvedValue(undefined);
     const { signUpWithEmail } = await import("@/app/auth/actions");
     createClient.mockResolvedValueOnce({
       auth: {
@@ -75,5 +96,60 @@ describe("auth actions", () => {
     await signUpWithEmail(formData).catch((error) => {
       expectRedirect(error, "/en/auth/register?error=email_already_registered");
     });
+  });
+
+  it("denies auth when rate-limit service fails in deny mode", async () => {
+    process.env.RATE_LIMIT_AUTH_FAILURE_MODE = "deny";
+    rateLimitAuth.mockRejectedValue(new Error("rate limit backend down"));
+    const { signInWithEmail } = await import("@/app/auth/actions");
+    const formData = new FormData();
+    formData.append("locale", "en");
+    formData.append("email", "test@example.com");
+    formData.append("password", "password123");
+
+    await signInWithEmail(formData).catch((error) => {
+      expectRedirect(error, "/en/auth/login?error=rate_limited");
+    });
+
+    expect(logError).toHaveBeenCalledWith(
+      "auth_rate_limit_unavailable",
+      expect.objectContaining({
+        requestId: "req-123",
+        action: "auth.sign_in",
+        failureMode: "deny",
+      }),
+    );
+  });
+
+  it("allows auth when rate-limit service fails in allow mode", async () => {
+    process.env.RATE_LIMIT_AUTH_FAILURE_MODE = "allow";
+    rateLimitAuth.mockRejectedValue(new Error("rate limit backend down"));
+    const { signInWithEmail } = await import("@/app/auth/actions");
+    createClient.mockResolvedValueOnce({
+      auth: {
+        signInWithPassword: () => Promise.resolve({ error: null }),
+        getUser: () =>
+          Promise.resolve({
+            data: { user: { id: "user-1" } },
+          }),
+      },
+    });
+    const formData = new FormData();
+    formData.append("locale", "en");
+    formData.append("email", "test@example.com");
+    formData.append("password", "password123");
+
+    await signInWithEmail(formData).catch((error) => {
+      expectRedirect(error, "/en/dashboard");
+    });
+
+    expect(logError).toHaveBeenCalledWith(
+      "auth_rate_limit_unavailable",
+      expect.objectContaining({
+        requestId: "req-123",
+        action: "auth.sign_in",
+        failureMode: "allow",
+      }),
+    );
   });
 });

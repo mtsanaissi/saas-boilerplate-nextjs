@@ -3,32 +3,6 @@
   "version": 1,
   "tasks": [
     {
-      "id": "T-031",
-      "title": "Harden auth rate-limit failure handling",
-      "description": "Use structured logging for rate-limit failures and ensure auth flows fail safely when rate-limit checks are unavailable. Add tests around the rate-limit failure path and configured behavior.",
-      "status": "pending",
-      "createdAt": "2026-01-05",
-      "completedAt": null,
-      "acceptanceCriteria": [
-        {
-          "text": "Rate-limit errors are logged with the structured logger and request context",
-          "done": false
-        },
-        {
-          "text": "Auth flows fail safe on rate-limit service errors (configurable allow/deny)",
-          "done": false
-        },
-        {
-          "text": "User-facing errors remain localized and stable",
-          "done": false
-        },
-        {
-          "text": "Tests cover rate-limit service failure path (non-rate_limited error) and verify the configured allow/deny behavior",
-          "done": false
-        }
-      ]
-    },
-    {
       "id": "T-032",
       "title": "Add tests for Stripe webhook + usage API",
       "description": "Expand test coverage for webhook handling, usage consumption, and rate-limiting edge cases. Use fixtures for Stripe payloads and minimize mocking to API boundaries only.",
@@ -850,6 +824,32 @@
         },
         {
           "text": "Test asserts Stripe checkout params include `customer` for existing billing_customers and do not break anonymous fallback",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-031",
+      "title": "Harden auth rate-limit failure handling",
+      "description": "Use structured logging for rate-limit failures and ensure auth flows fail safely when rate-limit checks are unavailable. Add tests around the rate-limit failure path and configured behavior.",
+      "status": "done",
+      "createdAt": "2026-01-05",
+      "completedAt": "2026-01-07",
+      "acceptanceCriteria": [
+        {
+          "text": "Rate-limit errors are logged with the structured logger and request context",
+          "done": true
+        },
+        {
+          "text": "Auth flows fail safe on rate-limit service errors (configurable allow/deny)",
+          "done": true
+        },
+        {
+          "text": "User-facing errors remain localized and stable",
+          "done": true
+        },
+        {
+          "text": "Tests cover rate-limit service failure path (non-rate_limited error) and verify the configured allow/deny behavior",
           "done": true
         }
       ]

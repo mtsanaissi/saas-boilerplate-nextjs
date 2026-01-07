@@ -4,7 +4,10 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getClientIpFromHeaders } from "@/lib/rate-limit/headers";
 import { rateLimitAuth } from "@/lib/rate-limit/server";
+import { rateLimitConfig } from "@/lib/rate-limit/config";
 import { logAuditEvent } from "@/lib/observability/audit";
+import { logError, logWarn } from "@/lib/observability/logger";
+import { getRequestId } from "@/lib/observability/request-id";
 import { headers } from "next/headers";
 
 function getRedirectTarget(formData: FormData, fallback: string): string {
@@ -36,17 +39,48 @@ async function getUserAgent(): Promise<string | null> {
   return headerStore.get("user-agent");
 }
 
-async function enforceAuthRateLimit(
-  key: string,
-  redirectTo: string,
-): Promise<void> {
+async function enforceAuthRateLimit({
+  key,
+  redirectTo,
+  action,
+  locale,
+  identifier,
+  identifierType,
+}: {
+  key: string;
+  redirectTo: string;
+  action: string;
+  locale: string;
+  identifier: string;
+  identifierType: "ip" | "email";
+}): Promise<void> {
+  const requestId = await getRequestId();
   try {
     await rateLimitAuth(key);
   } catch (error) {
     if (error instanceof Error && error.name === "rate_limited") {
+      logWarn("auth_rate_limited", {
+        requestId,
+        action,
+        locale,
+        identifierType,
+        identifier,
+      });
       redirect(redirectTo);
     }
-    console.error("Rate limit check failed", error);
+    logError("auth_rate_limit_unavailable", {
+      requestId,
+      action,
+      locale,
+      identifierType,
+      identifier,
+      failureMode: rateLimitConfig.auth.failureMode,
+      errorName: error instanceof Error ? error.name : "unknown",
+      errorMessage: error instanceof Error ? error.message : String(error),
+    });
+    if (rateLimitConfig.auth.failureMode === "deny") {
+      redirect(redirectTo);
+    }
   }
 }
 
@@ -56,19 +90,27 @@ export async function signInWithEmail(formData: FormData) {
   const locale = getLocale(formData);
   const ip = await getClientIpFromHeaders();
 
-  await enforceAuthRateLimit(
-    `ip:${ip}`,
-    `/${locale}/auth/login?error=rate_limited`,
-  );
+  await enforceAuthRateLimit({
+    key: `ip:${ip}`,
+    redirectTo: `/${locale}/auth/login?error=rate_limited`,
+    action: "auth.sign_in",
+    locale,
+    identifier: ip,
+    identifierType: "ip",
+  });
 
   if (typeof email !== "string" || typeof password !== "string") {
     redirect(`/${locale}/auth/login?error=invalid_credentials`);
   }
 
-  await enforceAuthRateLimit(
-    `email:${email.toLowerCase()}`,
-    `/${locale}/auth/login?error=rate_limited`,
-  );
+  await enforceAuthRateLimit({
+    key: `email:${email.toLowerCase()}`,
+    redirectTo: `/${locale}/auth/login?error=rate_limited`,
+    action: "auth.sign_in",
+    locale,
+    identifier: "redacted",
+    identifierType: "email",
+  });
 
   const supabase = await createClient();
 
@@ -103,19 +145,27 @@ export async function signUpWithEmail(formData: FormData) {
   const locale = getLocale(formData);
   const ip = await getClientIpFromHeaders();
 
-  await enforceAuthRateLimit(
-    `ip:${ip}`,
-    `/${locale}/auth/register?error=rate_limited`,
-  );
+  await enforceAuthRateLimit({
+    key: `ip:${ip}`,
+    redirectTo: `/${locale}/auth/register?error=rate_limited`,
+    action: "auth.sign_up",
+    locale,
+    identifier: ip,
+    identifierType: "ip",
+  });
 
   if (typeof email !== "string" || typeof password !== "string") {
     redirect(`/${locale}/auth/register?error=invalid_credentials`);
   }
 
-  await enforceAuthRateLimit(
-    `email:${email.toLowerCase()}`,
-    `/${locale}/auth/register?error=rate_limited`,
-  );
+  await enforceAuthRateLimit({
+    key: `email:${email.toLowerCase()}`,
+    redirectTo: `/${locale}/auth/register?error=rate_limited`,
+    action: "auth.sign_up",
+    locale,
+    identifier: "redacted",
+    identifierType: "email",
+  });
 
   const supabase = await createClient();
 
@@ -172,19 +222,27 @@ export async function requestPasswordReset(formData: FormData) {
   const locale = getLocale(formData);
   const ip = await getClientIpFromHeaders();
 
-  await enforceAuthRateLimit(
-    `ip:${ip}`,
-    `/${locale}/auth/forgot?error=rate_limited`,
-  );
+  await enforceAuthRateLimit({
+    key: `ip:${ip}`,
+    redirectTo: `/${locale}/auth/forgot?error=rate_limited`,
+    action: "auth.password_reset",
+    locale,
+    identifier: ip,
+    identifierType: "ip",
+  });
 
   if (typeof email !== "string") {
     redirect(`/${locale}/auth/forgot?error=invalid_email`);
   }
 
-  await enforceAuthRateLimit(
-    `email:${email.toLowerCase()}`,
-    `/${locale}/auth/forgot?error=rate_limited`,
-  );
+  await enforceAuthRateLimit({
+    key: `email:${email.toLowerCase()}`,
+    redirectTo: `/${locale}/auth/forgot?error=rate_limited`,
+    action: "auth.password_reset",
+    locale,
+    identifier: "redacted",
+    identifierType: "email",
+  });
 
   const supabase = await createClient();
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -229,19 +287,27 @@ export async function sendMagicLink(formData: FormData) {
   const locale = getLocale(formData);
   const ip = await getClientIpFromHeaders();
 
-  await enforceAuthRateLimit(
-    `ip:${ip}`,
-    `/${locale}/auth/magic?error=rate_limited`,
-  );
+  await enforceAuthRateLimit({
+    key: `ip:${ip}`,
+    redirectTo: `/${locale}/auth/magic?error=rate_limited`,
+    action: "auth.magic_link",
+    locale,
+    identifier: ip,
+    identifierType: "ip",
+  });
 
   if (typeof email !== "string") {
     redirect(`/${locale}/auth/magic?error=invalid_email`);
   }
 
-  await enforceAuthRateLimit(
-    `email:${email.toLowerCase()}`,
-    `/${locale}/auth/magic?error=rate_limited`,
-  );
+  await enforceAuthRateLimit({
+    key: `email:${email.toLowerCase()}`,
+    redirectTo: `/${locale}/auth/magic?error=rate_limited`,
+    action: "auth.magic_link",
+    locale,
+    identifier: "redacted",
+    identifierType: "email",
+  });
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithOtp({
@@ -263,19 +329,27 @@ export async function resendVerificationEmail(formData: FormData) {
   const locale = getLocale(formData);
   const ip = await getClientIpFromHeaders();
 
-  await enforceAuthRateLimit(
-    `ip:${ip}`,
-    `/${locale}/auth/verify?error=rate_limited`,
-  );
+  await enforceAuthRateLimit({
+    key: `ip:${ip}`,
+    redirectTo: `/${locale}/auth/verify?error=rate_limited`,
+    action: "auth.resend_verification",
+    locale,
+    identifier: ip,
+    identifierType: "ip",
+  });
 
   if (typeof email !== "string") {
     redirect(`/${locale}/auth/verify?error=invalid_email`);
   }
 
-  await enforceAuthRateLimit(
-    `email:${email.toLowerCase()}`,
-    `/${locale}/auth/verify?error=rate_limited`,
-  );
+  await enforceAuthRateLimit({
+    key: `email:${email.toLowerCase()}`,
+    redirectTo: `/${locale}/auth/verify?error=rate_limited`,
+    action: "auth.resend_verification",
+    locale,
+    identifier: "redacted",
+    identifierType: "email",
+  });
 
   const supabase = await createClient();
   const { error } = await supabase.auth.resend({
