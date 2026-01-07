@@ -3,32 +3,6 @@
   "version": 1,
   "tasks": [
     {
-      "id": "T-030",
-      "title": "Reuse Stripe customers in Checkout",
-      "description": "Attach existing billing_customers to Stripe Checkout sessions so users are not duplicated as new Stripe customers. Add a unit test that asserts the Stripe session creation call includes `customer` when a stripe_customer_id exists.",
-      "status": "pending",
-      "createdAt": "2026-01-05",
-      "completedAt": null,
-      "acceptanceCriteria": [
-        {
-          "text": "Checkout uses existing stripe_customer_id when available",
-          "done": false
-        },
-        {
-          "text": "Fallback behavior preserves current flow for users without a customer record",
-          "done": false
-        },
-        {
-          "text": "Audit/logging remains unchanged or is minimally updated to avoid noise",
-          "done": false
-        },
-        {
-          "text": "Test asserts Stripe checkout params include `customer` for existing billing_customers and do not break anonymous fallback",
-          "done": false
-        }
-      ]
-    },
-    {
       "id": "T-031",
       "title": "Harden auth rate-limit failure handling",
       "description": "Use structured logging for rate-limit failures and ensure auth flows fail safely when rate-limit checks are unavailable. Add tests around the rate-limit failure path and configured behavior.",
@@ -850,6 +824,32 @@
         },
         {
           "text": "Tests cover concurrency/limit behavior or include a regression test for double-spend",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-030",
+      "title": "Reuse Stripe customers in Checkout",
+      "description": "Attach existing billing_customers to Stripe Checkout sessions so users are not duplicated as new Stripe customers. Add a unit test that asserts the Stripe session creation call includes `customer` when a stripe_customer_id exists.",
+      "status": "done",
+      "createdAt": "2026-01-05",
+      "completedAt": "2026-01-06",
+      "acceptanceCriteria": [
+        {
+          "text": "Checkout uses existing stripe_customer_id when available",
+          "done": true
+        },
+        {
+          "text": "Fallback behavior preserves current flow for users without a customer record",
+          "done": true
+        },
+        {
+          "text": "Audit/logging remains unchanged or is minimally updated to avoid noise",
+          "done": true
+        },
+        {
+          "text": "Test asserts Stripe checkout params include `customer` for existing billing_customers and do not break anonymous fallback",
           "done": true
         }
       ]

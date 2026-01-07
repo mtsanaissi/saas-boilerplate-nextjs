@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getStripeClient } from "@/lib/stripe/server";
+import type Stripe from "stripe";
 import { getAppBaseUrl, getPlanById } from "@/lib/stripe/plans";
 import type { PlanId } from "@/types/billing";
 
@@ -29,11 +30,17 @@ export async function createCheckoutSession(formData: FormData) {
     redirect(`/auth/login?redirect=/plans`);
   }
 
+  const { data: billingCustomer } = await supabase
+    .from("billing_customers")
+    .select("stripe_customer_id")
+    .eq("user_id", user.id)
+    .maybeSingle<{ stripe_customer_id: string }>();
+
   const stripe = getStripeClient();
 
   const baseUrl = getAppBaseUrl();
 
-  const session = await stripe.checkout.sessions.create({
+  const sessionParams: Stripe.Checkout.SessionCreateParams = {
     mode: "subscription",
     line_items: [
       {
@@ -43,7 +50,6 @@ export async function createCheckoutSession(formData: FormData) {
     ],
     success_url: `${baseUrl}/plans?success=1`,
     cancel_url: `${baseUrl}/plans?canceled=1`,
-    customer_email: user.email ?? undefined,
     client_reference_id: user.id,
     subscription_data: {
       metadata: {
@@ -55,7 +61,15 @@ export async function createCheckoutSession(formData: FormData) {
       supabase_user_id: user.id,
       plan_id: plan.id,
     },
-  });
+  };
+
+  if (billingCustomer?.stripe_customer_id) {
+    sessionParams.customer = billingCustomer.stripe_customer_id;
+  } else {
+    sessionParams.customer_email = user.email ?? undefined;
+  }
+
+  const session = await stripe.checkout.sessions.create(sessionParams);
 
   if (!session.url) {
     redirect("/plans?error=checkout_unavailable");
