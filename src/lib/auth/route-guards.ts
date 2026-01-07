@@ -17,6 +17,7 @@ const activeStatuses: PlanStatus[] = ["trialing", "active"];
 export async function requireUserInRoute(
   _request?: NextRequest,
 ): Promise<RouteAuthSuccess | RouteAuthFailure> {
+  void _request;
   const supabase = await createClient();
   const {
     data: { user },

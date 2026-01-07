@@ -21,3 +21,11 @@ export interface AuditLogEntry {
   created_at: string;
   ip_address: string | null;
 }
+
+export interface AccountDeletionRequest {
+  user_id: string;
+  token: string;
+  requested_at: string;
+  expires_at: string;
+  confirmed_at: string | null;
+}

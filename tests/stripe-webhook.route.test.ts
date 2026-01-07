@@ -88,8 +88,8 @@ function loadFixture<T>(name: string): T {
 }
 
 async function getWebhookPost() {
-  const module = await import("@/app/api/stripe/webhook/route");
-  return module.POST;
+  const webhookModule = await import("@/app/api/stripe/webhook/route");
+  return webhookModule.POST;
 }
 
 describe("POST /api/stripe/webhook", () => {
@@ -126,16 +126,15 @@ describe("POST /api/stripe/webhook", () => {
     }));
     profilesUpdateEqMock.mockResolvedValue({ error: null });
 
-    process.env.STRIPE_WEBHOOK_ALLOW_UNVERIFIED = "true";
-    process.env.NODE_ENV = "test";
-    process.env.STRIPE_PRICE_STARTER_MONTHLY = "price_starter";
+    vi.stubEnv("STRIPE_WEBHOOK_ALLOW_UNVERIFIED", "true");
+    vi.stubEnv("NODE_ENV", "test");
+    vi.stubEnv("STRIPE_PRICE_STARTER_MONTHLY", "price_starter");
   });
 
   afterEach(() => {
     vi.clearAllMocks();
-    delete process.env.STRIPE_WEBHOOK_ALLOW_UNVERIFIED;
+    vi.unstubAllEnvs();
     delete process.env.STRIPE_WEBHOOK_SECRET;
-    delete process.env.STRIPE_PRICE_STARTER_MONTHLY;
   });
 
   it("returns 429 when rate-limited", async () => {

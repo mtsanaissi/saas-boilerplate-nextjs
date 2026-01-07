@@ -2,6 +2,7 @@ import { AuthCard } from "@/components/features/auth/AuthCard";
 import { updateProfile } from "@/app/settings/actions";
 import { safeDecodeURIComponent } from "@/lib/url";
 import { Link } from "@/i18n/navigation";
+import NextLink from "next/link";
 import { getTranslations } from "next-intl/server";
 import { routing, type AppLocale } from "@/i18n/routing";
 import { getErrorMessageKey } from "@/lib/errors";
@@ -18,16 +19,25 @@ import {
   signOutOtherSessions,
   updateConsents,
 } from "@/app/settings/security-actions";
+import {
+  confirmAccountDeletion,
+  requestAccountDeletion,
+} from "@/app/settings/account-actions";
 import { getSessionIdFromAccessToken } from "@/lib/auth/session";
 import { upsertUserSession } from "@/lib/auth/session-tracking";
 import { headers } from "next/headers";
 import { getClientIpFromHeaders } from "@/lib/rate-limit/headers";
-import type { UserConsent, UserSession } from "@/types/security";
+import type {
+  AccountDeletionRequest,
+  UserConsent,
+  UserSession,
+} from "@/types/security";
 import type { AuditLogEntry } from "@/types/security";
 
 type SettingsSearchParams = {
   error?: string;
   success?: string;
+  accountDeletionRequested?: string;
 };
 
 interface SettingsPageProps {
@@ -55,6 +65,7 @@ export default async function SettingsPage({
     getTranslations({ locale, namespace: "usage" }),
     getTranslations({ locale, namespace: "dashboard" }),
   ]);
+  const deletionConfirmPhrase = t("deletionConfirmPhrase");
 
   const [{ data: freshProfile }, { data: subscription }] = await Promise.all([
     supabase
@@ -70,6 +81,8 @@ export default async function SettingsPage({
   ]);
 
   const hasSuccess = resolvedSearchParams.success === "1";
+  const hasDeletionRequested =
+    resolvedSearchParams.accountDeletionRequested === "1";
   const errorCode = safeDecodeURIComponent(resolvedSearchParams.error);
   const errorKey = getErrorMessageKey(errorCode);
   const errorMessage = errorKey ? tErrors(errorKey) : null;
@@ -141,31 +154,52 @@ export default async function SettingsPage({
     .eq("user_id", userId)
     .lt("last_seen_at", staleCutoff);
 
-  const [{ data: consents }, { data: sessions }, { data: auditLogs }] =
-    await Promise.all([
-      supabase
-        .from("user_consents")
-        .select(
-          "user_id, analytics_enabled, marketing_enabled, terms_accepted_at, privacy_accepted_at",
-        )
-        .eq("user_id", userId)
-        .maybeSingle<UserConsent>(),
-      supabase
-        .from("user_sessions")
-        .select(
-          "session_id, user_id, ip_address, user_agent, created_at, last_seen_at",
-        )
-        .eq("user_id", userId)
-        .order("last_seen_at", { ascending: false })
-        .returns<UserSession[]>(),
-      supabase
-        .from("audit_logs")
-        .select("id, action, created_at, ip_address")
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false })
-        .limit(10)
-        .returns<AuditLogEntry[]>(),
-    ]);
+  const [
+    { data: consents },
+    { data: sessions },
+    { data: auditLogs },
+    { data: deletionRequest },
+  ] = await Promise.all([
+    supabase
+      .from("user_consents")
+      .select(
+        "user_id, analytics_enabled, marketing_enabled, terms_accepted_at, privacy_accepted_at",
+      )
+      .eq("user_id", userId)
+      .maybeSingle<UserConsent>(),
+    supabase
+      .from("user_sessions")
+      .select(
+        "session_id, user_id, ip_address, user_agent, created_at, last_seen_at",
+      )
+      .eq("user_id", userId)
+      .order("last_seen_at", { ascending: false })
+      .returns<UserSession[]>(),
+    supabase
+      .from("audit_logs")
+      .select("id, action, created_at, ip_address")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .limit(10)
+      .returns<AuditLogEntry[]>(),
+    supabase
+      .from("account_deletion_requests")
+      .select("user_id, token, requested_at, expires_at, confirmed_at")
+      .eq("user_id", userId)
+      .maybeSingle<AccountDeletionRequest>(),
+  ]);
+
+  const now = new Date().getTime();
+  const deletionRequestActive =
+    deletionRequest !== null &&
+    new Date(deletionRequest.expires_at).getTime() > now;
+  const deletionRequestExpired =
+    deletionRequest !== null && !deletionRequestActive;
+  const formattedDeletionExpires =
+    deletionRequestActive && deletionRequest
+      ? dateFormatter.format(new Date(deletionRequest.expires_at))
+      : null;
+  const deletionRequestToken = deletionRequest?.token ?? "";
 
   return (
     <AuthCard title={t("title")} subtitle={t("subtitle")}>
@@ -450,6 +484,96 @@ export default async function SettingsPage({
         ) : (
           <p className="text-sm text-base-content/70">{t("auditLogsEmpty")}</p>
         )}
+      </div>
+
+      <div className="divider text-xs uppercase" id="account">
+        {t("dataTitle")}
+      </div>
+      <div className="space-y-4 text-sm text-base-content/80">
+        <div className="space-y-2">
+          <div className="font-semibold text-base-content">
+            {t("dataExportTitle")}
+          </div>
+          <p className="text-sm text-base-content/70">
+            {t("dataExportSubtitle")}
+          </p>
+          <NextLink
+            href="/api/account/export"
+            className="btn btn-outline btn-sm"
+            prefetch={false}
+          >
+            {t("dataExportCta")}
+          </NextLink>
+        </div>
+        <div className="rounded border border-error/30 bg-error/5 p-4 text-sm text-base-content/80">
+          <div className="font-semibold text-error">{t("deletionTitle")}</div>
+          <p className="mt-1 text-sm text-base-content/70">
+            {t("deletionSubtitle")}
+          </p>
+          {hasDeletionRequested ? (
+            <div
+              className="alert alert-success mt-3 text-sm"
+              role="status"
+              aria-live="polite"
+            >
+              <span>{t("deletionRequested")}</span>
+            </div>
+          ) : null}
+          {deletionRequestActive ? (
+            <div className="mt-3 space-y-2">
+              {formattedDeletionExpires ? (
+                <p className="text-xs text-base-content/70">
+                  {t("deletionExpires", { date: formattedDeletionExpires })}
+                </p>
+              ) : null}
+              <form action={confirmAccountDeletion} className="space-y-2">
+                <input type="hidden" name="locale" value={locale} />
+                <input
+                  type="hidden"
+                  name="token"
+                  value={deletionRequestToken}
+                />
+                <label className="form-control">
+                  <span className="label-text text-sm">
+                    {t("deletionConfirmLabel", {
+                      phrase: deletionConfirmPhrase,
+                    })}
+                  </span>
+                  <input
+                    type="text"
+                    name="confirmation"
+                    className="input input-bordered input-sm mt-2"
+                    placeholder={deletionConfirmPhrase}
+                    aria-describedby="deletion-confirm-help"
+                  />
+                </label>
+                <p
+                  id="deletion-confirm-help"
+                  className="text-xs text-base-content/60"
+                >
+                  {t("deletionConfirmHelp")}
+                </p>
+                <button type="submit" className="btn btn-error btn-sm">
+                  {t("deletionConfirmCta")}
+                </button>
+              </form>
+            </div>
+          ) : (
+            <div className="mt-3 space-y-2">
+              {deletionRequestExpired ? (
+                <p className="text-xs text-base-content/70">
+                  {t("deletionExpired")}
+                </p>
+              ) : null}
+              <form action={requestAccountDeletion}>
+                <input type="hidden" name="locale" value={locale} />
+                <button type="submit" className="btn btn-error btn-sm">
+                  {t("deletionRequestCta")}
+                </button>
+              </form>
+            </div>
+          )}
+        </div>
       </div>
 
       <p className="text-sm text-center text-base-content/70">

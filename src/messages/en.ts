@@ -40,6 +40,20 @@ const messages = {
       "This plan is currently unavailable. Please choose another plan.",
     checkoutUnavailable:
       "We could not start the checkout session. Please try again.",
+    dataExportFailed:
+      "We could not generate your data export. Please try again.",
+    deletionRequestFailed:
+      "We could not start the deletion flow. Please try again.",
+    deletionConfirmationRequired:
+      "Please enter the confirmation phrase to continue.",
+    deletionConfirmationMismatch:
+      "The confirmation phrase did not match. Please try again.",
+    deletionRequestInvalid:
+      "We could not find a valid deletion request. Please start again.",
+    deletionRequestExpired:
+      "Your deletion request expired. Please request a new one.",
+    deletionConfirmFailed:
+      "We could not delete your account. Please try again.",
     unknown: "Something went wrong. Please try again.",
   },
   nav: {
@@ -284,6 +298,30 @@ const messages = {
     auditLogsTitle: "Audit logs",
     auditLogsSubtitle: "Recent security events for your account.",
     auditLogsEmpty: "No audit events recorded yet.",
+    dataTitle: "Data and privacy",
+    dataExportTitle: "Export your data",
+    dataExportSubtitle:
+      "Download a JSON archive of your profile, billing, and usage data.",
+    dataExportCta: "Download data export",
+    deletionTitle: "Delete account",
+    deletionSubtitle:
+      "This permanently deletes your account and removes or anonymizes your data.",
+    deletionRequestCta: "Request account deletion",
+    deletionRequested: "Deletion request created. Confirm below to finish.",
+    deletionExpires: "This request expires on {date}.",
+    deletionExpired:
+      "Your previous deletion request expired. Request a new one to continue.",
+    deletionConfirmPhrase: "DELETE",
+    deletionConfirmLabel: "Type {phrase} to confirm",
+    deletionConfirmHelp: "This action is permanent and cannot be undone.",
+    deletionConfirmCta: "Delete my account",
+  },
+  accountDeleted: {
+    title: "Account deleted",
+    subtitle: "Your account has been removed.",
+    body: "Your profile, billing, and usage data have been deleted or anonymized.",
+    backToHome: "Back to home",
+    createAccount: "Create a new account",
   },
   usage: {
     title: "Usage",

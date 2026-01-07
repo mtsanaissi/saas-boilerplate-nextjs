@@ -3,36 +3,6 @@
   "version": 1,
   "tasks": [
     {
-      "id": "T-033",
-      "title": "Account deletion + data export",
-      "description": "Add user-facing flows for account deletion and data export, with server actions and audit logging. Add tests for export contents and deletion side effects using local Supabase.",
-      "status": "pending",
-      "createdAt": "2026-01-05",
-      "completedAt": null,
-      "acceptanceCriteria": [
-        {
-          "text": "Users can request account deletion and confirm via a gated flow",
-          "done": false
-        },
-        {
-          "text": "A data export endpoint provides a user-owned archive of profile, billing, and usage data",
-          "done": false
-        },
-        {
-          "text": "Deletion and export events are recorded in audit logs",
-          "done": false
-        },
-        {
-          "text": "Tests verify export includes profile, billing, and usage sections for the requesting user",
-          "done": false
-        },
-        {
-          "text": "Tests verify deletion clears or anonymizes user data and records an audit log entry",
-          "done": false
-        }
-      ]
-    },
-    {
       "id": "T-034",
       "title": "Email change flow",
       "description": "Provide a secure email change flow with verification and localized UI messaging. Add tests for the request and confirmation paths.",
@@ -850,6 +820,36 @@
         },
         {
           "text": "Stripe webhook tests use real event fixtures and assert DB writes/updates via Supabase admin client",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-033",
+      "title": "Account deletion + data export",
+      "description": "Add user-facing flows for account deletion and data export, with server actions and audit logging. Add tests for export contents and deletion side effects using local Supabase.",
+      "status": "done",
+      "createdAt": "2026-01-05",
+      "completedAt": "2026-01-07",
+      "acceptanceCriteria": [
+        {
+          "text": "Users can request account deletion and confirm via a gated flow",
+          "done": true
+        },
+        {
+          "text": "A data export endpoint provides a user-owned archive of profile, billing, and usage data",
+          "done": true
+        },
+        {
+          "text": "Deletion and export events are recorded in audit logs",
+          "done": true
+        },
+        {
+          "text": "Tests verify export includes profile, billing, and usage sections for the requesting user",
+          "done": true
+        },
+        {
+          "text": "Tests verify deletion clears or anonymizes user data and records an audit log entry",
           "done": true
         }
       ]

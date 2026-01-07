@@ -21,6 +21,13 @@ export const errorCodeToMessageKey = {
   invalid_plan: "invalidPlan",
   plan_not_available: "planNotAvailable",
   checkout_unavailable: "checkoutUnavailable",
+  data_export_failed: "dataExportFailed",
+  deletion_request_failed: "deletionRequestFailed",
+  deletion_confirmation_required: "deletionConfirmationRequired",
+  deletion_confirmation_mismatch: "deletionConfirmationMismatch",
+  deletion_request_invalid: "deletionRequestInvalid",
+  deletion_request_expired: "deletionRequestExpired",
+  deletion_confirm_failed: "deletionConfirmFailed",
 } as const;
 
 export type ErrorCode = keyof typeof errorCodeToMessageKey;
