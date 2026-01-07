@@ -1,0 +1,30 @@
+{
+  "id": "evt_subscription_updated_456",
+  "object": "event",
+  "type": "customer.subscription.updated",
+  "created": 1700000100,
+  "livemode": false,
+  "data": {
+    "object": {
+      "id": "sub_123",
+      "object": "subscription",
+      "customer": "cus_123",
+      "status": "active",
+      "cancel_at_period_end": false,
+      "current_period_end": 1702592000,
+      "items": {
+        "data": [
+          {
+            "price": {
+              "id": "price_starter"
+            },
+            "current_period_end": 1702592000
+          }
+        ]
+      },
+      "metadata": {
+        "supabase_user_id": "user-123"
+      }
+    }
+  }
+}

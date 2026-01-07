@@ -3,32 +3,6 @@
   "version": 1,
   "tasks": [
     {
-      "id": "T-032",
-      "title": "Add tests for Stripe webhook + usage API",
-      "description": "Expand test coverage for webhook handling, usage consumption, and rate-limiting edge cases. Use fixtures for Stripe payloads and minimize mocking to API boundaries only.",
-      "status": "pending",
-      "createdAt": "2026-01-05",
-      "completedAt": null,
-      "acceptanceCriteria": [
-        {
-          "text": "Stripe webhook handler tests cover event idempotency and subscription updates",
-          "done": false
-        },
-        {
-          "text": "Usage consume API tests cover limit exceeded and invalid payloads",
-          "done": false
-        },
-        {
-          "text": "Rate-limit behavior is tested for at least one auth or API route",
-          "done": false
-        },
-        {
-          "text": "Stripe webhook tests use real event fixtures and assert DB writes/updates via Supabase admin client",
-          "done": false
-        }
-      ]
-    },
-    {
       "id": "T-033",
       "title": "Account deletion + data export",
       "description": "Add user-facing flows for account deletion and data export, with server actions and audit logging. Add tests for export contents and deletion side effects using local Supabase.",
@@ -850,6 +824,32 @@
         },
         {
           "text": "Tests cover rate-limit service failure path (non-rate_limited error) and verify the configured allow/deny behavior",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-032",
+      "title": "Add tests for Stripe webhook + usage API",
+      "description": "Expand test coverage for webhook handling, usage consumption, and rate-limiting edge cases. Use fixtures for Stripe payloads and minimize mocking to API boundaries only.",
+      "status": "done",
+      "createdAt": "2026-01-05",
+      "completedAt": "2026-01-07",
+      "acceptanceCriteria": [
+        {
+          "text": "Stripe webhook handler tests cover event idempotency and subscription updates",
+          "done": true
+        },
+        {
+          "text": "Usage consume API tests cover limit exceeded and invalid payloads",
+          "done": true
+        },
+        {
+          "text": "Rate-limit behavior is tested for at least one auth or API route",
+          "done": true
+        },
+        {
+          "text": "Stripe webhook tests use real event fixtures and assert DB writes/updates via Supabase admin client",
           "done": true
         }
       ]
