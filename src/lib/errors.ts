@@ -11,6 +11,8 @@ export const errorCodeToMessageKey = {
   resend_failed: "resendFailed",
   invalid_session: "invalidSession",
   profile_update_failed: "profileUpdateFailed",
+  email_change_failed: "emailChangeFailed",
+  email_change_same: "emailChangeSame",
   access_denied: "accessDenied",
   upgrade_required: "upgradeRequired",
   unauthorized: "unauthorized",

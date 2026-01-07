@@ -3,32 +3,6 @@
   "version": 1,
   "tasks": [
     {
-      "id": "T-034",
-      "title": "Email change flow",
-      "description": "Provide a secure email change flow with verification and localized UI messaging. Add tests for the request and confirmation paths.",
-      "status": "pending",
-      "createdAt": "2026-01-05",
-      "completedAt": null,
-      "acceptanceCriteria": [
-        {
-          "text": "Users can request an email change and confirm via Supabase verification",
-          "done": false
-        },
-        {
-          "text": "Audit logs capture email change requests and completions",
-          "done": false
-        },
-        {
-          "text": "UI shows clear success and error states using i18n keys",
-          "done": false
-        },
-        {
-          "text": "Tests cover email change request action and confirmation callback behavior",
-          "done": false
-        }
-      ]
-    },
-    {
       "id": "T-035",
       "title": "Security hardening: email verification + MFA",
       "description": "Add email-verified enforcement on protected routes and an optional MFA setup flow. Add tests for verification gating and MFA enrollment state transitions.",
@@ -850,6 +824,32 @@
         },
         {
           "text": "Tests verify deletion clears or anonymizes user data and records an audit log entry",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-034",
+      "title": "Email change flow",
+      "description": "Provide a secure email change flow with verification and localized UI messaging. Add tests for the request and confirmation paths.",
+      "status": "done",
+      "createdAt": "2026-01-05",
+      "completedAt": "2026-01-07",
+      "acceptanceCriteria": [
+        {
+          "text": "Users can request an email change and confirm via Supabase verification",
+          "done": true
+        },
+        {
+          "text": "Audit logs capture email change requests and completions",
+          "done": true
+        },
+        {
+          "text": "UI shows clear success and error states using i18n keys",
+          "done": true
+        },
+        {
+          "text": "Tests cover email change request action and confirmation callback behavior",
           "done": true
         }
       ]

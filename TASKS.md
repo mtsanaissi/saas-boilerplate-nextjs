@@ -8,7 +8,6 @@ Do not hand-edit this file. To edit tasks, update `tasks/tasks.json` and run:
 
 ---
 
-- T-034 - [PENDING] - Email change flow
 - T-035 - [PENDING] - Security hardening: email verification + MFA
 - T-036 - [PENDING] - Billing UX improvements
 - T-037 - [PENDING] - Env validation and feature flags
@@ -44,3 +43,4 @@ Do not hand-edit this file. To edit tasks, update `tasks/tasks.json` and run:
 - T-031 - [DONE] - Harden auth rate-limit failure handling
 - T-032 - [DONE] - Add tests for Stripe webhook + usage API
 - T-033 - [DONE] - Account deletion + data export
+- T-034 - [DONE] - Email change flow

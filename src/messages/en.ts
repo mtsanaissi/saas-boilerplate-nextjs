@@ -24,6 +24,9 @@ const messages = {
       "Your session has expired. Please request a new link and try again.",
     profileUpdateFailed:
       "We could not save your profile changes. Please try again.",
+    emailChangeFailed: "We could not start the email change. Please try again.",
+    emailChangeSame:
+      "That is already your current email. Please enter a new address.",
     accessDenied: "You do not have access to this feature.",
     upgradeRequired:
       "This feature requires an upgraded plan. Please choose a plan to continue.",
@@ -268,6 +271,16 @@ const messages = {
     localeLabel: "Preferred locale",
     save: "Save changes",
     success: "Your profile has been updated.",
+    emailTitle: "Email address",
+    emailSubtitle: "Update the email used for sign-in.",
+    currentEmailLabel: "Current email",
+    newEmailLabel: "New email",
+    newEmailPlaceholder: "you@example.com",
+    emailChangeHelp:
+      "We will send a verification link to the new email address.",
+    emailChangeCta: "Request email change",
+    emailChangeRequested: "Check your new email address to confirm the change.",
+    emailChangeConfirmed: "Your email address has been updated.",
     backToDashboard: "Back to dashboard",
     billingTitle: "Billing",
     billingSubtitle: "Manage your subscription and payment details.",

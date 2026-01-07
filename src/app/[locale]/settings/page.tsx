@@ -23,6 +23,7 @@ import {
   confirmAccountDeletion,
   requestAccountDeletion,
 } from "@/app/settings/account-actions";
+import { requestEmailChange } from "@/app/settings/email-actions";
 import { getSessionIdFromAccessToken } from "@/lib/auth/session";
 import { upsertUserSession } from "@/lib/auth/session-tracking";
 import { headers } from "next/headers";
@@ -38,6 +39,8 @@ type SettingsSearchParams = {
   error?: string;
   success?: string;
   accountDeletionRequested?: string;
+  emailChangeRequested?: string;
+  emailChange?: string;
 };
 
 interface SettingsPageProps {
@@ -54,7 +57,7 @@ export default async function SettingsPage({
     searchParams ?? Promise.resolve<SettingsSearchParams>({}),
   ]);
 
-  const { supabase, userId, profile } = await requireProfile(
+  const { supabase, userId, profile, email } = await requireProfile(
     locale,
     "/settings",
   );
@@ -83,6 +86,9 @@ export default async function SettingsPage({
   const hasSuccess = resolvedSearchParams.success === "1";
   const hasDeletionRequested =
     resolvedSearchParams.accountDeletionRequested === "1";
+  const hasEmailChangeRequested =
+    resolvedSearchParams.emailChangeRequested === "1";
+  const hasEmailChangeConfirmed = resolvedSearchParams.emailChange === "1";
   const errorCode = safeDecodeURIComponent(resolvedSearchParams.error);
   const errorKey = getErrorMessageKey(errorCode);
   const errorMessage = errorKey ? tErrors(errorKey) : null;
@@ -290,6 +296,56 @@ export default async function SettingsPage({
           </button>
         </div>
       </form>
+
+      <div className="divider text-xs uppercase" id="email">
+        {t("emailTitle")}
+      </div>
+      <div className="space-y-3 text-sm text-base-content/80">
+        <p className="text-sm text-base-content/70">{t("emailSubtitle")}</p>
+        <p>
+          {t("currentEmailLabel")}:{" "}
+          <span className="font-semibold">{email ?? t("unknownValue")}</span>
+        </p>
+        {hasEmailChangeRequested ? (
+          <div
+            className="alert alert-success text-sm"
+            role="status"
+            aria-live="polite"
+          >
+            <span>{t("emailChangeRequested")}</span>
+          </div>
+        ) : null}
+        {hasEmailChangeConfirmed ? (
+          <div
+            className="alert alert-success text-sm"
+            role="status"
+            aria-live="polite"
+          >
+            <span>{t("emailChangeConfirmed")}</span>
+          </div>
+        ) : null}
+        <form action={requestEmailChange} className="space-y-2">
+          <input type="hidden" name="locale" value={locale} />
+          <label className="form-control">
+            <span className="label-text text-sm">{t("newEmailLabel")}</span>
+            <input
+              id="newEmail"
+              type="email"
+              name="newEmail"
+              className="input input-bordered w-full"
+              placeholder={t("newEmailPlaceholder")}
+              autoComplete="email"
+              aria-describedby="email-change-help"
+            />
+          </label>
+          <p id="email-change-help" className="text-xs text-base-content/60">
+            {t("emailChangeHelp")}
+          </p>
+          <button type="submit" className="btn btn-outline btn-sm">
+            {t("emailChangeCta")}
+          </button>
+        </form>
+      </div>
 
       <div className="divider text-xs uppercase">{t("billingTitle")}</div>
       <div className="space-y-2 text-sm text-base-content/80">

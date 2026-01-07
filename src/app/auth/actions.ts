@@ -9,6 +9,7 @@ import { logAuditEvent } from "@/lib/observability/audit";
 import { logError, logWarn } from "@/lib/observability/logger";
 import { getRequestId } from "@/lib/observability/request-id";
 import { headers } from "next/headers";
+import { buildAuthCallbackUrl } from "@/lib/auth/callback";
 
 function getRedirectTarget(formData: FormData, fallback: string): string {
   const redirectTo = formData.get("redirectTo");
@@ -22,16 +23,6 @@ function getRedirectTarget(formData: FormData, fallback: string): string {
 function getLocale(formData: FormData): string {
   const locale = formData.get("locale");
   return typeof locale === "string" && locale.length > 0 ? locale : "en";
-}
-
-function getAppUrl(): string {
-  return process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-}
-
-function buildAuthCallbackUrl(locale: string, nextPath: string): string {
-  const callbackUrl = new URL("/auth/callback", getAppUrl());
-  callbackUrl.searchParams.set("next", `/${locale}${nextPath}`);
-  return callbackUrl.toString();
 }
 
 async function getUserAgent(): Promise<string | null> {

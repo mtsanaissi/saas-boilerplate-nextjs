@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { routing } from "@/i18n/routing";
 import { upsertUserSession } from "@/lib/auth/session-tracking";
 import { getClientIpFromRequest } from "@/lib/rate-limit/headers";
+import { logAuditEvent } from "@/lib/observability/audit";
 
 function isSafeNextPath(path: string): boolean {
   return path.startsWith("/") && !path.startsWith("//");
@@ -14,6 +15,9 @@ export async function GET(request: NextRequest) {
   const nextPath =
     requestUrl.searchParams.get("next") ??
     `/${routing.defaultLocale}/dashboard`;
+  const flowType = requestUrl.searchParams.get("type");
+  const isEmailChange =
+    flowType === "email_change" || nextPath.includes("emailChange=1");
 
   if (!code) {
     const fallback = `/${routing.defaultLocale}/auth/login?error=invalid_session`;
@@ -40,6 +44,16 @@ export async function GET(request: NextRequest) {
     ipAddress: getClientIpFromRequest(request),
     userAgent: request.headers.get("user-agent"),
   });
+
+  if (isEmailChange && userData.user) {
+    await logAuditEvent({
+      userId: userData.user.id,
+      action: "account.email_change_confirmed",
+      ipAddress: getClientIpFromRequest(request),
+      userAgent: request.headers.get("user-agent"),
+      metadata: { email: userData.user.email ?? null },
+    });
+  }
 
   const destination = isSafeNextPath(nextPath)
     ? nextPath
