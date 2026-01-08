@@ -8,7 +8,6 @@ Do not hand-edit this file. To edit tasks, update `tasks/tasks.json` and run:
 
 ---
 
-- T-042 - [PENDING] - Plans page CTA: reflect active Starter plan
 - T-043 - [PENDING] - Settings theme switcher (light/dark/system)
 - T-001 - [DONE] - Localize user-facing errors via error codes
 - T-002 - [DONE] - Forms + alerts accessibility pass
@@ -48,3 +47,4 @@ Do not hand-edit this file. To edit tasks, update `tasks/tasks.json` and run:
 - T-039 - [DONE] - Seed and reset scripts for local dev
 - T-040 - [DONE] - Navbar layout: align sign-out + add mobile menu
 - T-041 - [DONE] - Settings page responsive two-column layout
+- T-042 - [DONE] - Plans page CTA: reflect active Starter plan

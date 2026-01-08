@@ -3,28 +3,6 @@
   "version": 1,
   "tasks": [
     {
-      "id": "T-042",
-      "title": "Plans page CTA: reflect active Starter plan",
-      "description": "When a user is already on the Starter plan, the Free plan card should show a downgrade action and the Starter plan card should show \"Go to dashboard\" instead of \"Subscribe\". Align plan CTA labels with the active subscription state and confirm behavior for both desktop and mobile.",
-      "status": "pending",
-      "createdAt": "2026-01-08",
-      "completedAt": null,
-      "acceptanceCriteria": [
-        {
-          "text": "Active Starter plan shows \"Go to dashboard\" CTA on the Starter plan card",
-          "done": false
-        },
-        {
-          "text": "Free plan card shows a \"Downgrade\" CTA when the user is on Starter",
-          "done": false
-        },
-        {
-          "text": "CTA logic is consistent across breakpoints and states",
-          "done": false
-        }
-      ]
-    },
-    {
       "id": "T-043",
       "title": "Settings theme switcher (light/dark/system)",
       "description": "Add a theme selector in settings that supports light, dark, and system modes using DaisyUI's theme system. Persist user preference, respect system preference when set to system, and apply the theme globally via the html data-theme attribute.",
@@ -942,6 +920,28 @@
         },
         {
           "text": "Spacing and max-widths reduce vertical scroll without harming readability",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-042",
+      "title": "Plans page CTA: reflect active Starter plan",
+      "description": "When a user is already on the Starter plan, the Free plan card should show a downgrade action and the Starter plan card should show \"Go to dashboard\" instead of \"Subscribe\". Align plan CTA labels with the active subscription state and confirm behavior for both desktop and mobile.",
+      "status": "done",
+      "createdAt": "2026-01-08",
+      "completedAt": "2026-01-08",
+      "acceptanceCriteria": [
+        {
+          "text": "Active Starter plan shows \"Go to dashboard\" CTA on the Starter plan card",
+          "done": true
+        },
+        {
+          "text": "Free plan card shows a \"Downgrade\" CTA when the user is on Starter",
+          "done": true
+        },
+        {
+          "text": "CTA logic is consistent across breakpoints and states",
           "done": true
         }
       ]

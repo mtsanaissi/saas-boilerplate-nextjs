@@ -7,6 +7,9 @@ import { getTranslations } from "next-intl/server";
 import messages from "@/messages/en";
 import type { AppLocale } from "@/i18n/routing";
 import { getErrorMessageKey } from "@/lib/errors";
+import type { PlanId, PlanStatus } from "@/types/billing";
+import type { UserProfile } from "@/types/profile";
+import { createBillingPortalSession } from "@/app/billing/actions";
 
 type PlansSearchParams = {
   success?: string;
@@ -36,6 +39,13 @@ export default async function PlansPage({
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  const { data: profile } = user
+    ? await supabase
+        .from("profiles")
+        .select("plan_id, plan_status")
+        .eq("id", user.id)
+        .maybeSingle<UserProfile>()
+    : { data: null };
 
   const hasSuccess = resolvedSearchParams.success === "1";
   const hasCanceled = resolvedSearchParams.canceled === "1";
@@ -45,6 +55,11 @@ export default async function PlansPage({
   const errorMessage = errorKey ? tErrors(errorKey) : null;
 
   const cards = messages.plans.cards;
+  const planId = (profile?.plan_id as PlanId) ?? "free";
+  const planStatus = (profile?.plan_status as PlanStatus) ?? "free";
+  const isActiveStarter =
+    planId === "starter" &&
+    (planStatus === "trialing" || planStatus === "active");
 
   return (
     <div className="min-h-screen bg-base-200 py-10 px-4">
@@ -175,14 +190,37 @@ export default async function PlansPage({
 
                   <div className="card-actions mt-4">
                     {plan.id === "free" ? (
+                      isActiveStarter ? (
+                        <form
+                          action={createBillingPortalSession}
+                          className="w-full"
+                        >
+                          <input type="hidden" name="locale" value={locale} />
+                          <button
+                            type="submit"
+                            className="btn btn-outline w-full"
+                          >
+                            {cards.free.ctaDowngrade}
+                          </button>
+                        </form>
+                      ) : (
+                        <Link
+                          href={user ? "/dashboard" : "/auth/register"}
+                          locale={locale}
+                          className="btn btn-outline w-full"
+                        >
+                          {user
+                            ? cards.free.ctaSignedIn
+                            : cards.free.ctaSignedOut}
+                        </Link>
+                      )
+                    ) : plan.id === "starter" && isActiveStarter ? (
                       <Link
-                        href={user ? "/dashboard" : "/auth/register"}
+                        href="/dashboard"
                         locale={locale}
-                        className="btn btn-outline w-full"
+                        className="btn btn-primary w-full"
                       >
-                        {user
-                          ? cards.free.ctaSignedIn
-                          : cards.free.ctaSignedOut}
+                        {cards.starter.ctaActive}
                       </Link>
                     ) : (
                       <form action={createCheckoutSession} className="w-full">
