@@ -70,6 +70,28 @@ pnpm test
 
 See `TESTING.md` for the testing strategy and mocking guidance.
 
+### 3c. Local Supabase seed/reset
+
+Use the scripts below to reset the local database and seed demo data (users, billing, usage).
+
+```bash
+pnpm db:reset
+pnpm db:seed
+```
+
+Dry-run mode prints the plan without changing data:
+
+```bash
+pnpm db:reset -- --dry-run
+pnpm db:seed -- --dry-run
+```
+
+To reset and then seed in one command:
+
+```bash
+pnpm db:reset -- --seed
+```
+
 ### 4. Configure Stripe webhooks
 
 To keep subscription status in sync, configure a Stripe webhook that points to:

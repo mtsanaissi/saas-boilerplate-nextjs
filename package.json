@@ -10,6 +10,8 @@
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
     "test": "vitest run",
+    "db:seed": "node scripts/db-seed.mjs",
+    "db:reset": "node scripts/db-reset.mjs",
     "tasks:check": "node scripts/tasks.mjs check",
     "tasks:fmt": "node scripts/tasks.mjs fmt",
     "tasks:md": "node scripts/tasks.mjs write-md",

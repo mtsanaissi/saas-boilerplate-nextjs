@@ -74,7 +74,7 @@ export default async function SettingsPage({
   const [{ data: freshProfile }, { data: subscription }] = await Promise.all([
     supabase
       .from("profiles")
-      .select("id, display_name, avatar_url, locale")
+      .select("id, display_name, avatar_url, locale, plan_id, plan_status")
       .eq("id", userId)
       .maybeSingle<UserProfile>(),
     supabase

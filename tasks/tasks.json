@@ -3,32 +3,6 @@
   "version": 1,
   "tasks": [
     {
-      "id": "T-039",
-      "title": "Seed and reset scripts for local dev",
-      "description": "Add scripts to seed demo data and reset local Supabase state for faster onboarding. Include a dry-run mode and a smoke test that exercises it.",
-      "status": "pending",
-      "createdAt": "2026-01-05",
-      "completedAt": null,
-      "acceptanceCriteria": [
-        {
-          "text": "A script seeds demo users, billing, and usage data in local Supabase",
-          "done": false
-        },
-        {
-          "text": "A reset script restores local DB to a clean state",
-          "done": false
-        },
-        {
-          "text": "README documents how to run seed/reset scripts",
-          "done": false
-        },
-        {
-          "text": "Dry-run mode produces a non-destructive plan and a smoke test asserts it exits successfully",
-          "done": false
-        }
-      ]
-    },
-    {
       "id": "T-040",
       "title": "Navbar layout: align sign-out + add mobile menu",
       "description": "Fix navbar layout so the sign-out control sits in the same row as the other actions. For small screens, move actions into a DaisyUI menu (e.g., dropdown or drawer) to prioritize the title. Confirm latest DaisyUI component guidance via Context7 before implementing.",
@@ -894,6 +868,32 @@
         },
         {
           "text": "Health endpoint test asserts status code and JSON payload shape",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-039",
+      "title": "Seed and reset scripts for local dev",
+      "description": "Add scripts to seed demo data and reset local Supabase state for faster onboarding. Include a dry-run mode and a smoke test that exercises it.",
+      "status": "done",
+      "createdAt": "2026-01-05",
+      "completedAt": "2026-01-08",
+      "acceptanceCriteria": [
+        {
+          "text": "A script seeds demo users, billing, and usage data in local Supabase",
+          "done": true
+        },
+        {
+          "text": "A reset script restores local DB to a clean state",
+          "done": true
+        },
+        {
+          "text": "README documents how to run seed/reset scripts",
+          "done": true
+        },
+        {
+          "text": "Dry-run mode produces a non-destructive plan and a smoke test asserts it exits successfully",
           "done": true
         }
       ]
