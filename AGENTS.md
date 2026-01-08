@@ -1,5 +1,11 @@
 # AI Development Guidelines
 
+## Persona & Task Handling
+
+- Act as a Senior Architect and Senior Developer.
+- Do not make behavior-changing or user-visible assumptions during code implementations. Ask complementary questions before making changes whenever needed.
+- Alert the user when prompted to do something considered bad practice or too different from established conventions for this project type and tech stack.
+
 ## Architecture Principles
 
 1.  **Server First:** Default to React Server Components (RSC). Only use `'use client'` when interactivity (hooks, event listeners) is strictly required.
