@@ -8,7 +8,6 @@ Do not hand-edit this file. To edit tasks, update `tasks/tasks.json` and run:
 
 ---
 
-- T-038 - [PENDING] - Health endpoint + error boundaries
 - T-039 - [PENDING] - Seed and reset scripts for local dev
 - T-040 - [PENDING] - Navbar layout: align sign-out + add mobile menu
 - T-041 - [PENDING] - Settings page responsive two-column layout
@@ -46,3 +45,4 @@ Do not hand-edit this file. To edit tasks, update `tasks/tasks.json` and run:
 - T-035 - [DONE] - Security hardening: email verification
 - T-036 - [DONE] - Billing UX improvements
 - T-037 - [DONE] - Env validation and feature flags
+- T-038 - [DONE] - Health endpoint + error boundaries

@@ -416,6 +416,20 @@ const messages = {
       envLoaded: "Env vars loaded",
       missingEnvVars: "Missing env vars",
     },
+    errorBoundary: {
+      title: "We hit a snag",
+      subtitle: "Something went wrong while loading this page.",
+      tryAgain: "Try again",
+      goHome: "Go to home",
+      digestLabel: "Error reference",
+      supportHint:
+        "If this keeps happening, share the error reference with support.",
+    },
+    notFound: {
+      title: "Page not found",
+      subtitle: "We could not find the page you were looking for.",
+      goHome: "Go to home",
+    },
   },
   dev: {
     index: {

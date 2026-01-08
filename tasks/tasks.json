@@ -3,32 +3,6 @@
   "version": 1,
   "tasks": [
     {
-      "id": "T-038",
-      "title": "Health endpoint + error boundaries",
-      "description": "Add basic operational endpoints and error boundaries for runtime resilience. Add a route test for the health endpoint response.",
-      "status": "pending",
-      "createdAt": "2026-01-05",
-      "completedAt": null,
-      "acceptanceCriteria": [
-        {
-          "text": "Health check route returns service status and dependency checks",
-          "done": false
-        },
-        {
-          "text": "app/error.tsx and app/not-found.tsx provide localized fallback UI",
-          "done": false
-        },
-        {
-          "text": "Errors are logged with request IDs where available",
-          "done": false
-        },
-        {
-          "text": "Health endpoint test asserts status code and JSON payload shape",
-          "done": false
-        }
-      ]
-    },
-    {
       "id": "T-039",
       "title": "Seed and reset scripts for local dev",
       "description": "Add scripts to seed demo data and reset local Supabase state for faster onboarding. Include a dry-run mode and a smoke test that exercises it.",
@@ -894,6 +868,32 @@
         },
         {
           "text": "Unit tests verify missing required envs throw and optional flags default correctly",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-038",
+      "title": "Health endpoint + error boundaries",
+      "description": "Add basic operational endpoints and error boundaries for runtime resilience. Add a route test for the health endpoint response.",
+      "status": "done",
+      "createdAt": "2026-01-05",
+      "completedAt": "2026-01-08",
+      "acceptanceCriteria": [
+        {
+          "text": "Health check route returns service status and dependency checks",
+          "done": true
+        },
+        {
+          "text": "app/error.tsx and app/not-found.tsx provide localized fallback UI",
+          "done": true
+        },
+        {
+          "text": "Errors are logged with request IDs where available",
+          "done": true
+        },
+        {
+          "text": "Health endpoint test asserts status code and JSON payload shape",
           "done": true
         }
       ]
