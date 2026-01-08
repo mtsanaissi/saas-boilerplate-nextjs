@@ -1,8 +1,11 @@
+import { getFeatureFlags } from "@/lib/env/server";
+
 export type AnalyticsEvent = {
   name: string;
   properties?: Record<string, unknown>;
 };
 
 export function isAnalyticsEnabled(): boolean {
-  return process.env.NEXT_PUBLIC_ANALYTICS_ENABLED !== "false";
+  const { analytics } = getFeatureFlags();
+  return analytics;
 }

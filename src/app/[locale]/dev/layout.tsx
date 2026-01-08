@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { requireUser } from "@/lib/auth/guards";
 import type { AppLocale } from "@/i18n/routing";
+import { getFeatureFlags } from "@/lib/env/server";
 
 interface DevLayoutProps {
   children: React.ReactNode;
@@ -9,7 +10,7 @@ interface DevLayoutProps {
 
 export default async function DevLayout({ children, params }: DevLayoutProps) {
   const { locale } = await params;
-  const devPagesEnabled = process.env.DEV_PAGES_ENABLED === "true";
+  const { devPages: devPagesEnabled } = getFeatureFlags();
 
   if (!devPagesEnabled) {
     notFound();

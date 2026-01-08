@@ -3,32 +3,6 @@
   "version": 1,
   "tasks": [
     {
-      "id": "T-037",
-      "title": "Env validation and feature flags",
-      "description": "Add a typed env validation module and feature-flag helpers to reduce runtime config errors. Add unit tests for required/optional env parsing and flag defaults.",
-      "status": "pending",
-      "createdAt": "2026-01-05",
-      "completedAt": null,
-      "acceptanceCriteria": [
-        {
-          "text": "Required env vars are validated on boot with clear error messages",
-          "done": false
-        },
-        {
-          "text": "Feature flags are available for optional flows (billing, analytics, etc.)",
-          "done": false
-        },
-        {
-          "text": "README documents env validation and flags",
-          "done": false
-        },
-        {
-          "text": "Unit tests verify missing required envs throw and optional flags default correctly",
-          "done": false
-        }
-      ]
-    },
-    {
       "id": "T-038",
       "title": "Health endpoint + error boundaries",
       "description": "Add basic operational endpoints and error boundaries for runtime resilience. Add a route test for the health endpoint response.",
@@ -76,6 +50,58 @@
         },
         {
           "text": "Dry-run mode produces a non-destructive plan and a smoke test asserts it exits successfully",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "T-040",
+      "title": "Navbar layout: align sign-out + add mobile menu",
+      "description": "Fix navbar layout so the sign-out control sits in the same row as the other actions. For small screens, move actions into a DaisyUI menu (e.g., dropdown or drawer) to prioritize the title. Confirm latest DaisyUI component guidance via Context7 before implementing.",
+      "status": "pending",
+      "createdAt": "2026-01-08",
+      "completedAt": null,
+      "acceptanceCriteria": [
+        {
+          "text": "Sign-out action aligns in the same row as other navbar actions on desktop",
+          "done": false
+        },
+        {
+          "text": "Mobile layout prioritizes title and moves actions into a DaisyUI menu component",
+          "done": false
+        },
+        {
+          "text": "Navbar structure avoids layout shifts caused by form wrappers",
+          "done": false
+        },
+        {
+          "text": "DaisyUI component choice is validated against latest docs via Context7",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "T-041",
+      "title": "Settings page responsive two-column layout",
+      "description": "Restructure the settings page to use a two-column layout for md+ screens with left-side navigation and right-side content. Decide and implement the best small-screen layout (keep stacked or improve with a collapsible nav) based on current UX best practices.",
+      "status": "pending",
+      "createdAt": "2026-01-08",
+      "completedAt": null,
+      "acceptanceCriteria": [
+        {
+          "text": "md+ screens render a two-column layout with navigation on the left and content on the right",
+          "done": false
+        },
+        {
+          "text": "Small-screen layout is explicitly chosen (stacked or alternative) and implemented",
+          "done": false
+        },
+        {
+          "text": "Navigation remains accessible and keyboard friendly on all breakpoints",
+          "done": false
+        },
+        {
+          "text": "Spacing and max-widths reduce vertical scroll without harming readability",
           "done": false
         }
       ]
@@ -842,6 +868,32 @@
         },
         {
           "text": "If a status-mapping helper is introduced, unit tests cover every PlanStatus value",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-037",
+      "title": "Env validation and feature flags",
+      "description": "Add a typed env validation module and feature-flag helpers to reduce runtime config errors. Add unit tests for required/optional env parsing and flag defaults.",
+      "status": "done",
+      "createdAt": "2026-01-05",
+      "completedAt": "2026-01-08",
+      "acceptanceCriteria": [
+        {
+          "text": "Required env vars are validated on boot with clear error messages",
+          "done": true
+        },
+        {
+          "text": "Feature flags are available for optional flows (billing, analytics, etc.)",
+          "done": true
+        },
+        {
+          "text": "README documents env validation and flags",
+          "done": true
+        },
+        {
+          "text": "Unit tests verify missing required envs throw and optional flags default correctly",
           "done": true
         }
       ]

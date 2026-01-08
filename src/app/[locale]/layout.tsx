@@ -5,6 +5,9 @@ import { routing } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
+import { assertServerEnv, getFeatureFlags } from "@/lib/env/server";
+
+assertServerEnv();
 
 export async function generateMetadata({
   params,
@@ -40,7 +43,7 @@ export default async function RootLayout({
 }: RootLayoutProps) {
   const { locale } = await params;
   const appLocale = locale as (typeof routing.locales)[number];
-  const devPagesEnabled = process.env.DEV_PAGES_ENABLED === "true";
+  const { devPages: devPagesEnabled } = getFeatureFlags();
 
   if (!routing.locales.includes(appLocale)) {
     notFound();

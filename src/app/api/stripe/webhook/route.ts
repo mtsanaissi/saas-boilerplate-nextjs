@@ -10,6 +10,7 @@ import { rateLimitApi } from "@/lib/rate-limit/server";
 import { getRequestId } from "@/lib/observability/request-id";
 import { logInfo } from "@/lib/observability/logger";
 import { reportError } from "@/lib/observability/error-reporting";
+import { getServerEnv } from "@/lib/env/server";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -67,14 +68,17 @@ export async function POST(request: NextRequest) {
     throw error;
   }
 
+  const env = getServerEnv();
+  if (!env.featureFlags.billing) {
+    return NextResponse.json({ error: "billing_disabled" }, { status: 404 });
+  }
   const supabaseAdmin = createAdminClient();
 
   const headerStore = await headers();
   const signature = headerStore.get("stripe-signature");
 
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
-  const allowUnverified =
-    process.env.STRIPE_WEBHOOK_ALLOW_UNVERIFIED === "true";
+  const webhookSecret = env.stripeWebhookSecret;
+  const allowUnverified = env.stripeWebhookAllowUnverified === true;
   const isDev = process.env.NODE_ENV !== "production";
 
   if (!signature && !(isDev && allowUnverified)) {

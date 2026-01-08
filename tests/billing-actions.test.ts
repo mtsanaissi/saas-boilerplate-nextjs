@@ -1,6 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createRedirectError, expectRedirect } from "./helpers";
 
+const billingEnvReady = Boolean(
+  process.env.FEATURE_BILLING_ENABLED !== "false" &&
+  process.env.STRIPE_SECRET_KEY &&
+  process.env.STRIPE_WEBHOOK_SECRET &&
+  process.env.STRIPE_PRICE_STARTER_MONTHLY &&
+  process.env.STRIPE_PRICE_PRO_MONTHLY,
+);
+
+const describeBilling = billingEnvReady ? describe : describe.skip;
+
 const createClient = vi.fn();
 const stripeSessionCreate = vi.fn();
 const getStripeClient = vi.fn(() => ({
@@ -21,7 +31,7 @@ vi.mock("@/lib/stripe/server", () => ({
   getStripeClient,
 }));
 
-describe("billing actions", () => {
+describeBilling("billing actions", () => {
   beforeEach(() => {
     createClient.mockReset();
     stripeSessionCreate.mockReset();

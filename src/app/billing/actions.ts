@@ -8,6 +8,7 @@ import { routing, type AppLocale } from "@/i18n/routing";
 import { logAuditEvent } from "@/lib/observability/audit";
 import { getClientIpFromHeaders } from "@/lib/rate-limit/headers";
 import { headers } from "next/headers";
+import { getFeatureFlags } from "@/lib/env/server";
 
 function getLocale(formData: FormData): AppLocale {
   const locale = formData.get("locale");
@@ -22,6 +23,11 @@ function getLocale(formData: FormData): AppLocale {
 
 export async function createBillingPortalSession(formData: FormData) {
   const locale = getLocale(formData);
+  const { billing } = getFeatureFlags();
+  if (!billing) {
+    redirect(`/${locale}/settings?error=billing_disabled`);
+  }
+
   const supabase = await createClient();
   const {
     data: { user },

@@ -3,6 +3,16 @@ import { NextRequest } from "next/server";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
+const billingEnvReady = Boolean(
+  process.env.FEATURE_BILLING_ENABLED !== "false" &&
+  process.env.STRIPE_SECRET_KEY &&
+  process.env.STRIPE_WEBHOOK_SECRET &&
+  process.env.STRIPE_PRICE_STARTER_MONTHLY &&
+  process.env.STRIPE_PRICE_PRO_MONTHLY,
+);
+
+const describeBilling = billingEnvReady ? describe : describe.skip;
+
 const rateLimitApi = vi.hoisted(() => vi.fn());
 
 const stripeEventsUpsertMock = vi.hoisted(() => vi.fn());
@@ -92,7 +102,7 @@ async function getWebhookPost() {
   return webhookModule.POST;
 }
 
-describe("POST /api/stripe/webhook", () => {
+describeBilling("POST /api/stripe/webhook", () => {
   beforeEach(() => {
     vi.resetModules();
     rateLimitApi.mockResolvedValue(undefined);

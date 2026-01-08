@@ -1,6 +1,8 @@
 import type { Plan, PlanId } from "@/types/billing";
+import { getServerEnv } from "@/lib/env/server";
 
-const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+const env = getServerEnv();
+const appUrl = env.appUrl;
 
 export const plans: Plan[] = [
   {
@@ -10,12 +12,12 @@ export const plans: Plan[] = [
   {
     id: "starter",
     priceMonthly: 29,
-    stripePriceId: process.env.STRIPE_PRICE_STARTER_MONTHLY ?? "",
+    stripePriceId: env.stripePriceStarterMonthly ?? "",
   },
   {
     id: "pro",
     priceMonthly: 79,
-    stripePriceId: process.env.STRIPE_PRICE_PRO_MONTHLY ?? "",
+    stripePriceId: env.stripePriceProMonthly ?? "",
   },
 ];
 

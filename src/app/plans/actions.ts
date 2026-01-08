@@ -6,8 +6,14 @@ import { getStripeClient } from "@/lib/stripe/server";
 import type Stripe from "stripe";
 import { getAppBaseUrl, getPlanById } from "@/lib/stripe/plans";
 import type { PlanId } from "@/types/billing";
+import { getFeatureFlags } from "@/lib/env/server";
 
 export async function createCheckoutSession(formData: FormData) {
+  const { billing } = getFeatureFlags();
+  if (!billing) {
+    redirect("/plans?error=billing_disabled");
+  }
+
   const planIdValue = formData.get("planId");
 
   if (typeof planIdValue !== "string") {

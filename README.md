@@ -35,6 +35,19 @@ The app expects the following variables (for local development put them in `.env
 - `STRIPE_API_PROTOCOL` (optional, for local Stripe mock)
 - `NEXT_PUBLIC_APP_URL` (e.g. `http://localhost:3000`)
 
+### Env validation & feature flags
+
+On boot, the server validates required env vars and throws a clear error listing any missing keys. This prevents runtime failures caused by incomplete configuration.
+
+Feature flags let you toggle optional flows without deleting env vars:
+
+- `FEATURE_BILLING_ENABLED` (default: auto-enabled when Stripe vars are present)
+- `FEATURE_ANALYTICS_ENABLED` (default: enabled unless `NEXT_PUBLIC_ANALYTICS_ENABLED=false`)
+- `DEV_PAGES_ENABLED` (default: `false`)
+- `ERROR_REPORTING_ENABLED` (default: `false`)
+
+When billing is enabled, Stripe vars are required: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_STARTER_MONTHLY`, and `STRIPE_PRICE_PRO_MONTHLY`.
+
 ### 3. Run the dev server
 
 ```bash

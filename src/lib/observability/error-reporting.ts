@@ -1,4 +1,5 @@
 import { logError } from "@/lib/observability/logger";
+import { getFeatureFlags } from "@/lib/env/server";
 
 type ErrorReportContext = {
   requestId?: string;
@@ -8,7 +9,8 @@ type ErrorReportContext = {
 };
 
 export function reportError(error: unknown, context?: ErrorReportContext) {
-  if (process.env.ERROR_REPORTING_ENABLED !== "true") {
+  const { errorReporting } = getFeatureFlags();
+  if (!errorReporting) {
     return;
   }
 
