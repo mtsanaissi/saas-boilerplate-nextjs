@@ -1,10 +1,81 @@
 @import "tailwindcss";
 @plugin "daisyui";
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  prefersdark: false;
+  color-scheme: light;
 
-/* DaisyUI v5 Configuration (CSS Variables) */
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Core surfaces */
+  --color-base-100: oklch(100% 0 89.88);
+  --color-base-200: oklch(98.42% 0.0034 247.86);
+  --color-base-300: oklch(92.88% 0.0126 255.51);
+  --color-base-content: oklch(20.77% 0.0398 265.75);
+
+  /* Brand + semantic colors */
+  --color-primary: oklch(58.54% 0.2041 277.12);
+  --color-primary-content: oklch(100% 0 89.88);
+  --color-secondary: oklch(65.59% 0.2118 354.31);
+  --color-secondary-content: oklch(100% 0 89.88);
+  --color-accent: oklch(68.47% 0.1479 237.32);
+  --color-accent-content: oklch(100% 0 89.88);
+  --color-neutral: oklch(27.95% 0.0368 260.03);
+  --color-neutral-content: oklch(96.83% 0.0069 247.9);
+  --color-info: oklch(58.76% 0.1389 241.97);
+  --color-info-content: oklch(100% 0 89.88);
+  --color-success: oklch(69.59% 0.1491 162.48);
+  --color-success-content: oklch(100% 0 89.88);
+  --color-warning: oklch(76.86% 0.1647 70.08);
+  --color-warning-content: oklch(21.01% 0.0318 264.66);
+  --color-error: oklch(63.68% 0.2078 25.33);
+  --color-error-content: oklch(100% 0 89.88);
+
+  --radius-selector: 0.5rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
+}
+
+@plugin "daisyui/theme" {
+  name: "dark";
+  default: false;
+  prefersdark: true;
+  color-scheme: dark;
+
+  --color-base-100: oklch(21.01% 0.0318 264.66);
+  --color-base-200: oklch(20.77% 0.0398 265.75);
+  --color-base-300: oklch(27.95% 0.0368 260.03);
+  --color-base-content: oklch(92.88% 0.0126 255.51);
+
+  --color-primary: oklch(68.01% 0.1583 276.93);
+  --color-primary-content: oklch(20.77% 0.0398 265.75);
+  --color-secondary: oklch(72.53% 0.1752 349.76);
+  --color-secondary-content: oklch(20.77% 0.0398 265.75);
+  --color-accent: oklch(75.35% 0.139 232.66);
+  --color-accent-content: oklch(20.77% 0.0398 265.75);
+  --color-neutral: oklch(37.17% 0.0392 257.29);
+  --color-neutral-content: oklch(96.83% 0.0069 247.9);
+  --color-info: oklch(75.35% 0.139 232.66);
+  --color-info-content: oklch(20.77% 0.0398 265.75);
+  --color-success: oklch(77.29% 0.1535 163.22);
+  --color-success-content: oklch(20.77% 0.0398 265.75);
+  --color-warning: oklch(83.69% 0.1644 84.43);
+  --color-warning-content: oklch(20.77% 0.0398 265.75);
+  --color-error: oklch(71.06% 0.1661 22.22);
+  --color-error-content: oklch(20.77% 0.0398 265.75);
+
+  --radius-selector: 0.5rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+  --border: 1px;
+  --depth: 1;
+  --noise: 0;
 }
 
 /* Theme Customization */
@@ -16,61 +87,7 @@
 /* DaisyUI Theme Defaults + Accessibility */
 @layer base {
   :root {
-    color-scheme: light;
-
-    /* Core surfaces */
-    --color-base-100: 255 255 255;
-    --color-base-200: 248 250 252;
-    --color-base-300: 226 232 240;
-    --color-base-content: 15 23 42;
-
-    /* Brand + semantic colors */
-    --color-primary: 99 102 241;
-    --color-primary-content: 255 255 255;
-    --color-secondary: 236 72 153;
-    --color-secondary-content: 255 255 255;
-    --color-accent: 14 165 233;
-    --color-accent-content: 255 255 255;
-    --color-neutral: 30 41 59;
-    --color-neutral-content: 241 245 249;
-    --color-info: 2 132 199;
-    --color-info-content: 255 255 255;
-    --color-success: 16 185 129;
-    --color-success-content: 255 255 255;
-    --color-warning: 245 158 11;
-    --color-warning-content: 17 24 39;
-    --color-error: 239 68 68;
-    --color-error-content: 255 255 255;
-
     --focus-ring: var(--color-primary);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      color-scheme: dark;
-
-      --color-base-100: 17 24 39;
-      --color-base-200: 15 23 42;
-      --color-base-300: 30 41 59;
-      --color-base-content: 226 232 240;
-
-      --color-primary: 129 140 248;
-      --color-primary-content: 15 23 42;
-      --color-secondary: 244 114 182;
-      --color-secondary-content: 15 23 42;
-      --color-accent: 56 189 248;
-      --color-accent-content: 15 23 42;
-      --color-neutral: 51 65 85;
-      --color-neutral-content: 241 245 249;
-      --color-info: 56 189 248;
-      --color-info-content: 15 23 42;
-      --color-success: 52 211 153;
-      --color-success-content: 15 23 42;
-      --color-warning: 251 191 36;
-      --color-warning-content: 15 23 42;
-      --color-error: 248 113 113;
-      --color-error-content: 15 23 42;
-    }
   }
 
   :where(

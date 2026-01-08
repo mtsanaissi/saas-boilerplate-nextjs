@@ -36,6 +36,7 @@ import type {
 import type { AuditLogEntry } from "@/types/security";
 import { BackToTopButton } from "@/components/ui/BackToTopButton";
 import { SettingsScrollLayout } from "@/components/features/settings/SettingsScrollLayout";
+import { ThemePreferenceSelector } from "@/components/features/settings/ThemePreferenceSelector";
 
 type SettingsSearchParams = {
   error?: string;
@@ -216,6 +217,7 @@ export default async function SettingsPage({
 
   const settingsSections = [
     { id: "profile", label: t("profileTitle") },
+    { id: "theme", label: t("themeTitle") },
     { id: "email", label: t("emailTitle") },
     { id: "billing", label: t("billingTitle") },
     { id: "usage", label: tUsage("title") },
@@ -348,6 +350,24 @@ export default async function SettingsPage({
                     </div>
                   </div>
                 </form>
+              </section>
+
+              <section id="theme" className="scroll-mt-24 space-y-3">
+                <h2 className="text-lg font-semibold">{t("themeTitle")}</h2>
+                <div className="space-y-2 text-sm text-base-content/80">
+                  <p className="text-sm text-base-content/70">
+                    {t("themeSubtitle")}
+                  </p>
+                  <ThemePreferenceSelector
+                    label={t("themeLabel")}
+                    helpText={t("themeHelp")}
+                    options={{
+                      light: t("themeLight"),
+                      dark: t("themeDark"),
+                      system: t("themeSystem"),
+                    }}
+                  />
+                </div>
               </section>
 
               <section id="email" className="scroll-mt-24 space-y-3">

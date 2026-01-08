@@ -3,32 +3,6 @@
   "version": 1,
   "tasks": [
     {
-      "id": "T-043",
-      "title": "Settings theme switcher (light/dark/system)",
-      "description": "Add a theme selector in settings that supports light, dark, and system modes using DaisyUI's theme system. Persist user preference, respect system preference when set to system, and apply the theme globally via the html data-theme attribute.",
-      "status": "pending",
-      "createdAt": "2026-01-08",
-      "completedAt": null,
-      "acceptanceCriteria": [
-        {
-          "text": "Settings page includes a light/dark/system theme control with localized labels",
-          "done": false
-        },
-        {
-          "text": "Theme preference persists and restores on reload/session (user profile or storage)",
-          "done": false
-        },
-        {
-          "text": "System mode follows prefers-color-scheme and updates on changes",
-          "done": false
-        },
-        {
-          "text": "App applies the selected theme via html data-theme for DaisyUI compatibility",
-          "done": false
-        }
-      ]
-    },
-    {
       "id": "T-001",
       "title": "Localize user-facing errors via error codes",
       "description": "Replace direct decodeURIComponent/error-string rendering with error-code to t(\"errors.*\") mapping so all user-visible messages are fully localizable.",
@@ -942,6 +916,32 @@
         },
         {
           "text": "CTA logic is consistent across breakpoints and states",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-043",
+      "title": "Settings theme switcher (light/dark/system)",
+      "description": "Add a theme selector in settings that supports light, dark, and system modes using DaisyUI's theme system. Persist user preference, respect system preference when set to system, and apply the theme globally via the html data-theme attribute.",
+      "status": "done",
+      "createdAt": "2026-01-08",
+      "completedAt": "2026-01-08",
+      "acceptanceCriteria": [
+        {
+          "text": "Settings page includes a light/dark/system theme control with localized labels",
+          "done": true
+        },
+        {
+          "text": "Theme preference persists and restores on reload/session (user profile or storage)",
+          "done": true
+        },
+        {
+          "text": "System mode follows prefers-color-scheme and updates on changes",
+          "done": true
+        },
+        {
+          "text": "App applies the selected theme via html data-theme for DaisyUI compatibility",
           "done": true
         }
       ]

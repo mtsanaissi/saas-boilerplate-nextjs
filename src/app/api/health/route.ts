@@ -1,4 +1,4 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { validateServerEnv } from "@/lib/env/server";
 import { getRequestId } from "@/lib/observability/request-id";
@@ -30,7 +30,7 @@ function summarizeError(error: unknown): string {
   return "Unknown error";
 }
 
-export async function GET(_request: NextRequest) {
+export async function GET() {
   const requestId = await getRequestId();
 
   let envStatus: HealthDependency = { status: "ok" };

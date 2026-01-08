@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { NextRequest } from "next/server";
 import { GET } from "@/app/api/health/route";
 
 const fromMock = vi.hoisted(() => vi.fn());
@@ -39,8 +38,7 @@ describe("GET /api/health", () => {
   });
 
   it("returns status and dependency checks", async () => {
-    const request = new NextRequest("http://localhost/api/health");
-    const response = await GET(request);
+    const response = await GET();
 
     expect(response.status).toBe(200);
 
