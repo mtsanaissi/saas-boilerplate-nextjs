@@ -172,6 +172,9 @@ const messages = {
       title: "Plans",
       subtitle:
         "Choose the subscription that fits your stage. You can start on the Free tier and upgrade when you are ready.",
+      billingChangePrefix: "Already subscribed? Manage plan changes in",
+      billingChangeLink: "Billing settings",
+      billingChangeSuffix: "including upgrades, downgrades, or cancellations.",
       priceFree: "Free",
       perMonthSuffix: "/month",
     },
@@ -261,6 +264,48 @@ const messages = {
       incomplete_expired: "Incomplete expired",
       paused: "Paused",
     },
+    planStatusNotices: {
+      free: {
+        title: "On the Free plan",
+        body: "Upgrade anytime to unlock more usage and features.",
+      },
+      trialing: {
+        title: "Trial in progress",
+        body: "Your subscription is active while you evaluate the plan.",
+      },
+      active: {
+        title: "Subscription active",
+        body: "Your plan renews automatically unless you make a change in billing.",
+      },
+      past_due: {
+        title: "Payment issue",
+        body: "You're in a grace period. Update your payment method to keep access.",
+      },
+      canceled: {
+        title: "Subscription canceled",
+        body: "You're no longer billed. Choose a plan to reactivate.",
+      },
+      unpaid: {
+        title: "Access paused",
+        body: "Payment retries failed. Update billing to restore access.",
+      },
+      incomplete: {
+        title: "Setup incomplete",
+        body: "Your plan change needs a completed payment step.",
+      },
+      incomplete_expired: {
+        title: "Checkout expired",
+        body: "The payment attempt expired. Start checkout again to activate.",
+      },
+      paused: {
+        title: "Subscription paused",
+        body: "Billing is paused. Resume or change your plan in the portal.",
+      },
+      canceling: {
+        title: "Cancellation scheduled",
+        body: "Your plan stays active until the end of the current period.",
+      },
+    },
   },
   settings: {
     title: "Profile settings",
@@ -291,6 +336,9 @@ const messages = {
     billingRenewalLabel: "Renews on",
     billingCancelLabel: "Cancels on",
     manageBilling: "Manage billing",
+    billingUpgradeCta: "Upgrade",
+    billingPlanChangeHelp:
+      "Use the billing portal to upgrade, downgrade, or cancel. You'll see the effective date before confirming.",
     noBilling: "No active subscription found.",
     sessionsTitle: "Active sessions",
     sessionsSubtitle: "Review where your account is signed in.",

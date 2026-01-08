@@ -14,6 +14,7 @@ import { getCreditsTotalForPlanStatus } from "@/lib/usage/limits";
 import { getCurrentPeriodRange } from "@/lib/usage/period";
 import type { BillingSubscription } from "@/types/billing";
 import { createBillingPortalSession } from "@/app/billing/actions";
+import { getPlanStatusNotice } from "@/lib/billing/status";
 import {
   signOutAllSessions,
   signOutOtherSessions,
@@ -130,6 +131,11 @@ export default async function SettingsPage({
 
   const planName = tDashboard(`planNames.${planId}`);
   const planStatusLabel = tDashboard(`planStatuses.${planStatus}`);
+  const statusNotice = getPlanStatusNotice(planStatus, {
+    cancelAtPeriodEnd: subscription?.cancel_at_period_end,
+  });
+  const statusNoticeTitle = tDashboard(statusNotice.titleKey);
+  const statusNoticeBody = tDashboard(statusNotice.bodyKey);
   const renewalDate = subscription?.current_period_end
     ? dateFormatter.format(new Date(subscription.current_period_end))
     : null;
@@ -347,37 +353,61 @@ export default async function SettingsPage({
         </form>
       </div>
 
-      <div className="divider text-xs uppercase">{t("billingTitle")}</div>
+      <div className="divider text-xs uppercase" id="billing">
+        {t("billingTitle")}
+      </div>
       <div className="space-y-2 text-sm text-base-content/80">
         <p className="text-sm text-base-content/70">{t("billingSubtitle")}</p>
+        <p>
+          {t("billingPlanLabel")}:{" "}
+          <span className="font-semibold">{planName}</span>
+        </p>
+        <p>
+          {t("billingStatusLabel")}:{" "}
+          <span className="font-semibold">{planStatusLabel}</span>
+        </p>
+        <div
+          className={`alert alert-${statusNotice.tone} text-xs`}
+          role="status"
+          aria-live="polite"
+        >
+          <div>
+            <div className="font-semibold">{statusNoticeTitle}</div>
+            <div className="text-xs">{statusNoticeBody}</div>
+          </div>
+        </div>
+        {subscription?.cancel_at_period_end && renewalDate ? (
+          <p className="text-xs text-base-content/60">
+            {t("billingCancelLabel")}: {renewalDate}
+          </p>
+        ) : renewalDate ? (
+          <p className="text-xs text-base-content/60">
+            {t("billingRenewalLabel")}: {renewalDate}
+          </p>
+        ) : null}
+        {planId === "free" ? (
+          <Link
+            href="/plans"
+            locale={locale}
+            className="btn btn-accent btn-sm mt-2 w-fit"
+          >
+            {t("billingUpgradeCta")}
+          </Link>
+        ) : null}
         {subscription ? (
           <>
-            <p>
-              {t("billingPlanLabel")}:{" "}
-              <span className="font-semibold">{planName}</span>
-            </p>
-            <p>
-              {t("billingStatusLabel")}:{" "}
-              <span className="font-semibold">{planStatusLabel}</span>
-            </p>
-            {subscription.cancel_at_period_end && renewalDate ? (
-              <p className="text-xs text-base-content/60">
-                {t("billingCancelLabel")}: {renewalDate}
-              </p>
-            ) : renewalDate ? (
-              <p className="text-xs text-base-content/60">
-                {t("billingRenewalLabel")}: {renewalDate}
-              </p>
-            ) : null}
             <form action={createBillingPortalSession}>
               <input type="hidden" name="locale" value={locale} />
               <button type="submit" className="btn btn-outline btn-sm mt-2">
                 {t("manageBilling")}
               </button>
             </form>
+            <p className="text-xs text-base-content/60">
+              {t("billingPlanChangeHelp")}
+            </p>
           </>
         ) : (
-          <p className="text-sm text-base-content/70">{t("noBilling")}</p>
+          <p className="text-xs text-base-content/60">{t("noBilling")}</p>
         )}
       </div>
 

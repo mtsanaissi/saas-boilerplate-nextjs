@@ -8,6 +8,7 @@ import type { BillingSubscription } from "@/types/billing";
 import { getCreditsTotalForPlanStatus } from "@/lib/usage/limits";
 import { getCurrentPeriodRange } from "@/lib/usage/period";
 import { DevUsageEventButton } from "@/components/features/dev/DevUsageEventButton";
+import { getPlanStatusNotice } from "@/lib/billing/status";
 
 interface DashboardPageProps {
   params: Promise<{ locale: AppLocale }>;
@@ -63,6 +64,11 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
 
   const planName = t(`planNames.${planId}`);
   const planStatusLabel = t(`planStatuses.${planStatus}`);
+  const statusNotice = getPlanStatusNotice(planStatus, {
+    cancelAtPeriodEnd: subscription?.cancel_at_period_end,
+  });
+  const statusNoticeTitle = t(statusNotice.titleKey);
+  const statusNoticeBody = t(statusNotice.bodyKey);
   const renewalDate = subscription?.current_period_end
     ? dateFormatter.format(new Date(subscription.current_period_end))
     : null;
@@ -91,6 +97,16 @@ export default async function DashboardPage({ params }: DashboardPageProps) {
               <p className="text-xs text-base-content/60">
                 {t("planStatusLabel", { status: planStatusLabel })}
               </p>
+              <div
+                className={`alert alert-${statusNotice.tone} text-xs`}
+                role="status"
+                aria-live="polite"
+              >
+                <div>
+                  <div className="font-semibold">{statusNoticeTitle}</div>
+                  <div className="text-xs">{statusNoticeBody}</div>
+                </div>
+              </div>
               {subscription?.cancel_at_period_end && renewalDate ? (
                 <p className="text-xs text-base-content/60">
                   {t("cancelAtPeriodEndLabel", { date: renewalDate })}

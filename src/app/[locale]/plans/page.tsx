@@ -109,6 +109,26 @@ export default async function PlansPage({
           </div>
         ) : null}
 
+        {user ? (
+          <div
+            className="alert alert-info text-sm"
+            role="status"
+            aria-live="polite"
+          >
+            <span>
+              {tPage("billingChangePrefix")}{" "}
+              <Link
+                href="/settings#billing"
+                locale={locale}
+                className="link link-primary font-medium"
+              >
+                {tPage("billingChangeLink")}
+              </Link>{" "}
+              {tPage("billingChangeSuffix")}
+            </span>
+          </div>
+        ) : null}
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {plans.map((plan) => {
             const card = cards[plan.id];

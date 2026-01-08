@@ -3,32 +3,6 @@
   "version": 1,
   "tasks": [
     {
-      "id": "T-036",
-      "title": "Billing UX improvements",
-      "description": "Add UI copy and states for plan changes, cancellations, grace periods, and renewal messaging. If status-to-copy mapping is extracted into a helper, add unit tests for the mapping.",
-      "status": "pending",
-      "createdAt": "2026-01-05",
-      "completedAt": null,
-      "acceptanceCriteria": [
-        {
-          "text": "Plan status states map to clear, localized messaging in dashboard/settings",
-          "done": false
-        },
-        {
-          "text": "Cancellation and grace period states are visible and easy to understand",
-          "done": false
-        },
-        {
-          "text": "Billing upgrade/downgrade paths include helpful guidance text",
-          "done": false
-        },
-        {
-          "text": "If a status-mapping helper is introduced, unit tests cover every PlanStatus value",
-          "done": false
-        }
-      ]
-    },
-    {
       "id": "T-037",
       "title": "Env validation and feature flags",
       "description": "Add a typed env validation module and feature-flag helpers to reduce runtime config errors. Add unit tests for required/optional env parsing and flag defaults.",
@@ -842,6 +816,32 @@
         },
         {
           "text": "Audit logs record verification enforcement changes where applicable",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-036",
+      "title": "Billing UX improvements",
+      "description": "Add UI copy and states for plan changes, cancellations, grace periods, and renewal messaging. If status-to-copy mapping is extracted into a helper, add unit tests for the mapping.",
+      "status": "done",
+      "createdAt": "2026-01-05",
+      "completedAt": "2026-01-07",
+      "acceptanceCriteria": [
+        {
+          "text": "Plan status states map to clear, localized messaging in dashboard/settings",
+          "done": true
+        },
+        {
+          "text": "Cancellation and grace period states are visible and easy to understand",
+          "done": true
+        },
+        {
+          "text": "Billing upgrade/downgrade paths include helpful guidance text",
+          "done": true
+        },
+        {
+          "text": "If a status-mapping helper is introduced, unit tests cover every PlanStatus value",
           "done": true
         }
       ]

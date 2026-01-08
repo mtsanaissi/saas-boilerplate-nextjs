@@ -8,7 +8,6 @@ Do not hand-edit this file. To edit tasks, update `tasks/tasks.json` and run:
 
 ---
 
-- T-036 - [PENDING] - Billing UX improvements
 - T-037 - [PENDING] - Env validation and feature flags
 - T-038 - [PENDING] - Health endpoint + error boundaries
 - T-039 - [PENDING] - Seed and reset scripts for local dev
@@ -44,3 +43,4 @@ Do not hand-edit this file. To edit tasks, update `tasks/tasks.json` and run:
 - T-033 - [DONE] - Account deletion + data export
 - T-034 - [DONE] - Email change flow
 - T-035 - [DONE] - Security hardening: email verification
+- T-036 - [DONE] - Billing UX improvements
