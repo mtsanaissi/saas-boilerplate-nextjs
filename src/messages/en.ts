@@ -66,6 +66,7 @@ const messages = {
     dev: "Dev",
     skipToContent: "Skip to content",
     primaryNavLabel: "Primary",
+    menuToggleLabel: "Toggle menu",
     dashboard: "Dashboard",
     settings: "Settings",
     signIn: "Sign in",

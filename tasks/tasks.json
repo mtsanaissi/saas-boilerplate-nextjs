@@ -3,32 +3,6 @@
   "version": 1,
   "tasks": [
     {
-      "id": "T-040",
-      "title": "Navbar layout: align sign-out + add mobile menu",
-      "description": "Fix navbar layout so the sign-out control sits in the same row as the other actions. For small screens, move actions into a DaisyUI menu (e.g., dropdown or drawer) to prioritize the title. Confirm latest DaisyUI component guidance via Context7 before implementing.",
-      "status": "pending",
-      "createdAt": "2026-01-08",
-      "completedAt": null,
-      "acceptanceCriteria": [
-        {
-          "text": "Sign-out action aligns in the same row as other navbar actions on desktop",
-          "done": false
-        },
-        {
-          "text": "Mobile layout prioritizes title and moves actions into a DaisyUI menu component",
-          "done": false
-        },
-        {
-          "text": "Navbar structure avoids layout shifts caused by form wrappers",
-          "done": false
-        },
-        {
-          "text": "DaisyUI component choice is validated against latest docs via Context7",
-          "done": false
-        }
-      ]
-    },
-    {
       "id": "T-041",
       "title": "Settings page responsive two-column layout",
       "description": "Restructure the settings page to use a two-column layout for md+ screens with left-side navigation and right-side content. Decide and implement the best small-screen layout (keep stacked or improve with a collapsible nav) based on current UX best practices.",
@@ -50,6 +24,28 @@
         },
         {
           "text": "Spacing and max-widths reduce vertical scroll without harming readability",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "T-042",
+      "title": "Plans page CTA: reflect active Starter plan",
+      "description": "When a user is already on the Starter plan, the Free plan card should show a downgrade action and the Starter plan card should show \"Go to dashboard\" instead of \"Subscribe\". Align plan CTA labels with the active subscription state and confirm behavior for both desktop and mobile.",
+      "status": "pending",
+      "createdAt": "2026-01-08",
+      "completedAt": null,
+      "acceptanceCriteria": [
+        {
+          "text": "Active Starter plan shows \"Go to dashboard\" CTA on the Starter plan card",
+          "done": false
+        },
+        {
+          "text": "Free plan card shows a \"Downgrade\" CTA when the user is on Starter",
+          "done": false
+        },
+        {
+          "text": "CTA logic is consistent across breakpoints and states",
           "done": false
         }
       ]
@@ -894,6 +890,32 @@
         },
         {
           "text": "Dry-run mode produces a non-destructive plan and a smoke test asserts it exits successfully",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-040",
+      "title": "Navbar layout: align sign-out + add mobile menu",
+      "description": "Fix navbar layout so the sign-out control sits in the same row as the other actions. For small screens, move actions into a DaisyUI menu (e.g., dropdown or drawer) to prioritize the title. Confirm latest DaisyUI component guidance via Context7 before implementing.",
+      "status": "done",
+      "createdAt": "2026-01-08",
+      "completedAt": "2026-01-08",
+      "acceptanceCriteria": [
+        {
+          "text": "Sign-out action aligns in the same row as other navbar actions on desktop",
+          "done": true
+        },
+        {
+          "text": "Mobile layout prioritizes title and moves actions into a DaisyUI menu component",
+          "done": true
+        },
+        {
+          "text": "Navbar structure avoids layout shifts caused by form wrappers",
+          "done": true
+        },
+        {
+          "text": "DaisyUI component choice is validated against latest docs via Context7",
           "done": true
         }
       ]

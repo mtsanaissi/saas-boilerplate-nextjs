@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { signOut } from "@/app/auth/actions";
 import { routing } from "@/i18n/routing";
 import { Link } from "@/i18n/navigation";
+import Navbar from "@/components/features/navigation/Navbar";
 import { NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { assertServerEnv, getFeatureFlags } from "@/lib/env/server";
@@ -73,75 +73,23 @@ export default async function RootLayout({
         </a>
 
         <header className="border-b border-base-300 bg-base-100 px-4">
-          <nav className="navbar" aria-label={tNav("primaryNavLabel")}>
-            <div className="flex-1">
-              <Link
-                href="/"
-                locale={appLocale}
-                className="btn btn-ghost normal-case text-xl"
-              >
-                {tCommon("appName")}
-              </Link>
-            </div>
-            <div className="flex-none gap-2">
-              <Link
-                href="/plans"
-                locale={appLocale}
-                className="btn btn-ghost btn-sm"
-              >
-                {tNav("plans")}
-              </Link>
-              {showDevLinks ? (
-                <Link
-                  href="/dev"
-                  locale={appLocale}
-                  className="btn btn-ghost btn-sm"
-                >
-                  {tNav("dev")}
-                </Link>
-              ) : null}
-              {user ? (
-                <>
-                  <Link
-                    href="/dashboard"
-                    locale={appLocale}
-                    className="btn btn-ghost btn-sm"
-                  >
-                    {tNav("dashboard")}
-                  </Link>
-                  <Link
-                    href="/settings"
-                    locale={appLocale}
-                    className="btn btn-ghost btn-sm"
-                  >
-                    {tNav("settings")}
-                  </Link>
-                  <form action={signOut}>
-                    <button type="submit" className="btn btn-outline btn-sm">
-                      {tNav("signOut")}
-                    </button>
-                  </form>
-                </>
-              ) : (
-                <>
-                  <Link
-                    href="/auth/login"
-                    locale={appLocale}
-                    className="btn btn-ghost btn-sm"
-                  >
-                    {tNav("signIn")}
-                  </Link>
-                  <Link
-                    href="/auth/register"
-                    locale={appLocale}
-                    className="btn btn-primary btn-sm"
-                  >
-                    {tNav("getStarted")}
-                  </Link>
-                </>
-              )}
-            </div>
-          </nav>
+          <Navbar
+            appLocale={appLocale}
+            appName={tCommon("appName")}
+            labels={{
+              primaryNavLabel: tNav("primaryNavLabel"),
+              menuToggleLabel: tNav("menuToggleLabel"),
+              plans: tNav("plans"),
+              dev: tNav("dev"),
+              dashboard: tNav("dashboard"),
+              settings: tNav("settings"),
+              signIn: tNav("signIn"),
+              signOut: tNav("signOut"),
+              getStarted: tNav("getStarted"),
+            }}
+            showDevLinks={showDevLinks}
+            isAuthenticated={Boolean(user)}
+          />
         </header>
 
         <main id="main-content" tabIndex={-1} className="flex-1">
