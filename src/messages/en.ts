@@ -311,6 +311,9 @@ const messages = {
   settings: {
     title: "Profile settings",
     subtitle: "Update how your account appears across the app.",
+    profileTitle: "Profile",
+    navTitle: "On this page",
+    navJumpTo: "Jump to section",
     displayNameLabel: "Display name",
     displayNameHelp: "Shown in the dashboard and emails.",
     avatarUrlLabel: "Avatar URL",
@@ -330,6 +333,7 @@ const messages = {
     emailChangeRequested: "Check your new email address to confirm the change.",
     emailChangeConfirmed: "Your email address has been updated.",
     backToDashboard: "Back to dashboard",
+    backToTop: "Back to top",
     billingTitle: "Billing",
     billingSubtitle: "Manage your subscription and payment details.",
     billingPlanLabel: "Plan",

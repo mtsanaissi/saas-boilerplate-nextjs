@@ -8,8 +8,8 @@ Do not hand-edit this file. To edit tasks, update `tasks/tasks.json` and run:
 
 ---
 
-- T-041 - [PENDING] - Settings page responsive two-column layout
 - T-042 - [PENDING] - Plans page CTA: reflect active Starter plan
+- T-043 - [PENDING] - Settings theme switcher (light/dark/system)
 - T-001 - [DONE] - Localize user-facing errors via error codes
 - T-002 - [DONE] - Forms + alerts accessibility pass
 - T-003 - [DONE] - WCAG focus/contrast + theme tokens
@@ -47,3 +47,4 @@ Do not hand-edit this file. To edit tasks, update `tasks/tasks.json` and run:
 - T-038 - [DONE] - Health endpoint + error boundaries
 - T-039 - [DONE] - Seed and reset scripts for local dev
 - T-040 - [DONE] - Navbar layout: align sign-out + add mobile menu
+- T-041 - [DONE] - Settings page responsive two-column layout

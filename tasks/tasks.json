@@ -3,32 +3,6 @@
   "version": 1,
   "tasks": [
     {
-      "id": "T-041",
-      "title": "Settings page responsive two-column layout",
-      "description": "Restructure the settings page to use a two-column layout for md+ screens with left-side navigation and right-side content. Decide and implement the best small-screen layout (keep stacked or improve with a collapsible nav) based on current UX best practices.",
-      "status": "pending",
-      "createdAt": "2026-01-08",
-      "completedAt": null,
-      "acceptanceCriteria": [
-        {
-          "text": "md+ screens render a two-column layout with navigation on the left and content on the right",
-          "done": false
-        },
-        {
-          "text": "Small-screen layout is explicitly chosen (stacked or alternative) and implemented",
-          "done": false
-        },
-        {
-          "text": "Navigation remains accessible and keyboard friendly on all breakpoints",
-          "done": false
-        },
-        {
-          "text": "Spacing and max-widths reduce vertical scroll without harming readability",
-          "done": false
-        }
-      ]
-    },
-    {
       "id": "T-042",
       "title": "Plans page CTA: reflect active Starter plan",
       "description": "When a user is already on the Starter plan, the Free plan card should show a downgrade action and the Starter plan card should show \"Go to dashboard\" instead of \"Subscribe\". Align plan CTA labels with the active subscription state and confirm behavior for both desktop and mobile.",
@@ -46,6 +20,32 @@
         },
         {
           "text": "CTA logic is consistent across breakpoints and states",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "T-043",
+      "title": "Settings theme switcher (light/dark/system)",
+      "description": "Add a theme selector in settings that supports light, dark, and system modes using DaisyUI's theme system. Persist user preference, respect system preference when set to system, and apply the theme globally via the html data-theme attribute.",
+      "status": "pending",
+      "createdAt": "2026-01-08",
+      "completedAt": null,
+      "acceptanceCriteria": [
+        {
+          "text": "Settings page includes a light/dark/system theme control with localized labels",
+          "done": false
+        },
+        {
+          "text": "Theme preference persists and restores on reload/session (user profile or storage)",
+          "done": false
+        },
+        {
+          "text": "System mode follows prefers-color-scheme and updates on changes",
+          "done": false
+        },
+        {
+          "text": "App applies the selected theme via html data-theme for DaisyUI compatibility",
           "done": false
         }
       ]
@@ -916,6 +916,32 @@
         },
         {
           "text": "DaisyUI component choice is validated against latest docs via Context7",
+          "done": true
+        }
+      ]
+    },
+    {
+      "id": "T-041",
+      "title": "Settings page responsive two-column layout",
+      "description": "Restructure the settings page to use a two-column layout for md+ screens with left-side navigation and right-side content. Decide and implement the best small-screen layout (keep stacked or improve with a collapsible nav) based on current UX best practices.",
+      "status": "done",
+      "createdAt": "2026-01-08",
+      "completedAt": "2026-01-08",
+      "acceptanceCriteria": [
+        {
+          "text": "md+ screens render a two-column layout with navigation on the left and content on the right",
+          "done": true
+        },
+        {
+          "text": "Small-screen layout is explicitly chosen (stacked or alternative) and implemented",
+          "done": true
+        },
+        {
+          "text": "Navigation remains accessible and keyboard friendly on all breakpoints",
+          "done": true
+        },
+        {
+          "text": "Spacing and max-widths reduce vertical scroll without harming readability",
           "done": true
         }
       ]

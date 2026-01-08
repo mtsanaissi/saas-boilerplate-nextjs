@@ -72,7 +72,7 @@ export default async function RootLayout({
           {tNav("skipToContent")}
         </a>
 
-        <header className="border-b border-base-300 bg-base-100 px-4">
+        <header className="fixed top-0 inset-x-0 z-50 border-b border-base-300 bg-base-100 px-4">
           <Navbar
             appLocale={appLocale}
             appName={tCommon("appName")}
@@ -92,7 +92,7 @@ export default async function RootLayout({
           />
         </header>
 
-        <main id="main-content" tabIndex={-1} className="flex-1">
+        <main id="main-content" tabIndex={-1} className="flex-1 pt-16">
           {children}
         </main>
 

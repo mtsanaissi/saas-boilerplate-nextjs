@@ -1,4 +1,3 @@
-import { AuthCard } from "@/components/features/auth/AuthCard";
 import { updateProfile } from "@/app/settings/actions";
 import { safeDecodeURIComponent } from "@/lib/url";
 import { Link } from "@/i18n/navigation";
@@ -35,6 +34,8 @@ import type {
   UserSession,
 } from "@/types/security";
 import type { AuditLogEntry } from "@/types/security";
+import { BackToTopButton } from "@/components/ui/BackToTopButton";
+import { SettingsScrollLayout } from "@/components/features/settings/SettingsScrollLayout";
 
 type SettingsSearchParams = {
   error?: string;
@@ -213,460 +214,574 @@ export default async function SettingsPage({
       : null;
   const deletionRequestToken = deletionRequest?.token ?? "";
 
+  const settingsSections = [
+    { id: "profile", label: t("profileTitle") },
+    { id: "email", label: t("emailTitle") },
+    { id: "billing", label: t("billingTitle") },
+    { id: "usage", label: tUsage("title") },
+    { id: "sessions", label: t("sessionsTitle") },
+    { id: "consents", label: t("consentsTitle") },
+    { id: "audit-logs", label: t("auditLogsTitle") },
+    { id: "account", label: t("dataTitle") },
+  ];
+
   return (
-    <AuthCard title={t("title")} subtitle={t("subtitle")}>
-      {hasSuccess ? (
-        <div
-          className="alert alert-success text-sm"
-          role="status"
-          aria-live="polite"
-        >
-          <span>{t("success")}</span>
-        </div>
-      ) : null}
+    <div
+      id="settings-top"
+      className="min-h-screen bg-base-200 px-4 py-8 sm:py-12"
+    >
+      <div className="mx-auto w-full max-w-6xl">
+        <div className="card border border-base-300 bg-base-100 shadow-2xl">
+          <div className="card-body gap-8">
+            <header className="space-y-2">
+              <h1 className="text-2xl font-semibold">{t("title")}</h1>
+              {t("subtitle") ? (
+                <p className="text-sm text-base-content/70">{t("subtitle")}</p>
+              ) : null}
+            </header>
 
-      {errorMessage ? (
-        <div
-          id={formErrorId}
-          className="alert alert-error text-sm"
-          role="alert"
-          aria-live="assertive"
-        >
-          <span>{errorMessage}</span>
-        </div>
-      ) : null}
-
-      <form action={updateProfile} className="space-y-4">
-        <input type="hidden" name="locale" value={locale} />
-
-        <div className="form-control">
-          <label className="label" htmlFor="displayName">
-            <span className="label-text">{t("displayNameLabel")}</span>
-          </label>
-          <input
-            id="displayName"
-            type="text"
-            name="displayName"
-            className="input input-bordered w-full"
-            maxLength={80}
-            defaultValue={displayName}
-            aria-describedby={"display-name-help"}
-          />
-          <p
-            id="display-name-help"
-            className="mt-2 text-xs text-base-content/70"
-          >
-            {t("displayNameHelp")}
-          </p>
-        </div>
-
-        <div className="form-control">
-          <label className="label" htmlFor="avatarUrl">
-            <span className="label-text">{t("avatarUrlLabel")}</span>
-          </label>
-          <input
-            id="avatarUrl"
-            type="url"
-            name="avatarUrl"
-            className="input input-bordered w-full"
-            placeholder={t("avatarUrlPlaceholder")}
-            defaultValue={avatarUrl}
-            aria-describedby={"avatar-url-help"}
-          />
-          <p id="avatar-url-help" className="mt-2 text-xs text-base-content/70">
-            {t("avatarUrlHelp")}
-          </p>
-        </div>
-
-        <div className="form-control">
-          <label className="label" htmlFor="localePreference">
-            <span className="label-text">{t("localeLabel")}</span>
-          </label>
-          <select
-            id="localePreference"
-            name="localePreference"
-            className="select select-bordered w-full"
-            defaultValue={preferredLocale}
-          >
-            {routing.locales.map((localeOption) => (
-              <option key={localeOption} value={localeOption}>
-                {localeOption.toUpperCase()}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="form-control mt-6">
-          <button type="submit" className="btn btn-primary w-full">
-            {t("save")}
-          </button>
-        </div>
-      </form>
-
-      <div className="divider text-xs uppercase" id="email">
-        {t("emailTitle")}
-      </div>
-      <div className="space-y-3 text-sm text-base-content/80">
-        <p className="text-sm text-base-content/70">{t("emailSubtitle")}</p>
-        <p>
-          {t("currentEmailLabel")}:{" "}
-          <span className="font-semibold">{email ?? t("unknownValue")}</span>
-        </p>
-        {hasEmailChangeRequested ? (
-          <div
-            className="alert alert-success text-sm"
-            role="status"
-            aria-live="polite"
-          >
-            <span>{t("emailChangeRequested")}</span>
-          </div>
-        ) : null}
-        {hasEmailChangeConfirmed ? (
-          <div
-            className="alert alert-success text-sm"
-            role="status"
-            aria-live="polite"
-          >
-            <span>{t("emailChangeConfirmed")}</span>
-          </div>
-        ) : null}
-        <form action={requestEmailChange} className="space-y-2">
-          <input type="hidden" name="locale" value={locale} />
-          <label className="form-control">
-            <span className="label-text text-sm">{t("newEmailLabel")}</span>
-            <input
-              id="newEmail"
-              type="email"
-              name="newEmail"
-              className="input input-bordered w-full"
-              placeholder={t("newEmailPlaceholder")}
-              autoComplete="email"
-              aria-describedby="email-change-help"
-            />
-          </label>
-          <p id="email-change-help" className="text-xs text-base-content/60">
-            {t("emailChangeHelp")}
-          </p>
-          <button type="submit" className="btn btn-outline btn-sm">
-            {t("emailChangeCta")}
-          </button>
-        </form>
-      </div>
-
-      <div className="divider text-xs uppercase" id="billing">
-        {t("billingTitle")}
-      </div>
-      <div className="space-y-2 text-sm text-base-content/80">
-        <p className="text-sm text-base-content/70">{t("billingSubtitle")}</p>
-        <p>
-          {t("billingPlanLabel")}:{" "}
-          <span className="font-semibold">{planName}</span>
-        </p>
-        <p>
-          {t("billingStatusLabel")}:{" "}
-          <span className="font-semibold">{planStatusLabel}</span>
-        </p>
-        <div
-          className={`alert alert-${statusNotice.tone} text-xs`}
-          role="status"
-          aria-live="polite"
-        >
-          <div>
-            <div className="font-semibold">{statusNoticeTitle}</div>
-            <div className="text-xs">{statusNoticeBody}</div>
-          </div>
-        </div>
-        {subscription?.cancel_at_period_end && renewalDate ? (
-          <p className="text-xs text-base-content/60">
-            {t("billingCancelLabel")}: {renewalDate}
-          </p>
-        ) : renewalDate ? (
-          <p className="text-xs text-base-content/60">
-            {t("billingRenewalLabel")}: {renewalDate}
-          </p>
-        ) : null}
-        {planId === "free" ? (
-          <Link
-            href="/plans"
-            locale={locale}
-            className="btn btn-accent btn-sm mt-2 w-fit"
-          >
-            {t("billingUpgradeCta")}
-          </Link>
-        ) : null}
-        {subscription ? (
-          <>
-            <form action={createBillingPortalSession}>
-              <input type="hidden" name="locale" value={locale} />
-              <button type="submit" className="btn btn-outline btn-sm mt-2">
-                {t("manageBilling")}
-              </button>
-            </form>
-            <p className="text-xs text-base-content/60">
-              {t("billingPlanChangeHelp")}
-            </p>
-          </>
-        ) : (
-          <p className="text-xs text-base-content/60">{t("noBilling")}</p>
-        )}
-      </div>
-
-      <div className="divider text-xs uppercase">{tUsage("title")}</div>
-
-      <div className="space-y-2 text-sm text-base-content/80">
-        <p className="text-sm text-base-content/70">{tUsage("subtitle")}</p>
-        {creditsTotal > 0 ? (
-          <>
-            <p>
-              {tUsage("creditsRemaining")}:{" "}
-              <span className="font-semibold">{creditsRemaining}</span>
-            </p>
-            <p>
-              {tUsage("creditsUsed")}:{" "}
-              <span className="font-semibold">{creditsUsed}</span>
-            </p>
-            <p className="text-xs text-base-content/60">
-              {tUsage("resetOn", { date: formattedReset })}
-            </p>
-          </>
-        ) : (
-          <p className="text-sm text-base-content/70">{tUsage("noCredits")}</p>
-        )}
-        <Link href="/usage" locale={locale} className="link link-primary">
-          {tUsage("viewDetails")}
-        </Link>
-      </div>
-
-      <div className="divider text-xs uppercase" id="sessions">
-        {t("sessionsTitle")}
-      </div>
-      <div className="space-y-2 text-sm text-base-content/80">
-        <p className="text-sm text-base-content/70">{t("sessionsSubtitle")}</p>
-        {sessions && sessions.length > 0 ? (
-          <ul className="space-y-2">
-            {sessions.map((sessionItem) => {
-              const isCurrent = sessionId === sessionItem.session_id;
-              const label = isCurrent
-                ? t("currentSession")
-                : t("otherSessions");
-              const unknownValue = t("unknownValue");
-              return (
-                <li
-                  key={sessionItem.session_id}
-                  className="rounded border border-base-300 p-3 text-xs text-base-content/70"
-                >
-                  <div className="font-semibold text-base-content">{label}</div>
-                  <div>
-                    {t("ipLabel", {
-                      value: sessionItem.ip_address ?? unknownValue,
-                    })}
-                  </div>
-                  <div>
-                    {t("userAgentLabel", {
-                      value: sessionItem.user_agent ?? unknownValue,
-                    })}
-                  </div>
-                  <div>
-                    {t("lastSeenLabel", {
-                      date: dateFormatter.format(
-                        new Date(sessionItem.last_seen_at),
-                      ),
-                    })}
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        ) : (
-          <p className="text-sm text-base-content/70">{t("sessionsEmpty")}</p>
-        )}
-        <div className="flex flex-wrap gap-2">
-          <form action={signOutOtherSessions}>
-            <input type="hidden" name="locale" value={locale} />
-            {sessionId ? (
-              <input type="hidden" name="currentSessionId" value={sessionId} />
-            ) : null}
-            <button type="submit" className="btn btn-outline btn-sm">
-              {t("signOutOthers")}
-            </button>
-          </form>
-          <form action={signOutAllSessions}>
-            <input type="hidden" name="locale" value={locale} />
-            <button type="submit" className="btn btn-outline btn-sm">
-              {t("signOutAll")}
-            </button>
-          </form>
-        </div>
-      </div>
-
-      <div className="divider text-xs uppercase" id="consents">
-        {t("consentsTitle")}
-      </div>
-      <div className="space-y-2 text-sm text-base-content/80">
-        <p className="text-sm text-base-content/70">{t("consentsSubtitle")}</p>
-        <form action={updateConsents} className="space-y-3">
-          <input type="hidden" name="locale" value={locale} />
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              name="analyticsEnabled"
-              className="checkbox checkbox-sm"
-              defaultChecked={consents?.analytics_enabled ?? true}
-            />
-            <span>{t("analyticsConsent")}</span>
-          </label>
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              name="marketingEnabled"
-              className="checkbox checkbox-sm"
-              defaultChecked={consents?.marketing_enabled ?? false}
-            />
-            <span>{t("marketingConsent")}</span>
-          </label>
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              name="termsAccepted"
-              className="checkbox checkbox-sm"
-              defaultChecked={Boolean(consents?.terms_accepted_at)}
-            />
-            <span>{t("termsConsent")}</span>
-          </label>
-          <label className="flex items-center gap-2 text-sm">
-            <input
-              type="checkbox"
-              name="privacyAccepted"
-              className="checkbox checkbox-sm"
-              defaultChecked={Boolean(consents?.privacy_accepted_at)}
-            />
-            <span>{t("privacyConsent")}</span>
-          </label>
-          <button type="submit" className="btn btn-primary btn-sm">
-            {t("saveConsents")}
-          </button>
-        </form>
-      </div>
-
-      <div className="divider text-xs uppercase" id="audit-logs">
-        {t("auditLogsTitle")}
-      </div>
-      <div className="space-y-2 text-sm text-base-content/80">
-        <p className="text-sm text-base-content/70">{t("auditLogsSubtitle")}</p>
-        {auditLogs && auditLogs.length > 0 ? (
-          <ul className="space-y-2 text-xs text-base-content/70">
-            {auditLogs.map((entry) => (
-              <li key={entry.id} className="rounded border border-base-300 p-3">
-                <div className="font-semibold text-base-content">
-                  {entry.action}
-                </div>
-                <div>
-                  {dateFormatter.format(new Date(entry.created_at))} •{" "}
-                  {entry.ip_address ?? "unknown"}
-                </div>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-sm text-base-content/70">{t("auditLogsEmpty")}</p>
-        )}
-      </div>
-
-      <div className="divider text-xs uppercase" id="account">
-        {t("dataTitle")}
-      </div>
-      <div className="space-y-4 text-sm text-base-content/80">
-        <div className="space-y-2">
-          <div className="font-semibold text-base-content">
-            {t("dataExportTitle")}
-          </div>
-          <p className="text-sm text-base-content/70">
-            {t("dataExportSubtitle")}
-          </p>
-          <NextLink
-            href="/api/account/export"
-            className="btn btn-outline btn-sm"
-            prefetch={false}
-          >
-            {t("dataExportCta")}
-          </NextLink>
-        </div>
-        <div className="rounded border border-error/30 bg-error/5 p-4 text-sm text-base-content/80">
-          <div className="font-semibold text-error">{t("deletionTitle")}</div>
-          <p className="mt-1 text-sm text-base-content/70">
-            {t("deletionSubtitle")}
-          </p>
-          {hasDeletionRequested ? (
-            <div
-              className="alert alert-success mt-3 text-sm"
-              role="status"
-              aria-live="polite"
+            <SettingsScrollLayout
+              sections={settingsSections}
+              navTitle={t("navTitle")}
+              navJumpTo={t("navJumpTo")}
             >
-              <span>{t("deletionRequested")}</span>
-            </div>
-          ) : null}
-          {deletionRequestActive ? (
-            <div className="mt-3 space-y-2">
-              {formattedDeletionExpires ? (
-                <p className="text-xs text-base-content/70">
-                  {t("deletionExpires", { date: formattedDeletionExpires })}
-                </p>
-              ) : null}
-              <form action={confirmAccountDeletion} className="space-y-2">
-                <input type="hidden" name="locale" value={locale} />
-                <input
-                  type="hidden"
-                  name="token"
-                  value={deletionRequestToken}
-                />
-                <label className="form-control">
-                  <span className="label-text text-sm">
-                    {t("deletionConfirmLabel", {
-                      phrase: deletionConfirmPhrase,
-                    })}
-                  </span>
-                  <input
-                    type="text"
-                    name="confirmation"
-                    className="input input-bordered input-sm mt-2"
-                    placeholder={deletionConfirmPhrase}
-                    aria-describedby="deletion-confirm-help"
-                  />
-                </label>
-                <p
-                  id="deletion-confirm-help"
-                  className="text-xs text-base-content/60"
+              {hasSuccess ? (
+                <div
+                  className="alert alert-success text-sm"
+                  role="status"
+                  aria-live="polite"
                 >
-                  {t("deletionConfirmHelp")}
-                </p>
-                <button type="submit" className="btn btn-error btn-sm">
-                  {t("deletionConfirmCta")}
-                </button>
-              </form>
-            </div>
-          ) : (
-            <div className="mt-3 space-y-2">
-              {deletionRequestExpired ? (
-                <p className="text-xs text-base-content/70">
-                  {t("deletionExpired")}
-                </p>
+                  <span>{t("success")}</span>
+                </div>
               ) : null}
-              <form action={requestAccountDeletion}>
-                <input type="hidden" name="locale" value={locale} />
-                <button type="submit" className="btn btn-error btn-sm">
-                  {t("deletionRequestCta")}
-                </button>
-              </form>
-            </div>
-          )}
+
+              {errorMessage ? (
+                <div
+                  id={formErrorId}
+                  className="alert alert-error text-sm"
+                  role="alert"
+                  aria-live="assertive"
+                >
+                  <span>{errorMessage}</span>
+                </div>
+              ) : null}
+
+              <section id="profile" className="scroll-mt-24 space-y-4">
+                <h2 className="text-lg font-semibold">{t("profileTitle")}</h2>
+                <form action={updateProfile} className="space-y-4">
+                  <input type="hidden" name="locale" value={locale} />
+
+                  <div className="grid gap-4 md:grid-cols-2">
+                    <div className="form-control">
+                      <label className="label" htmlFor="displayName">
+                        <span className="label-text">
+                          {t("displayNameLabel")}
+                        </span>
+                      </label>
+                      <input
+                        id="displayName"
+                        type="text"
+                        name="displayName"
+                        className="input input-bordered w-full"
+                        maxLength={80}
+                        defaultValue={displayName}
+                        aria-describedby={"display-name-help"}
+                      />
+                      <p
+                        id="display-name-help"
+                        className="mt-2 text-xs text-base-content/70"
+                      >
+                        {t("displayNameHelp")}
+                      </p>
+                    </div>
+
+                    <div className="form-control">
+                      <label className="label" htmlFor="avatarUrl">
+                        <span className="label-text">
+                          {t("avatarUrlLabel")}
+                        </span>
+                      </label>
+                      <input
+                        id="avatarUrl"
+                        type="url"
+                        name="avatarUrl"
+                        className="input input-bordered w-full"
+                        placeholder={t("avatarUrlPlaceholder")}
+                        defaultValue={avatarUrl}
+                        aria-describedby={"avatar-url-help"}
+                      />
+                      <p
+                        id="avatar-url-help"
+                        className="mt-2 text-xs text-base-content/70"
+                      >
+                        {t("avatarUrlHelp")}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="grid gap-4 md:grid-cols-[1fr,auto] md:items-end">
+                    <div className="form-control">
+                      <label className="label" htmlFor="localePreference">
+                        <span className="label-text">{t("localeLabel")}</span>
+                      </label>
+                      <select
+                        id="localePreference"
+                        name="localePreference"
+                        className="select select-bordered w-full"
+                        defaultValue={preferredLocale}
+                      >
+                        {routing.locales.map((localeOption) => (
+                          <option key={localeOption} value={localeOption}>
+                            {localeOption.toUpperCase()}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div className="form-control md:justify-self-end">
+                      <button
+                        type="submit"
+                        className="btn btn-primary w-full md:w-auto"
+                      >
+                        {t("save")}
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </section>
+
+              <section id="email" className="scroll-mt-24 space-y-3">
+                <h2 className="text-lg font-semibold">{t("emailTitle")}</h2>
+                <div className="space-y-3 text-sm text-base-content/80">
+                  <p className="text-sm text-base-content/70">
+                    {t("emailSubtitle")}
+                  </p>
+                  <p>
+                    {t("currentEmailLabel")}:{" "}
+                    <span className="font-semibold">
+                      {email ?? t("unknownValue")}
+                    </span>
+                  </p>
+                  {hasEmailChangeRequested ? (
+                    <div
+                      className="alert alert-success text-sm"
+                      role="status"
+                      aria-live="polite"
+                    >
+                      <span>{t("emailChangeRequested")}</span>
+                    </div>
+                  ) : null}
+                  {hasEmailChangeConfirmed ? (
+                    <div
+                      className="alert alert-success text-sm"
+                      role="status"
+                      aria-live="polite"
+                    >
+                      <span>{t("emailChangeConfirmed")}</span>
+                    </div>
+                  ) : null}
+                  <form action={requestEmailChange} className="space-y-2">
+                    <input type="hidden" name="locale" value={locale} />
+                    <label className="form-control">
+                      <span className="label-text text-sm">
+                        {t("newEmailLabel")}
+                      </span>
+                      <input
+                        id="newEmail"
+                        type="email"
+                        name="newEmail"
+                        className="input input-bordered w-full"
+                        placeholder={t("newEmailPlaceholder")}
+                        autoComplete="email"
+                        aria-describedby="email-change-help"
+                      />
+                    </label>
+                    <p
+                      id="email-change-help"
+                      className="text-xs text-base-content/60"
+                    >
+                      {t("emailChangeHelp")}
+                    </p>
+                    <button type="submit" className="btn btn-outline btn-sm">
+                      {t("emailChangeCta")}
+                    </button>
+                  </form>
+                </div>
+              </section>
+
+              <section id="billing" className="scroll-mt-24 space-y-3">
+                <h2 className="text-lg font-semibold">{t("billingTitle")}</h2>
+                <div className="space-y-2 text-sm text-base-content/80">
+                  <p className="text-sm text-base-content/70">
+                    {t("billingSubtitle")}
+                  </p>
+                  <p>
+                    {t("billingPlanLabel")}:{" "}
+                    <span className="font-semibold">{planName}</span>
+                  </p>
+                  <p>
+                    {t("billingStatusLabel")}:{" "}
+                    <span className="font-semibold">{planStatusLabel}</span>
+                  </p>
+                  <div
+                    className={`alert alert-${statusNotice.tone} text-xs`}
+                    role="status"
+                    aria-live="polite"
+                  >
+                    <div>
+                      <div className="font-semibold">{statusNoticeTitle}</div>
+                      <div className="text-xs">{statusNoticeBody}</div>
+                    </div>
+                  </div>
+                  {subscription?.cancel_at_period_end && renewalDate ? (
+                    <p className="text-xs text-base-content/60">
+                      {t("billingCancelLabel")}: {renewalDate}
+                    </p>
+                  ) : renewalDate ? (
+                    <p className="text-xs text-base-content/60">
+                      {t("billingRenewalLabel")}: {renewalDate}
+                    </p>
+                  ) : null}
+                  {planId === "free" ? (
+                    <Link
+                      href="/plans"
+                      locale={locale}
+                      className="btn btn-accent btn-sm mt-2 w-fit"
+                    >
+                      {t("billingUpgradeCta")}
+                    </Link>
+                  ) : null}
+                  {subscription ? (
+                    <>
+                      <form action={createBillingPortalSession}>
+                        <input type="hidden" name="locale" value={locale} />
+                        <button
+                          type="submit"
+                          className="btn btn-outline btn-sm mt-2"
+                        >
+                          {t("manageBilling")}
+                        </button>
+                      </form>
+                      <p className="text-xs text-base-content/60">
+                        {t("billingPlanChangeHelp")}
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-xs text-base-content/60">
+                      {t("noBilling")}
+                    </p>
+                  )}
+                </div>
+              </section>
+
+              <section id="usage" className="scroll-mt-24 space-y-3">
+                <h2 className="text-lg font-semibold">{tUsage("title")}</h2>
+                <div className="space-y-2 text-sm text-base-content/80">
+                  <p className="text-sm text-base-content/70">
+                    {tUsage("subtitle")}
+                  </p>
+                  {creditsTotal > 0 ? (
+                    <>
+                      <p>
+                        {tUsage("creditsRemaining")}:{" "}
+                        <span className="font-semibold">
+                          {creditsRemaining}
+                        </span>
+                      </p>
+                      <p>
+                        {tUsage("creditsUsed")}:{" "}
+                        <span className="font-semibold">{creditsUsed}</span>
+                      </p>
+                      <p className="text-xs text-base-content/60">
+                        {tUsage("resetOn", { date: formattedReset })}
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-sm text-base-content/70">
+                      {tUsage("noCredits")}
+                    </p>
+                  )}
+                  <Link
+                    href="/usage"
+                    locale={locale}
+                    className="link link-primary"
+                  >
+                    {tUsage("viewDetails")}
+                  </Link>
+                </div>
+              </section>
+
+              <section id="sessions" className="scroll-mt-24 space-y-3">
+                <h2 className="text-lg font-semibold">{t("sessionsTitle")}</h2>
+                <div className="space-y-2 text-sm text-base-content/80">
+                  <p className="text-sm text-base-content/70">
+                    {t("sessionsSubtitle")}
+                  </p>
+                  {sessions && sessions.length > 0 ? (
+                    <ul className="space-y-2">
+                      {sessions.map((sessionItem) => {
+                        const isCurrent = sessionId === sessionItem.session_id;
+                        const label = isCurrent
+                          ? t("currentSession")
+                          : t("otherSessions");
+                        const unknownValue = t("unknownValue");
+                        return (
+                          <li
+                            key={sessionItem.session_id}
+                            className="rounded border border-base-300 p-3 text-xs text-base-content/70"
+                          >
+                            <div className="font-semibold text-base-content">
+                              {label}
+                            </div>
+                            <div>
+                              {t("ipLabel", {
+                                value: sessionItem.ip_address ?? unknownValue,
+                              })}
+                            </div>
+                            <div>
+                              {t("userAgentLabel", {
+                                value: sessionItem.user_agent ?? unknownValue,
+                              })}
+                            </div>
+                            <div>
+                              {t("lastSeenLabel", {
+                                date: dateFormatter.format(
+                                  new Date(sessionItem.last_seen_at),
+                                ),
+                              })}
+                            </div>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  ) : (
+                    <p className="text-sm text-base-content/70">
+                      {t("sessionsEmpty")}
+                    </p>
+                  )}
+                  <div className="flex flex-wrap gap-2">
+                    <form action={signOutOtherSessions}>
+                      <input type="hidden" name="locale" value={locale} />
+                      {sessionId ? (
+                        <input
+                          type="hidden"
+                          name="currentSessionId"
+                          value={sessionId}
+                        />
+                      ) : null}
+                      <button type="submit" className="btn btn-outline btn-sm">
+                        {t("signOutOthers")}
+                      </button>
+                    </form>
+                    <form action={signOutAllSessions}>
+                      <input type="hidden" name="locale" value={locale} />
+                      <button type="submit" className="btn btn-outline btn-sm">
+                        {t("signOutAll")}
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </section>
+
+              <section id="consents" className="scroll-mt-24 space-y-3">
+                <h2 className="text-lg font-semibold">{t("consentsTitle")}</h2>
+                <div className="space-y-2 text-sm text-base-content/80">
+                  <p className="text-sm text-base-content/70">
+                    {t("consentsSubtitle")}
+                  </p>
+                  <form action={updateConsents} className="space-y-3">
+                    <input type="hidden" name="locale" value={locale} />
+                    <label className="flex items-center gap-2 text-sm">
+                      <input
+                        type="checkbox"
+                        name="analyticsEnabled"
+                        className="checkbox checkbox-sm"
+                        defaultChecked={consents?.analytics_enabled ?? true}
+                      />
+                      <span>{t("analyticsConsent")}</span>
+                    </label>
+                    <label className="flex items-center gap-2 text-sm">
+                      <input
+                        type="checkbox"
+                        name="marketingEnabled"
+                        className="checkbox checkbox-sm"
+                        defaultChecked={consents?.marketing_enabled ?? false}
+                      />
+                      <span>{t("marketingConsent")}</span>
+                    </label>
+                    <label className="flex items-center gap-2 text-sm">
+                      <input
+                        type="checkbox"
+                        name="termsAccepted"
+                        className="checkbox checkbox-sm"
+                        defaultChecked={Boolean(consents?.terms_accepted_at)}
+                      />
+                      <span>{t("termsConsent")}</span>
+                    </label>
+                    <label className="flex items-center gap-2 text-sm">
+                      <input
+                        type="checkbox"
+                        name="privacyAccepted"
+                        className="checkbox checkbox-sm"
+                        defaultChecked={Boolean(consents?.privacy_accepted_at)}
+                      />
+                      <span>{t("privacyConsent")}</span>
+                    </label>
+                    <button type="submit" className="btn btn-primary btn-sm">
+                      {t("saveConsents")}
+                    </button>
+                  </form>
+                </div>
+              </section>
+
+              <section id="audit-logs" className="scroll-mt-24 space-y-3">
+                <h2 className="text-lg font-semibold">{t("auditLogsTitle")}</h2>
+                <div className="space-y-2 text-sm text-base-content/80">
+                  <p className="text-sm text-base-content/70">
+                    {t("auditLogsSubtitle")}
+                  </p>
+                  {auditLogs && auditLogs.length > 0 ? (
+                    <ul className="space-y-2 text-xs text-base-content/70">
+                      {auditLogs.map((entry) => (
+                        <li
+                          key={entry.id}
+                          className="rounded border border-base-300 p-3"
+                        >
+                          <div className="font-semibold text-base-content">
+                            {entry.action}
+                          </div>
+                          <div>
+                            {dateFormatter.format(new Date(entry.created_at))} •{" "}
+                            {entry.ip_address ?? "unknown"}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-sm text-base-content/70">
+                      {t("auditLogsEmpty")}
+                    </p>
+                  )}
+                </div>
+              </section>
+
+              <section id="account" className="scroll-mt-24 space-y-3">
+                <h2 className="text-lg font-semibold">{t("dataTitle")}</h2>
+                <div className="space-y-4 text-sm text-base-content/80">
+                  <div className="space-y-2">
+                    <div className="font-semibold text-base-content">
+                      {t("dataExportTitle")}
+                    </div>
+                    <p className="text-sm text-base-content/70">
+                      {t("dataExportSubtitle")}
+                    </p>
+                    <NextLink
+                      href="/api/account/export"
+                      className="btn btn-outline btn-sm"
+                      prefetch={false}
+                    >
+                      {t("dataExportCta")}
+                    </NextLink>
+                  </div>
+                  <div className="rounded border border-error/30 bg-error/5 p-4 text-sm text-base-content/80">
+                    <div className="font-semibold text-error">
+                      {t("deletionTitle")}
+                    </div>
+                    <p className="mt-1 text-sm text-base-content/70">
+                      {t("deletionSubtitle")}
+                    </p>
+                    {hasDeletionRequested ? (
+                      <div
+                        className="alert alert-success mt-3 text-sm"
+                        role="status"
+                        aria-live="polite"
+                      >
+                        <span>{t("deletionRequested")}</span>
+                      </div>
+                    ) : null}
+                    {deletionRequestActive ? (
+                      <div className="mt-3 space-y-2">
+                        {formattedDeletionExpires ? (
+                          <p className="text-xs text-base-content/70">
+                            {t("deletionExpires", {
+                              date: formattedDeletionExpires,
+                            })}
+                          </p>
+                        ) : null}
+                        <form
+                          action={confirmAccountDeletion}
+                          className="space-y-2"
+                        >
+                          <input type="hidden" name="locale" value={locale} />
+                          <input
+                            type="hidden"
+                            name="token"
+                            value={deletionRequestToken}
+                          />
+                          <label className="form-control">
+                            <span className="label-text text-sm">
+                              {t("deletionConfirmLabel", {
+                                phrase: deletionConfirmPhrase,
+                              })}
+                            </span>
+                            <input
+                              type="text"
+                              name="confirmation"
+                              className="input input-bordered input-sm mt-2"
+                              placeholder={deletionConfirmPhrase}
+                              aria-describedby="deletion-confirm-help"
+                            />
+                          </label>
+                          <p
+                            id="deletion-confirm-help"
+                            className="text-xs text-base-content/60"
+                          >
+                            {t("deletionConfirmHelp")}
+                          </p>
+                          <button
+                            type="submit"
+                            className="btn btn-error btn-sm"
+                          >
+                            {t("deletionConfirmCta")}
+                          </button>
+                        </form>
+                      </div>
+                    ) : (
+                      <div className="mt-3 space-y-2">
+                        {deletionRequestExpired ? (
+                          <p className="text-xs text-base-content/70">
+                            {t("deletionExpired")}
+                          </p>
+                        ) : null}
+                        <form action={requestAccountDeletion}>
+                          <input type="hidden" name="locale" value={locale} />
+                          <button
+                            type="submit"
+                            className="btn btn-error btn-sm"
+                          >
+                            {t("deletionRequestCta")}
+                          </button>
+                        </form>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </section>
+
+              <p className="text-sm text-center text-base-content/70">
+                <Link
+                  href="/dashboard"
+                  locale={locale}
+                  className="link link-primary"
+                >
+                  {t("backToDashboard")}
+                </Link>
+              </p>
+            </SettingsScrollLayout>
+          </div>
         </div>
       </div>
-
-      <p className="text-sm text-center text-base-content/70">
-        <Link href="/dashboard" locale={locale} className="link link-primary">
-          {t("backToDashboard")}
-        </Link>
-      </p>
-    </AuthCard>
+      <BackToTopButton href="#settings-top" label={t("backToTop")} />
+    </div>
   );
 }
