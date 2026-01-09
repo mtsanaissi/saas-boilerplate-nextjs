@@ -1,5 +1,10 @@
 # SaaS Boilerplate (Next.js 16 + Tailwind 4 + Supabase)
 
+## DISCLAIMER
+
+This project was built with heavy use of AI coding agents and is provided “as is”, without warranty of any kind. The authors and contributors disclaim all liability for any damages or issues arising from the use of this code. Use at your own risk, and review, test, and secure it before deploying to production.
+Some aspects of the codebase was not properly tested, mainly Stripe integration.
+
 ## Tech Stack
 
 - **Framework:** Next.js 16 (App Router, React Compiler enabled)
@@ -7,6 +12,28 @@
 - **Database & Auth:** Supabase (Local Docker + Cloud)
 - **Payments:** Stripe (Subscriptions via Checkout)
 - **Package Manager:** pnpm
+
+## Project Structure
+
+```text
+.
+├─ src/
+│  ├─ app/              # Next.js App Router (RSC-first)
+│  ├─ components/       # UI + feature components
+│  ├─ lib/              # Shared libs (Supabase, observability, etc.)
+│  ├─ i18n/             # Locale configuration
+│  ├─ messages/         # Translations
+│  └─ types/            # Shared TypeScript types
+├─ supabase/
+│  └─ migrations/       # SQL migrations
+├─ tests/               # Unit/integration tests
+├─ tasks/               # Task tracking (source of truth)
+├─ scripts/             # Dev scripts
+├─ public/              # Static assets
+├─ TESTING.md           # Testing strategy
+├─ TASKS.md             # Generated task list (read-only)
+└─ README.md
+```
 
 ## Getting Started
 
